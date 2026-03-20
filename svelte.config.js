@@ -4,7 +4,12 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 export default {
   preprocess: vitePreprocess(),
   kit: {
-    adapter: adapter(),
+    adapter: adapter({
+      routes: {
+        include: ['/*'],
+        exclude: ['<all>']
+      }
+    }),
     alias: {
       $lib: 'src/lib'
     }
