@@ -59,5 +59,4 @@ jobs:
             --project-name=dixscript-docs \
             --branch=main \
             --commit-dirty=true \
-            --compatibility-date=2024-01-01 \
             2>&1
