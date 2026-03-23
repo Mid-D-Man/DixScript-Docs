@@ -1,3 +1,7 @@
 name = "dixscript-docs"
 compatibility_date = "2024-01-01"
 pages_build_output_dir = ".svelte-kit/cloudflare"
+
+[[r2_buckets]]
+binding = "MDIX_REGISTRY"
+bucket_name = "mdix-registry"
