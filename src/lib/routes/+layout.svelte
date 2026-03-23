@@ -56,9 +56,7 @@
     <div class="footer-inner">
       <span>DixScript — MidManStudio</span>
       <span class="footer-sep">·</span>
-      <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener">
-        GitHub
-      </a>
+      <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener">GitHub</a>
       <span class="footer-sep">·</span>
       <span>MIT License</span>
       <span class="footer-sep">·</span>
@@ -72,7 +70,7 @@
 
   .topnav {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(13, 17, 23, 0.95);
+    background: rgba(13,17,23,0.95);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
   }
@@ -92,10 +90,9 @@
   }
   .wm-accent { color: var(--accent); }
   .wm-badge {
-    font-size: 0.55rem; font-weight: 700;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 4px; padding: 1px 5px;
-    color: var(--yellow); align-self: flex-start; margin-top: 4px;
+    font-size: 0.55rem; font-weight: 700; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 5px; color: var(--yellow); align-self: flex-start; margin-top: 4px;
   }
 
   .nav-links {
@@ -106,11 +103,11 @@
     display: flex; align-items: center; gap: 6px;
     color: var(--muted); text-decoration: none;
     padding: 6px 12px; border-radius: 6px;
-    font-size: 0.875rem; transition: color 0.15s, background 0.15s;
+    font-size: 0.875rem; transition: color .15s, background .15s;
     white-space: nowrap;
   }
   .nav-link:hover { color: var(--text); background: var(--surface2); text-decoration: none; }
-  .nav-link.active { color: var(--accent); background: rgba(247, 129, 102, 0.08); }
+  .nav-link.active { color: var(--accent); background: rgba(247,129,102,.08); }
   .nav-icon { font-size: 0.75rem; }
   .nav-gh { margin-left: auto; }
 
