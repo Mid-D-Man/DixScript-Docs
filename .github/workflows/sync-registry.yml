@@ -1,0 +1,143 @@
+name: Sync Registry to R2
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'registry/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Upload .mdix files to R2
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "Scanning registry/ folder for .mdix files..."
+
+          if [ ! -d "registry" ]; then
+            echo "No registry/ folder found — nothing to upload."
+            exit 0
+          fi
+
+          FILES=$(find registry -name "*.mdix" -type f)
+
+          if [ -z "$FILES" ]; then
+            echo "No .mdix files found in registry/ — nothing to upload."
+            exit 0
+          fi
+
+          for filepath in $FILES; do
+            filename=$(basename "$filepath")
+            echo "Uploading $filename → R2 packages/$filename"
+            npx wrangler r2 object put mdix-registry/packages/$filename \
+              --file "$filepath" \
+              --content-type "text/plain"
+          done
+
+          echo "Done. Files uploaded:"
+          echo "$FILES"
+```
+
+---
+
+## Part 3 — Add Your First `.mdix` Files to the Repo
+
+Create these two files in a new `registry/` folder at the root of the repo.
+
+### `registry/base_types.mdix` (create new)
+```
+@CONFIG(
+  version  -> "1.0.0"
+  features -> "advanced"
+)
+
+@ENUMS(
+  Rarity   { COMMON = 0, UNCOMMON = 1, RARE = 2, EPIC = 3, LEGENDARY = 4 }
+  ItemType { WEAPON = 0, ARMOR = 1, CONSUMABLE = 2, QUEST = 3 }
+)
+
+@QUICKFUNCS(
+  ~makeItem<object>(id<string>, name<string>, type<enum>, rarity<enum>, value<int>) {
+    return {
+      id       = id
+      name     = name
+      type     = type
+      rarity   = rarity
+      value    = value
+      sell     = value / 2
+    }
+  }
+
+  ~scaledValue<int>(base<int>, rarity<enum>) {
+    return rarity == Rarity.LEGENDARY ? base * 5 :
+           rarity == Rarity.EPIC      ? base * 3 :
+           rarity == Rarity.RARE      ? base * 2 :
+           rarity == Rarity.UNCOMMON  ? base + (base / 2) : base
+  }
+)
+
+@DATA(
+  package_name    = "base_types"
+  package_version = "1.0.0"
+)
+```
+
+### `registry/game_helpers.mdix` (create new)
+```
+@CONFIG(
+  version  -> "1.0.0"
+  features -> "advanced"
+)
+
+@IMPORTS(
+  Base from "base_types.mdix"
+)
+
+@ENUMS(
+  Difficulty { EASY = 0, NORMAL = 1, HARD = 2, NIGHTMARE = 3 }
+  EnemyType  { MELEE = 0, RANGED = 1, CASTER = 2, BOSS = 3 }
+)
+
+@QUICKFUNCS(
+  ~makeEnemy<object>(id<string>, name<string>, health<int>, difficulty<enum>) {
+    return {
+      id         = id
+      name       = name
+      health     = health
+      difficulty = difficulty
+      damage     = difficulty == Difficulty.NIGHTMARE ? health / 4 :
+                   difficulty == Difficulty.HARD      ? health / 6 :
+                   difficulty == Difficulty.NORMAL    ? health / 8 : health / 12
+      xp_reward  = health / 2
+    }
+  }
+
+  ~makeLootTable<object>(enemyId<string>, guaranteed<array>, chance<array>) {
+    return {
+      enemy_id  = enemyId
+      guaranteed = guaranteed
+      chance     = chance
+    }
+  }
+)
+
+@DATA(
+  package_name    = "game_helpers"
+  package_version = "1.0.0"
+)
