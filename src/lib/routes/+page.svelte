@@ -116,8 +116,7 @@
                 {@const i = icon(v)}
                 <td class="cmp-cell {i.cls}">{i.sym}</td>
               {/each}
-              {@const di = icon(row.dix)}
-              <td class="cmp-cell {di.cls} dix-col">{di.sym}</td>
+              <td class="cmp-cell {icon(row.dix).cls} dix-col">{icon(row.dix).sym}</td>
             </tr>
           {/each}
         </tbody>
