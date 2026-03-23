@@ -16,7 +16,7 @@
 
       <div class="nav-links" class:open={menuOpen}>
         {#each mainNav as item}
-          
+          <a
             href={item.href}
             class="nav-link"
             class:active={$page.url.pathname === item.href ||
@@ -28,7 +28,7 @@
           </a>
         {/each}
 
-        
+        <a
           href="https://github.com/Mid-D-Man/DixScript-Rust"
           class="nav-link nav-gh"
           target="_blank"
