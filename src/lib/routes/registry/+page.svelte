@@ -85,8 +85,8 @@
           </div>
 
           <div class="pkg-actions">
-            
-              href="https://raw.githubusercontent.com/Mid-D-Man/DixScript-Rust/master/{pkg.path}"
+            <a
+              href={`https://raw.githubusercontent.com/Mid-D-Man/DixScript-Rust/master/${pkg.path}`}
               class="action-btn primary"
               target="_blank"
               rel="noopener"
@@ -94,8 +94,8 @@
             >
               ⬇ Download
             </a>
-            
-              href="https://github.com/Mid-D-Man/DixScript-Rust/blob/master/{pkg.path}"
+            <a
+              href={`https://github.com/Mid-D-Man/DixScript-Rust/blob/master/${pkg.path}`}
               class="action-btn"
               target="_blank"
               rel="noopener"
@@ -191,8 +191,3 @@
 
   .empty { text-align: center; padding: 48px; color: var(--faint); }
   .reg-footer-note {
-    margin-top: 32px; padding-top: 20px;
-    border-top: 1px solid var(--border2);
-    font-size: 0.82rem; color: var(--faint); line-height: 1.6;
-  }
-</style>
