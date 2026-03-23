@@ -112,6 +112,8 @@
     cursor: pointer; font-size: 1rem; margin-left: auto;
   }
 
+
+
   .main-content { flex: 1; }
 
   .site-footer {
