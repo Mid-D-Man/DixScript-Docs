@@ -191,3 +191,4 @@
 
   .empty { text-align: center; padding: 48px; color: var(--faint); }
   .reg-footer-note {
+    margin-top: 32px; padding-top:
