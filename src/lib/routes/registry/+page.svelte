@@ -99,6 +99,7 @@
   </div>
 </div>
 
+
 <style>
   .reg-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
   h1 { font-size: 1.8rem; margin-bottom: 8px; }
