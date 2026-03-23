@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '../app.css';
+  import '../../app.css';   // fixed path: src/lib/routes → src/app.css
   import { page } from '$app/stores';
   import { mainNav } from '$lib/nav';
 
