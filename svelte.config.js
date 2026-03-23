@@ -12,6 +12,9 @@ export default {
     }),
     alias: {
       $lib: 'src/lib'
+    },
+    files: {
+      routes: 'src/lib/routes'   // ← add this
     }
   }
 };
