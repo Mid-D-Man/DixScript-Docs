@@ -27,7 +27,6 @@
 
 <svelte:head><title>DixScript — The Swiss Army Knife of Data Formats</title></svelte:head>
 
-<!-- Hero -->
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-badge">⚠️ Active Development — Not Production Ready</div>
@@ -49,7 +48,6 @@
     </div>
   </div>
 
-  <!-- Code example -->
   <div class="hero-code">
     <div class="code-header">
       <span class="code-dot r"></span><span class="code-dot y"></span><span class="code-dot g"></span>
@@ -78,7 +76,6 @@
   </div>
 </section>
 
-<!-- Features -->
 <section class="section">
   <div class="section-inner">
     <h2 class="section-title">Why DixScript?</h2>
@@ -95,7 +92,6 @@
   </div>
 </section>
 
-<!-- Comparison -->
 <section class="section alt">
   <div class="section-inner">
     <h2 class="section-title">How It Compares</h2>
@@ -125,7 +121,6 @@
   </div>
 </section>
 
-<!-- Status -->
 <section class="section">
   <div class="section-inner">
     <h2 class="section-title">Current Status</h2>
@@ -186,6 +181,7 @@
   .cs     { background:#1a0a2a; color:#9b4dca; border:1px solid #5a1e90; }
   .php    { background:#1a1f3a; color:#8892bf; border:1px solid #3a4080; }
   .wasm   { background:#1a2a0a; color:#7dd67d; border:1px solid #3a6020; }
+
 
   .hero-code {
     background: var(--surface); border: 1px solid var(--border);
