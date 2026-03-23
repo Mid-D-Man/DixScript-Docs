@@ -182,7 +182,6 @@
   .php    { background:#1a1f3a; color:#8892bf; border:1px solid #3a4080; }
   .wasm   { background:#1a2a0a; color:#7dd67d; border:1px solid #3a6020; }
 
-
   .hero-code {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 12px; overflow: hidden;
