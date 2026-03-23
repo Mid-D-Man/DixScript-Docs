@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
@@ -29,5 +31,6 @@ jobs:
             echo "Nothing to commit — lockfile already up to date"
             exit 0
           fi
+          git pull --rebase origin ${{ github.ref_name }}
           git commit -m "chore: add package-lock.json [skip ci]"
-          git push
+          git push origin HEAD:${{ github.ref_name }}
