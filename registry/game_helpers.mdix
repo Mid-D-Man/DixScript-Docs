@@ -1,0 +1,41 @@
+@CONFIG(
+  version  -> "1.0.0"
+  features -> "advanced"
+)
+
+@IMPORTS(
+  Base from "base_types.mdix"
+)
+
+@ENUMS(
+  Difficulty { EASY = 0, NORMAL = 1, HARD = 2, NIGHTMARE = 3 }
+  EnemyType  { MELEE = 0, RANGED = 1, CASTER = 2, BOSS = 3 }
+)
+
+@QUICKFUNCS(
+  ~makeEnemy<object>(id<string>, name<string>, health<int>, difficulty<enum>) {
+    return {
+      id         = id
+      name       = name
+      health     = health
+      difficulty = difficulty
+      damage     = difficulty == Difficulty.NIGHTMARE ? health / 4 :
+                   difficulty == Difficulty.HARD      ? health / 6 :
+                   difficulty == Difficulty.NORMAL    ? health / 8 : health / 12
+      xp_reward  = health / 2
+    }
+  }
+
+  ~makeLootTable<object>(enemyId<string>, guaranteed<array>, chance<array>) {
+    return {
+      enemy_id  = enemyId
+      guaranteed = guaranteed
+      chance     = chance
+    }
+  }
+)
+
+@DATA(
+  package_name    = "game_helpers"
+  package_version = "1.0.0"
+)
