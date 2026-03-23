@@ -67,21 +67,18 @@
 
 <style>
   .shell { display: flex; flex-direction: column; min-height: 100vh; }
-
   .topnav {
     position: sticky; top: 0; z-index: 100;
     background: rgba(13,17,23,0.95);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--border);
   }
-
   .nav-inner {
     max-width: 1280px; margin: 0 auto;
     display: flex; align-items: center;
     padding: 0 24px; height: 56px;
     gap: 8px;
   }
-
   .wordmark {
     font-size: 1.2rem; font-weight: 800;
     color: var(--text); text-decoration: none;
@@ -94,11 +91,7 @@
     border: 1px solid var(--border); border-radius: 4px;
     padding: 1px 5px; color: var(--yellow); align-self: flex-start; margin-top: 4px;
   }
-
-  .nav-links {
-    display: flex; align-items: center; gap: 4px; flex: 1;
-  }
-
+  .nav-links { display: flex; align-items: center; gap: 4px; flex: 1; }
   .nav-link {
     display: flex; align-items: center; gap: 6px;
     color: var(--muted); text-decoration: none;
@@ -110,19 +103,13 @@
   .nav-link.active { color: var(--accent); background: rgba(247,129,102,.08); }
   .nav-icon { font-size: 0.75rem; }
   .nav-gh { margin-left: auto; }
-
   .hamburger {
     display: none; background: none; border: 1px solid var(--border);
     color: var(--muted); padding: 6px 10px; border-radius: 6px;
     cursor: pointer; font-size: 1rem; margin-left: auto;
   }
-
   .main-content { flex: 1; }
-
-  .site-footer {
-    border-top: 1px solid var(--border);
-    padding: 20px 24px;
-  }
+  .site-footer { border-top: 1px solid var(--border); padding: 20px 24px; }
   .footer-inner {
     max-width: 1280px; margin: 0 auto;
     display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -131,7 +118,6 @@
   .footer-inner a { color: var(--faint); }
   .footer-inner a:hover { color: var(--muted); }
   .footer-sep { color: var(--border); }
-
   @media (max-width: 768px) {
     .nav-links {
       display: none; flex-direction: column; align-items: flex-start;
