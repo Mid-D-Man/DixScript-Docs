@@ -45,8 +45,7 @@ jobs:
           for filepath in $FILES; do
             filename=$(basename "$filepath")
             echo "Uploading $filename → R2 packages/$filename"
-            npx wrangler r2 object put packages/$filename \
-              --bucket mdix-registry \
+            npx wrangler r2 object put "mdix-registry/packages/$filename" \
               --file "$filepath" \
               --content-type "text/plain" \
               --remote
