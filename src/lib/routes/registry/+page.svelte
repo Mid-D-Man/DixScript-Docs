@@ -116,7 +116,6 @@
     adding your file under <code>mdix_files/shared/</code>.
   </div>
 </div>
-
 <style>
   .reg-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
   h1 { font-size: 1.8rem; margin-bottom: 8px; }
@@ -191,4 +190,8 @@
 
   .empty { text-align: center; padding: 48px; color: var(--faint); }
   .reg-footer-note {
-    margin-top: 32px; padding-top:
+    margin-top: 32px; padding-top: 20px;
+    border-top: 1px solid var(--border2);
+    font-size: 0.82rem; color: var(--faint); line-height: 1.6;
+  }
+</style>
