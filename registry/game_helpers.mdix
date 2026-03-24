@@ -4,7 +4,7 @@
 )
 
 @IMPORTS(
-  Base from "base_types.mdix"
+  Base from_cloud "https://dixscript-docs.pages.dev/api/registry/base_types.mdix"
 )
 
 @ENUMS(
@@ -28,7 +28,7 @@
 
   ~makeLootTable<object>(enemyId<string>, guaranteed<array>, chance<array>) {
     return {
-      enemy_id  = enemyId
+      enemy_id   = enemyId
       guaranteed = guaranteed
       chance     = chance
     }
