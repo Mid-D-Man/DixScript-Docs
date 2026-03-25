@@ -4,49 +4,55 @@
       icon: '⚡',
       title: 'Deduplication Engine',
       description:
-        'Intelligent pattern recognition compresses repetitive data at compile time. Game configs: 68%+ smaller. More repetition means more savings.',
+        'User-defined QuickFuncs compress repetitive data at compile time. Define a structure once, reuse it everywhere. Game configs: 68%+ smaller. More repetition means more savings.',
       highlight: 'Game config: 68% reduction',
     },
     {
       icon: '⌛',
-      title: 'Programmable via QuickFuncs',
+      title: 'QuickFuncs: Programmable Config',
       description:
-        'Write compile-time functions once, use everywhere. Values computed at parse time, zero runtime overhead.',
-      highlight: '~createEnemy(name, hp, dmg)',
+        'Write small functions that run at compile time, not at runtime. Compute derived values, enforce structure, and fan out repeated patterns without adding another scripting layer to your stack.',
+      highlight: '~service(name, image, port, replicas)',
+    },
+    {
+      icon: '🗂️',
+      title: 'Two-Tier Data Model',
+      description:
+        'Flat properties for simple settings, table and group syntax for structured data. Keep small configs minimal while still being able to model complex schemas when you need them.',
+      highlight: 'properties: then groups:: then arrays::',
     },
     {
       icon: '🔒',
-      title: '5 DLM Modules',
+      title: 'Built-in Encryption and Compression',
       description:
-        'Data Lifecycle Management: DCompressor (gzip/bzip2/lzma), DAuditor, DEncryptor (xor/aes128/aes256/chacha20), plus DIY.',
+        'Use DLM modules to chain compression and encryption in the same file. Ship encrypted secrets, compressed datasets, or both — without extra build tooling.',
       highlight: '@DLM(DCompressor.gzip, DEncryptor.aes256)',
     },
     {
       icon: '📌',
-      title: 'Immutable by Default',
+      title: 'Enums and Types When You Want Them',
       description:
-        'let, const, and let mut keywords with compile-time safety. Variable declarations prevent accidental mutations.',
-      highlight: 'const PI = 3.14; let mut x = 0',
+        'Add enums and explicit types where strictness matters, keep everything inferred when it doesn\'t. Readable configs that still catch mistakes before they hit production.',
+      highlight: 'Environment { DEV, STAGING, PROD }',
     },
     {
       icon: '🦀',
-      title: 'Zero Dependencies',
+      title: 'Zero-Dependency Core',
       description:
-        'Pure Rust core with FFI bindings for C#, Go, Java, Python, PHP, and WASM. Embed anywhere with no external libraries.',
-      highlight: 'Just works™',
-    },
-    {
-      icon: '🌐',
-      title: 'Import System & Verification',
-      description:
-        'Modular config with cloud imports, local includes, and SHA256 hash verification. Circular dependencies detected at compile time.',
-      highlight: 'utils from "lib.mdix" verify "sha256:..."',
+        'A pure Rust core with FFI bindings for C#, Go, Java, Python, and WebAssembly. Use the same .mdix file across services and languages without pulling in a heavyweight runtime.',
+      highlight: 'Rust · C# · Go · Java · Python · WASM',
     },
   ];
 
-  const useCases = [
-    'Game Dev', 'Web3 Configs', 'API Services', 'ML Pipelines',
-    'E-Commerce', 'Enterprise', 'CLI Tools', 'Embedded',
+  const useCases: { label: string; href: string }[] = [
+    { label: 'Game Dev',          href: '/docs#quickfuncs'  },
+    { label: 'API Services',      href: '/docs#config'      },
+    { label: 'Multi-Environment', href: '/docs#enums'       },
+    { label: 'ML Pipelines',      href: '/docs#data'        },
+    { label: 'E-Commerce',        href: '/docs#quickfuncs'  },
+    { label: 'Encrypted Bundles', href: '/docs#dlm'         },
+    { label: 'CLI Tools',         href: '/docs#cli'         },
+    { label: 'Embedded',          href: '/docs#ffi'         },
   ];
 </script>
 
@@ -57,8 +63,8 @@
     <div class="section-header">
       <h2>Powerful Features Built-In</h2>
       <p>
-        A programmable configuration format that learns from your data.
-        The more repetitive your configs, the more DixScript optimises them.
+        A programmable configuration format that turns repeated config into reusable building blocks.
+        The more repetitive your configs, the more you gain by factoring patterns into QuickFuncs.
       </p>
     </div>
 
@@ -76,13 +82,54 @@
       {/each}
     </div>
 
+    <!-- Why DixScript blurb -->
+    <div class="why-block">
+      <h3>Why DixScript?</h3>
+      <p>
+        A programmable configuration format that lets you factor repetition into functions.
+        If changing one field means editing it in more than three places today,
+        DixScript helps you pull that pattern into one reusable definition.
+      </p>
+      <ul class="why-list">
+        <li>Multi-environment configs that mostly differ by URLs, credentials, and flags</li>
+        <li>API services sharing the same retry, timeout, and logging policies</li>
+        <li>Feature flags and experiment configs duplicated across clients and backends</li>
+        <li>Secrets stored separately from the config that actually uses them</li>
+      </ul>
+    </div>
+
     <!-- Use cases -->
     <div class="use-cases">
       <h3 class="use-cases-title">Perfect For</h3>
+      <p class="use-cases-sub">
+        DixScript is designed for configs that have grown beyond simple key-value files
+        but don't deserve a full application just to keep them maintainable.
+      </p>
       <div class="use-cases-grid">
-        {#each useCases as use}
-          <div class="use-case-chip">{use}</div>
+        {#each useCases as { label, href }}
+          <a {href} class="use-case-chip">{label}</a>
         {/each}
+      </div>
+    </div>
+
+    <!-- Dev status note -->
+    <div class="status-note">
+      <div class="status-note-inner">
+        <div class="status-heading">
+          <span class="status-icon">⚠️</span>
+          <strong>Under Active Development</strong>
+        </div>
+        <p>
+          DixScript is not yet production-ready. The Rust port targets performance and portability,
+          while the original C# implementation serves as the current reference.
+        </p>
+        <div class="status-links">
+          <a href="https://github.com/Mid-D-Man/DixScript" target="_blank" rel="noopener noreferrer" class="status-link">C# Prototype ↗</a>
+          <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener noreferrer" class="status-link">Rust Source ↗</a>
+          <a href="/results" class="status-link">CI Results</a>
+          <a href="/docs" class="status-link">Docs</a>
+          <a href="/playground" class="status-link">Playground</a>
+        </div>
       </div>
     </div>
 
@@ -106,7 +153,7 @@
   /* ── Header ── */
   .section-header {
     text-align: center;
-    max-width: 600px;
+    max-width: 680px;
     margin: 0 auto;
   }
 
@@ -141,7 +188,7 @@
 
   .feature-card:hover {
     border-color: var(--primary);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   }
 
   .feature-icon {
@@ -151,7 +198,7 @@
 
   .feature-title {
     font-family: var(--font-serif);
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     font-weight: 700;
     color: var(--foreground);
   }
@@ -159,7 +206,7 @@
   .feature-desc {
     font-size: 0.875rem;
     color: var(--muted-foreground);
-    line-height: 1.7;
+    line-height: 1.75;
     flex: 1;
   }
 
@@ -169,13 +216,57 @@
 
   .feature-highlight code {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: 0.71875rem;
     background: var(--secondary);
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 0.25rem 0.5rem;
     color: var(--primary);
     word-break: break-all;
+  }
+
+  /* ── Why Block ── */
+  .why-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+  }
+
+  .why-block h3 {
+    font-size: 1.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .why-block p {
+    font-size: 0.9375rem;
+    color: var(--muted-foreground);
+    line-height: 1.75;
+    margin-bottom: 1rem;
+    max-width: 700px;
+  }
+
+  .why-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .why-list li {
+    font-size: 0.9375rem;
+    color: var(--foreground);
+    padding-left: 1.25rem;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  .why-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: 600;
   }
 
   /* ── Use Cases ── */
@@ -189,18 +280,29 @@
     font-family: var(--font-serif);
     font-size: 1.5rem;
     font-weight: 700;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.625rem;
     color: var(--foreground);
+  }
+
+  .use-cases-sub {
+    font-size: 0.9375rem;
+    color: var(--muted-foreground);
+    max-width: 560px;
+    margin: 0 auto 1.25rem;
+    line-height: 1.7;
   }
 
   .use-cases-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.625rem;
     justify-content: center;
   }
 
+  /* <a> tags styled as chips */
   .use-case-chip {
+    display: inline-flex;
+    align-items: center;
     background: var(--card);
     border: 1px solid var(--border);
     color: var(--foreground);
@@ -208,13 +310,69 @@
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: var(--radius);
-    transition: background 0.15s ease, border-color 0.15s ease;
-    cursor: default;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    cursor: pointer;
   }
 
   .use-case-chip:hover {
     background: var(--secondary);
     border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* ── Dev Status ── */
+  .status-note {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .status-note-inner {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .status-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--foreground);
+  }
+
+  .status-icon {
+    font-size: 1rem;
+  }
+
+  .status-note p {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    line-height: 1.7;
+    max-width: 640px;
+  }
+
+  .status-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .status-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .status-link:hover {
+    opacity: 0.75;
+    text-decoration: underline;
   }
 
   /* ── Responsive ── */
@@ -231,6 +389,10 @@
 
     .feature-grid {
       grid-template-columns: 1fr;
+    }
+
+    .why-block {
+      padding: 1.25rem;
     }
   }
 </style>
