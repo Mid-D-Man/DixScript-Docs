@@ -49,7 +49,7 @@
           {item.label}
         </a>
       {/each}
-
+<a
       
         href="https://github.com/Mid-D-Man/DixScript-Rust"
         class="nav-link github-link"
