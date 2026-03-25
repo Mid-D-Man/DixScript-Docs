@@ -39,16 +39,17 @@
 
     <!-- Desktop links -->
     <div class="nav-links" class:open={menuOpen}>
-      {#each navItems as item}
-        
-          href={item.href}
-          class="nav-link"
-          class:active={isActive(item.href)}
-          on:click={closeMenu}
-        >
-          {item.label}
-        </a>
-      {/each}
+    {#each navItems as item}
+  <a
+    href={item.href}
+    class="nav-link"
+    class:active={isActive(item.href)}
+    on:click={closeMenu}
+  >
+    {item.label}
+  </a>
+{/each}
+
 
       
         href="https://github.com/Mid-D-Man/DixScript-Rust"
