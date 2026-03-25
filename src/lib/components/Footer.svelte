@@ -50,7 +50,7 @@
         <ul class="link-list">
           {#each col.links as link}
             <li>
-              
+              <a
                 href={link.href}
                 class="footer-link"
                 target={link.external ? '_blank' : undefined}
@@ -71,7 +71,7 @@
     <div class="footer-bottom-inner">
       <p class="copyright">© {year} DixScript — MidManStudio. MIT License.</p>
       <div class="social-links">
-        
+        <a
           href="https://github.com/Mid-D-Man/DixScript-Rust"
           target="_blank"
           rel="noopener noreferrer"
@@ -86,6 +86,7 @@
     </div>
   </div>
 </footer>
+
 
 <style>
   .footer {
