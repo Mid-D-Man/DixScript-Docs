@@ -1,3 +1,4 @@
+<!-- src/lib/components/SyntaxComparison.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
 
@@ -114,47 +115,42 @@
 )
 
 @QUICKFUNCS(
-  ~dbHost<string>(svcName, env<enum>) {
-    suffix = env == Environment.PROD     ? "prod.internal"
-           : env == Environment.STAGING  ? "staging.internal"
+  ~dbHost(svcName, env) {
+    suffix = env == Environment.PROD    ? "prod.internal"
+           : env == Environment.STAGING ? "staging.internal"
            : "dev.internal"
     return $"postgres.{svcName}.{suffix}"
   }
 
-  ~redisUrl<string>(svcName, env<enum>) {
-    suffix = env == Environment.PROD     ? "prod.internal"
-           : env == Environment.STAGING  ? "staging.internal"
+  ~redisUrl(svcName, env) {
+    suffix = env == Environment.PROD    ? "prod.internal"
+           : env == Environment.STAGING ? "staging.internal"
            : "dev.internal"
     return $"redis://{svcName}-cache.{suffix}:6379"
   }
 
-  ~health<object>() {
-    return { path = "/health", interval = "30s", timeout = "3s" }
-  }
-
-  ~service<object>(
-    name, image, port<int>, replicas<int>,
-    cpu, memory, env<enum>, extraEnv, secrets...
-  ) {
+  ~service(name, image, port, replicas, cpu, memory, env) {
     return {
-      name     = name,   image    = image
-      port     = port,   replicas = replicas
+      name      = name
+      image     = image
+      port      = port
+      replicas  = replicas
       resources = { cpu = cpu, memory = memory }
       env = {
         DB_HOST   = dbHost(name, env)
-        DB_PORT   = "5432",  DB_USER = "app"
+        DB_PORT   = "5432"
+        DB_USER   = "app"
         REDIS_URL = redisUrl(name, env)
-        LOG_LEVEL = "INFO",  ENV     = "production"
-        extraEnv...
+        LOG_LEVEL = "INFO"
+        ENV       = "production"
       }
-      secrets     = secrets
-      healthcheck = health()
+      healthcheck = { path = "/health", interval = "30s", timeout = "3s" }
     }
   }
 )
 
 @DATA(
-  environment<enum> = Environment.PROD
+  environment = Environment.PROD
 
   logging:
     default_level = "INFO"
@@ -166,27 +162,11 @@
     beta_banner     = false
 
   services::
-    service("auth-service", "auth-service:v1.2.3",
-      8080, 3, "500m", "512Mi", environment,
-      {}, ["DB_PASSWORD", "JWT_SECRET"]),
-
-    service("payment-service", "payment-service:v2.1.0",
-      8081, 2, "750m", "1Gi", environment,
-      { STRIPE_URL = "https://api.stripe.com" },
-      ["DB_PASSWORD", "STRIPE_SECRET"]),
-
-    service("user-service", "user-service:v3.0.1",
-      8082, 4, "400m", "384Mi", environment,
-      {}, ["DB_PASSWORD"]),
-
-    service("orders-service", "orders-service:v1.4.0",
-      8083, 3, "600m", "768Mi", environment,
-      {}, ["DB_PASSWORD"]),
-
-    service("notifications-service", "notifications-service:v0.9.5",
-      8084, 2, "300m", "256Mi", environment,
-      { SMTP_HOST = "smtp.prod.internal", SMTP_PORT = "587" },
-      ["DB_PASSWORD", "SMTP_PASSWORD"])
+    service("auth-service",          "auth-service:v1.2.3",          8080, 3, "500m", "512Mi", environment),
+    service("payment-service",       "payment-service:v2.1.0",       8081, 2, "750m", "1Gi",   environment),
+    service("user-service",          "user-service:v3.0.1",          8082, 4, "400m", "384Mi", environment),
+    service("orders-service",        "orders-service:v1.4.0",        8083, 3, "600m", "768Mi", environment),
+    service("notifications-service", "notifications-service:v0.9.5", 8084, 2, "300m", "256Mi", environment)
 )`;
 
   let jsonBytes = 0;
@@ -206,7 +186,6 @@
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      // fallback for non-https or older browsers
       const ta = document.createElement('textarea');
       ta.value = text;
       document.body.appendChild(ta);
@@ -214,110 +193,67 @@
       document.execCommand('copy');
       document.body.removeChild(ta);
     }
-    if (which === 'json') {
-      jsonCopied = true;
-      setTimeout(() => (jsonCopied = false), 2000);
-    } else {
-      dixCopied = true;
-      setTimeout(() => (dixCopied = false), 2000);
-    }
+    if (which === 'json') { jsonCopied = true; setTimeout(() => (jsonCopied = false), 2000); }
+    else { dixCopied = true; setTimeout(() => (dixCopied = false), 2000); }
   }
 </script>
 
 <section class="comparison" id="see-it-in-action">
   <div class="comparison-inner">
 
-    <!-- Header -->
     <div class="section-header">
       <h2>See It In Action</h2>
       <p>
-        5 microservices in JSON versus DixScript — same data, dramatically less noise.
-        Shared structure (DB defaults, healthchecks, logging) lives in one QuickFunc.
+        5 microservices in JSON vs DixScript. DB host, Redis URL, healthcheck defaults and log level
+        are all derived from one function — change one line, all five services update.
       </p>
     </div>
 
-    <!-- Code panels -->
     <div class="panels">
-
-      <!-- JSON -->
       <div class="panel">
         <div class="panel-header">
           <div class="panel-dots" aria-hidden="true">
-            <span class="dot dot-r"></span>
-            <span class="dot dot-y"></span>
-            <span class="dot dot-g"></span>
+            <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
           </div>
-          <span class="panel-title">JSON Config</span>
-          <button
-            class="copy-btn"
-            on:click={() => copy(jsonCode, 'json')}
-            aria-label="Copy JSON code"
-          >
-            {#if jsonCopied}
-              ✓ Copied
-            {:else}
-              Copy
-            {/if}
+          <span class="panel-title">config.json</span>
+          <button class="copy-btn" on:click={() => copy(jsonCode, 'json')} aria-label="Copy JSON">
+            {jsonCopied ? '✓ Copied' : 'Copy'}
           </button>
         </div>
         <pre class="code-block"><code>{jsonCode}</code></pre>
         <div class="panel-footer panel-footer--bad">
           <span class="byte-count">{jsonBytes} bytes</span>
           <span class="byte-sep">·</span>
-          <span class="byte-label">every pattern repeated per service</span>
+          <span class="byte-label">every pattern repeated verbatim per service</span>
         </div>
       </div>
 
-      <!-- DixScript -->
       <div class="panel">
         <div class="panel-header">
           <div class="panel-dots" aria-hidden="true">
-            <span class="dot dot-r"></span>
-            <span class="dot dot-y"></span>
-            <span class="dot dot-g"></span>
+            <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
           </div>
-          <span class="panel-title">DixScript (.mdix)</span>
-          <button
-            class="copy-btn"
-            on:click={() => copy(dixCode, 'dix')}
-            aria-label="Copy DixScript code"
-          >
-            {#if dixCopied}
-              ✓ Copied
-            {:else}
-              Copy
-            {/if}
+          <span class="panel-title">config.mdix</span>
+          <button class="copy-btn" on:click={() => copy(dixCode, 'dix')} aria-label="Copy DixScript">
+            {dixCopied ? '✓ Copied' : 'Copy'}
           </button>
         </div>
         <pre class="code-block"><code>{dixCode}</code></pre>
         <div class="panel-footer panel-footer--good">
           <span class="byte-count">{dixBytes} bytes</span>
           <span class="byte-sep">·</span>
-          <span class="byte-label">patterns factored into one function</span>
+          <span class="byte-label">patterns factored into one reusable function</span>
         </div>
       </div>
-
     </div>
 
-    <!-- Caption -->
-    <p class="caption">
-      Same behavior, less noise. DB host, Redis URL, healthcheck defaults, and log level
-      are defined once in <code>~service()</code>. Change the database user or default port?
-      Update it once in the function — not in every service block.
-    </p>
-
-    <!-- Savings banner -->
     <div class="savings-banner">
       <div class="savings-left">
         <span class="savings-value">{savings}% Smaller</span>
         <span class="savings-desc">
           DixScript saves <strong>{jsonBytes - dixBytes} bytes</strong> across 5 services.
-          Scale to 50 services and the gap grows proportionally.
+          Scale to 50 services and the gap grows linearly.
         </span>
-      </div>
-      <div class="savings-actions">
-        <a href="/playground" class="savings-btn savings-btn--primary">Try It</a>
-        <a href="/docs" class="savings-btn">Read Docs</a>
       </div>
     </div>
 
@@ -340,30 +276,11 @@
     gap: 1.75rem;
   }
 
-  /* ── Header ── */
-  .section-header {
-    text-align: center;
-  }
+  .section-header { text-align: center; }
+  .section-header h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); margin-bottom: 0.75rem; }
+  .section-header p { font-size: 1rem; color: var(--muted-foreground); max-width: 600px; margin: 0 auto; line-height: 1.75; }
 
-  .section-header h2 {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    margin-bottom: 0.75rem;
-  }
-
-  .section-header p {
-    font-size: 1rem;
-    color: var(--muted-foreground);
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.75;
-  }
-
-  /* ── Panels ── */
-  .panels {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-  }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 
   .panel {
     background: var(--background);
@@ -384,29 +301,13 @@
     flex-shrink: 0;
   }
 
-  .panel-dots {
-    display: flex;
-    gap: 5px;
-    flex-shrink: 0;
-  }
-
-  .dot {
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
+  .panel-dots { display: flex; gap: 5px; flex-shrink: 0; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
   .dot-r { background: #f85149; }
   .dot-y { background: #e3b341; }
   .dot-g { background: #3fb950; }
 
-  .panel-title {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
-    flex: 1;
-  }
+  .panel-title { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted-foreground); flex: 1; }
 
   .copy-btn {
     background: none;
@@ -422,10 +323,7 @@
     flex-shrink: 0;
   }
 
-  .copy-btn:hover {
-    background: var(--muted);
-    color: var(--foreground);
-  }
+  .copy-btn:hover { background: var(--muted); color: var(--foreground); }
 
   .code-block {
     flex: 1;
@@ -434,7 +332,7 @@
     border-radius: 0;
     background: var(--background);
     font-size: 0.78125rem;
-    max-height: 480px;
+    max-height: 520px;
     overflow-y: auto;
     overflow-x: auto;
   }
@@ -461,32 +359,10 @@
   .panel-footer--bad  { background: rgba(185, 84, 53, 0.05); }
   .panel-footer--good { background: rgba(63, 185, 80, 0.05); }
 
-  .byte-count {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    color: var(--foreground);
-  }
+  .byte-count { font-family: var(--font-mono); font-weight: 600; color: var(--foreground); }
+  .byte-sep   { color: var(--border); }
+  .byte-label { color: var(--muted-foreground); font-size: 0.75rem; }
 
-  .byte-sep {
-    color: var(--border);
-  }
-
-  .byte-label {
-    color: var(--muted-foreground);
-    font-size: 0.75rem;
-  }
-
-  /* ── Caption ── */
-  .caption {
-    font-size: 0.9375rem;
-    color: var(--muted-foreground);
-    line-height: 1.75;
-    text-align: center;
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
-  /* ── Savings Banner ── */
   .savings-banner {
     background: var(--secondary);
     border: 1px solid var(--border);
@@ -494,91 +370,16 @@
     padding: 1.25rem 1.5rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 1.5rem;
     flex-wrap: wrap;
   }
 
-  .savings-left {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    flex: 1;
-    min-width: 0;
-  }
+  .savings-left { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; flex: 1; min-width: 0; }
+  .savings-value { font-family: var(--font-serif); font-size: 1.625rem; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+  .savings-desc { font-size: 0.9375rem; color: var(--foreground); line-height: 1.6; }
 
-  .savings-value {
-    font-family: var(--font-serif);
-    font-size: 1.625rem;
-    font-weight: 700;
-    color: var(--primary);
-    flex-shrink: 0;
-  }
-
-  .savings-desc {
-    font-size: 0.9375rem;
-    color: var(--foreground);
-    line-height: 1.6;
-  }
-
-  .savings-actions {
-    display: flex;
-    gap: 0.625rem;
-    flex-shrink: 0;
-  }
-
-  .savings-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5rem 1.125rem;
-    border-radius: var(--radius);
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid var(--border);
-    color: var(--foreground);
-    background: var(--card);
-    transition: all 0.15s ease;
-    cursor: pointer;
-  }
-
-  .savings-btn:hover {
-    background: var(--muted);
-  }
-
-  .savings-btn--primary {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-color: var(--primary);
-  }
-
-  .savings-btn--primary:hover {
-    opacity: 0.88;
-  }
-
-  /* ── Responsive ── */
   @media (max-width: 900px) {
-    .panels {
-      grid-template-columns: 1fr;
-    }
-
-    .comparison {
-      padding: 3rem 1rem;
-    }
-
-    .savings-banner {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .savings-actions {
-      width: 100%;
-    }
-
-    .savings-btn {
-      flex: 1;
-      justify-content: center;
-    }
+    .panels { grid-template-columns: 1fr; }
+    .comparison { padding: 3rem 1rem; }
   }
 </style>
