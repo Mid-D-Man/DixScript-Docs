@@ -1,9 +1,8 @@
+<!-- src/lib/components/docs/sections/DocQuickFuncs.svelte -->
 <script lang="ts">
-  import DocCallout from '$lib/components/docs/DocCallout.svelte';
-
   const example = `@QUICKFUNCS(
-  // Returns an object — shape defined once, reused everywhere
-  ~makeServer<object>(host<string>, port<int>, ssl<bool>) {
+  // Shape defined once — reused everywhere
+  ~makeServer(host, port, ssl) {
     return {
       host = host
       port = port
@@ -11,13 +10,13 @@
     }
   }
 
-  // Conditional expression
-  ~envLabel<string>(env<enum>) {
+  // Ternary expression
+  ~envLabel(env) {
     return env == Env.PROD ? "production" : "development"
   }
 
-  // Formula-based pricing — change here, all callers update
-  ~item<object>(name, damage<int>) {
+  // Formula-based pricing
+  ~item(name, damage) {
     return {
       name      = name
       damage    = damage
@@ -28,28 +27,31 @@
 )`;
 
   const scopeExample = `// Exported — importable from other files via alias
-~sharedHelper => global(x<int>) { return x * 2 }
+~sharedHelper => global(x) { return x * 2 }
 
-// Internal — only usable within this file
-~localHelper(x<int>) { return x + 1 }`;
+// Internal — only usable within this file (default)
+~localHelper(x) { return x + 1 }`;
 </script>
 
-<section id="quickfuncs" class="doc-section">
-  <h2>@QUICKFUNCS</h2>
-  <p>
-    Compile-time functions — they execute at parse time with zero runtime overhead.
-    Define your data shape once, call it everywhere.
+<div class="doc-page">
+  <h1>@QUICKFUNCS</h1>
+  <p class="page-lead">
+    Compile-time functions that execute at parse time with zero runtime overhead.
+    Define your data shape once, call it everywhere. Requires <code>features -> "advanced"</code>.
   </p>
   <pre><code>{example}</code></pre>
 
-  <h3>Scope declaration</h3>
+  <h2>Scope</h2>
   <p>
-    Functions with <code>=&gt; global</code> are exported and importable by other files.
+    Functions with <code>=> global</code> are exported and importable by other files.
     The default scope is internal to the current file.
   </p>
   <pre><code>{scopeExample}</code></pre>
 
-  <DocCallout type="warn">
-    Maximum recursion depth is enforced at compile time to prevent infinite loops.
-  </DocCallout>
-</section>
+  <h2>Rules</h2>
+  <ul>
+    <li>Maximum recursion depth is enforced at compile time</li>
+    <li>Functions can call other functions defined in the same section</li>
+    <li>Type annotations are optional — <code>(x)</code> and <code>(x&lt;int&gt;)</code> are both valid</li>
+  </ul>
+</div>
