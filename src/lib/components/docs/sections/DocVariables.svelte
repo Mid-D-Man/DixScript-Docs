@@ -1,7 +1,8 @@
+<!-- src/lib/components/docs/sections/DocVariables.svelte -->
 <script lang="ts">
   const example = `// Immutable — cannot be reassigned after declaration
-let name = "Alice"
-let count<int> = 42
+let name  = "Alice"
+let count = 42
 
 // Compile-time constant — value must be a literal
 const MAX_RETRIES = 3
@@ -9,13 +10,13 @@ const API_VERSION = "v2"
 
 // Mutable — explicitly marked, can be reassigned
 let mut total = 0
-total += item.price   // OK
-total = recalculate() // OK`;
+total += item.price
+total = recalculate()`;
 </script>
 
-<section id="variables" class="doc-section">
-  <h2>Variables</h2>
-  <p>
+<div class="doc-page">
+  <h1>Variables</h1>
+  <p class="page-lead">
     DixScript uses Rust-style variable semantics — immutable by default,
     explicit mutation with <code>let mut</code>.
   </p>
@@ -23,9 +24,9 @@ total = recalculate() // OK`;
 
   <div class="kv-table">
     {#each [
-      { key: 'let',     type: 'immutable', desc: 'Default choice — cannot be reassigned'          },
-      { key: 'const',   type: 'literal',   desc: 'Compile-time value — must be a literal'         },
-      { key: 'let mut', type: 'mutable',   desc: 'Explicit mutation — can be reassigned freely'   },
+      { key: 'let',     type: 'immutable', desc: 'Default — cannot be reassigned after declaration' },
+      { key: 'const',   type: 'literal',   desc: 'Compile-time constant — value must be a literal' },
+      { key: 'let mut', type: 'mutable',   desc: 'Explicit mutation — can be reassigned freely' },
     ] as row}
       <div class="kv-row">
         <code class="kv-key">{row.key}</code>
@@ -34,4 +35,4 @@ total = recalculate() // OK`;
       </div>
     {/each}
   </div>
-</section>
+</div>
