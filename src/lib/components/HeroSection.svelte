@@ -1,5 +1,6 @@
+<!-- src/lib/components/HeroSection.svelte -->
 <script lang="ts">
-  // Static section — no script needed
+  // Static section
 </script>
 
 <section class="hero">
@@ -11,7 +12,7 @@
     <!-- Dev badge -->
     <div class="badge">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
       </svg>
       Under Active Development
     </div>
@@ -23,29 +24,12 @@
     </h1>
 
     <!-- Sub-headline -->
-    <p class="subheadline">
-      Config, Code, and Crypto in One&nbsp;<code>.mdix</code>&nbsp;File
-    </p>
+    <p class="subheadline">Config, Code, and Crypto in One&nbsp;<code>.mdix</code>&nbsp;File</p>
 
-    <!-- Strapline -->
+    <!-- Value prop -->
     <p class="strapline">
       A programmable configuration format that lets you factor repetition into functions.
-    </p>
-
-    <!-- Quote -->
-    <blockquote class="quote">
-      <p>
-        "I built this because I was tired of copy-pasting the same JSON config blocks 500 times.
-        Turns out other people hate that too."
-      </p>
-      <footer>— Mid-D-Man, Creator</footer>
-    </blockquote>
-
-    <!-- Description -->
-    <p class="description">
-      DixScript is a programmable configuration format where you define the patterns once
-      and reuse them everywhere. Game configs reduced by 68%+, multi-environment setups
-      simplified, all with built-in encryption and compression — zero dependencies.
+      Define patterns once, reuse them everywhere — with built-in encryption and compression, zero dependencies.
     </p>
 
     <!-- CTAs -->
@@ -53,10 +37,10 @@
       <a href="/playground" class="btn btn-primary">
         Try Playground
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
         </svg>
       </a>
-      <a href="/docs" class="btn btn-secondary">Read Docs</a>
+      <a href="/docs" class="btn btn-secondary">Read the Docs</a>
     </div>
 
     <!-- Stats -->
@@ -76,6 +60,15 @@
         <div class="stat-label">Pure Rust core with FFI bindings</div>
       </div>
     </div>
+
+    <!-- Quote -->
+    <blockquote class="quote">
+      <p>
+        "I built this because I was tired of copy-pasting the same JSON config blocks 500 times.
+        Turns out other people hate that too."
+      </p>
+      <footer>— Mid-D-Man, Creator</footer>
+    </blockquote>
 
   </div>
 </section>
@@ -121,10 +114,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1.5rem;
   }
 
-  /* ── Badge ── */
   .badge {
     display: inline-flex;
     align-items: center;
@@ -132,14 +124,12 @@
     background: var(--secondary);
     border: 1px solid var(--border);
     color: var(--muted-foreground);
-    font-family: var(--font-sans);
     font-size: 0.8125rem;
     font-weight: 600;
     padding: 0.375rem 0.875rem;
     border-radius: 9999px;
   }
 
-  /* ── Headline ── */
   .headline {
     font-family: var(--font-serif);
     font-size: clamp(2.25rem, 6vw, 4rem);
@@ -149,61 +139,21 @@
     letter-spacing: -0.01em;
   }
 
-  .headline-accent {
-    color: var(--primary);
-  }
+  .headline-accent { color: var(--primary); }
 
-  /* ── Sub-headline ── */
   .subheadline {
     font-family: var(--font-serif);
     font-size: clamp(1rem, 2.5vw, 1.25rem);
     color: var(--muted-foreground);
-    line-height: 1.5;
   }
 
-  /* ── Strapline ── */
   .strapline {
     font-size: 1rem;
     color: var(--muted-foreground);
-    max-width: 540px;
-    line-height: 1.7;
+    max-width: 560px;
+    line-height: 1.75;
   }
 
-  /* ── Quote ── */
-  .quote {
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--primary);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    max-width: 600px;
-    text-align: left;
-    font-style: italic;
-  }
-
-  .quote p {
-    font-size: 0.9375rem;
-    color: var(--foreground);
-    line-height: 1.7;
-    margin-bottom: 0.5rem;
-  }
-
-  .quote footer {
-    font-size: 0.8125rem;
-    color: var(--muted-foreground);
-    font-style: normal;
-    font-weight: 600;
-  }
-
-  /* ── Description ── */
-  .description {
-    font-size: 1rem;
-    color: var(--foreground);
-    max-width: 620px;
-    line-height: 1.8;
-  }
-
-  /* ── CTAs ── */
   .cta-row {
     display: flex;
     align-items: center;
@@ -219,7 +169,6 @@
     gap: 0.5rem;
     padding: 0.75rem 1.75rem;
     border-radius: var(--radius);
-    font-family: var(--font-sans);
     font-size: 0.9375rem;
     font-weight: 600;
     cursor: pointer;
@@ -229,26 +178,11 @@
     white-space: nowrap;
   }
 
-  .btn-primary {
-    background: var(--primary);
-    color: var(--primary-foreground);
-  }
+  .btn-primary { background: var(--primary); color: var(--primary-foreground); }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-secondary { background: var(--card); color: var(--foreground); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--secondary); }
 
-  .btn-primary:hover {
-    opacity: 0.88;
-  }
-
-  .btn-secondary {
-    background: var(--card);
-    color: var(--foreground);
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover {
-    background: var(--secondary);
-  }
-
-  /* ── Stats ── */
   .stats-grid {
     display: flex;
     align-items: center;
@@ -260,10 +194,7 @@
     flex-wrap: wrap;
   }
 
-  .stat {
-    text-align: center;
-    flex-shrink: 0;
-  }
+  .stat { text-align: center; flex-shrink: 0; }
 
   .stat-value {
     font-family: var(--font-serif);
@@ -273,46 +204,28 @@
     margin-bottom: 0.25rem;
   }
 
-  .stat-label {
-    font-size: 0.8125rem;
-    color: var(--muted-foreground);
-    max-width: 160px;
-    line-height: 1.4;
+  .stat-label { font-size: 0.8125rem; color: var(--muted-foreground); max-width: 160px; line-height: 1.4; }
+  .stat-divider { width: 1px; height: 2.5rem; background: var(--border); flex-shrink: 0; }
+
+  .quote {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    max-width: 600px;
+    text-align: left;
+    font-style: italic;
   }
 
-  .stat-divider {
-    width: 1px;
-    height: 2.5rem;
-    background: var(--border);
-    flex-shrink: 0;
-  }
+  .quote p { font-size: 0.9375rem; color: var(--foreground); line-height: 1.7; margin-bottom: 0.5rem; }
+  .quote footer { font-size: 0.8125rem; color: var(--muted-foreground); font-style: normal; font-weight: 600; }
 
-  /* ── Responsive ── */
   @media (max-width: 640px) {
-    .hero {
-      padding: 3rem 1rem 2.5rem;
-    }
-
-    .stat-divider {
-      display: none;
-    }
-
-    .stats-grid {
-      gap: 1.5rem;
-    }
-
-    .cta-row {
-      flex-direction: column;
-      width: 100%;
-    }
-
-    .btn {
-      width: 100%;
-      justify-content: center;
-    }
-
-    .quote {
-      text-align: left;
-    }
+    .hero { padding: 3rem 1rem 2.5rem; }
+    .stat-divider { display: none; }
+    .stats-grid { gap: 1.5rem; }
+    .cta-row { flex-direction: column; width: 100%; }
+    .btn { width: 100%; justify-content: center; }
   }
 </style>
