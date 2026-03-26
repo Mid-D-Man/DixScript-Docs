@@ -1,6 +1,5 @@
+<!-- src/lib/components/docs/sections/DocCLI.svelte -->
 <script lang="ts">
-  import DocCallout from '$lib/components/docs/DocCallout.svelte';
-
   const commands = `mdix compile <file>              # Compile .mdix to binary
 mdix compile <file> --password   # Compile with password encryption
 mdix validate <file>             # Validate syntax and semantics
@@ -13,13 +12,21 @@ mdix format   <file>
 mdix minify   <file>`;
 </script>
 
-<section id="cli" class="doc-section">
-  <h2>CLI Reference</h2>
-
-  <DocCallout type="warn">
-    CLI is partially implemented. Commands below reflect the intended API —
-    not all are functional in the current Rust port.
-  </DocCallout>
-
+<div class="doc-page">
+  <h1>CLI Reference</h1>
+  <p class="page-lead">
+    The <code>mdix</code> command-line tool. Currently partially implemented —
+    the commands below reflect the intended API, not all are functional in the current Rust port.
+  </p>
   <pre><code>{commands}</code></pre>
-</section>
+
+  <h2>Installation</h2>
+  <pre><code># Via cargo (not yet published to crates.io)
+cargo install mdix-cli</code></pre>
+
+  <h2>Status</h2>
+  <p>
+    Track implementation progress on the <a href="/results">CI Results</a> page or in the
+    <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener noreferrer">Rust repository</a>.
+  </p>
+</div>
