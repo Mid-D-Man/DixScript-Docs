@@ -1,248 +1,413 @@
+<!-- src/lib/routes/registry/+page.svelte -->
 <script lang="ts">
+  import RegistryCard    from '$lib/components/registry/RegistryCard.svelte';
+  import RegistryFilters from '$lib/components/registry/RegistryFilters.svelte';
+  import RegistryModal   from '$lib/components/registry/RegistryModal.svelte';
+
   export let data: { files: any[]; error: string | null };
 
-  interface Package {
-    name: string;
-    displayName: string;
-    size: number;
-    uploaded: string | null;
-    downloadUrl: string;
+  /* ── Package metadata ─────────────────────────────────────────── */
+  interface PackageMeta {
     desc: string;
     tags: string[];
+    category: string;
+    addedBy: string;
   }
 
-  // Metadata map — add an entry here whenever you upload a new .mdix to R2
-  const meta: Record<string, { desc: string; tags: string[] }> = {
+  const META: Record<string, PackageMeta> = {
     'base_types.mdix': {
-      desc: 'Common enums (Rarity, ItemType) and helper functions (makeItem, scaledValue) for game item systems.',
-      tags: ['game', 'items', 'enums']
+      desc:     'Common enums (Rarity, ItemType) and helper functions (makeItem, scaledValue) for game item systems.',
+      tags:     ['enums', 'items', 'rarity', 'quickfuncs'],
+      category: 'game',
+      addedBy:  'MidManStudio',
     },
     'game_helpers.mdix': {
-      desc: 'Enemy and loot generation helpers. Imports base_types — transitive import example.',
-      tags: ['game', 'enemies', 'loot']
-    }
+      desc:     'Enemy and loot generation helpers. Imports base_types — transitive cloud import example.',
+      tags:     ['enemies', 'loot', 'difficulty', 'imports'],
+      category: 'game',
+      addedBy:  'MidManStudio',
+    },
+    'circular_cloud_a.mdix': {
+      desc:     'Cyclic import test file A — used to verify the compiler correctly detects and rejects circular cloud imports.',
+      tags:     ['test', 'circular', 'imports', 'edge-case'],
+      category: 'utils',
+      addedBy:  'MidManStudio',
+    },
+    'circular_cloud_b.mdix': {
+      desc:     'Cyclic import test file B — forms a cycle with circular_cloud_a to test compiler detection.',
+      tags:     ['test', 'circular', 'imports', 'edge-case'],
+      category: 'utils',
+      addedBy:  'MidManStudio',
+    },
   };
 
-  const packages: Package[] = data.files.map((f) => ({
-    name: f.name,
-    displayName: f.name.replace('.mdix', ''),
-    size: f.size,
-    uploaded: f.uploaded,
-    downloadUrl: f.downloadUrl,
-    desc: meta[f.name]?.desc ?? 'Importable .mdix package.',
-    tags: meta[f.name]?.tags ?? ['shared']
-  }));
+  const DEFAULT_META: PackageMeta = {
+    desc:     'Importable .mdix package.',
+    tags:     ['shared'],
+    category: 'utils',
+    addedBy:  'MidManStudio',
+  };
 
-  let search = '';
-  $: filtered = packages.filter(
-    (p) =>
-      p.displayName.toLowerCase().includes(search.toLowerCase()) ||
-      p.desc.toLowerCase().includes(search.toLowerCase()) ||
-      p.tags.some((t) => t.includes(search.toLowerCase()))
-  );
-
-  function formatSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`;
-    return `${(bytes / 1024).toFixed(1)} KB`;
+  interface Package {
+    name:        string;
+    displayName: string;
+    size:        number;
+    uploaded:    string | null;
+    downloadUrl: string;
+    desc:        string;
+    tags:        string[];
+    category:    string;
+    addedBy:     string;
   }
 
-  function formatDate(iso: string | null): string {
-    if (!iso) return '—';
-    return new Date(iso).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
+  const packages: Package[] = data.files.map((f) => {
+    const m = META[f.name] ?? DEFAULT_META;
+    return {
+      name:        f.name,
+      displayName: f.name.replace('.mdix', ''),
+      size:        f.size,
+      uploaded:    f.uploaded,
+      downloadUrl: f.downloadUrl,
+      ...m,
+    };
+  });
+
+  /* ── Filter state ─────────────────────────────────────────────── */
+  let search         = '';
+  let activeCategory = 'all';
+
+  $: filtered = packages.filter((p) => {
+    const matchCat = activeCategory === 'all' || p.category === activeCategory;
+    const q        = search.toLowerCase();
+    const matchQ   = !q ||
+      p.displayName.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q) ||
+      p.tags.some((t) => t.includes(q));
+    return matchCat && matchQ;
+  });
+
+  /* ── Modal state ──────────────────────────────────────────────── */
+  let modalOpen    = false;
+  let modalFile    = '';
+  let modalContent = '';
+  let modalLoading = false;
+  let modalError: string | null = null;
+
+  async function openView(filename: string) {
+    modalFile    = filename;
+    modalContent = '';
+    modalError   = null;
+    modalLoading = true;
+    modalOpen    = true;
+
+    try {
+      const res = await fetch(`/api/registry/${filename}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      modalContent = await res.text();
+    } catch (e: any) {
+      modalError = e?.message ?? 'Failed to load file';
+    } finally {
+      modalLoading = false;
+    }
   }
+
+  function closeModal() { modalOpen = false; }
 </script>
 
-<svelte:head><title>DixScript Registry</title></svelte:head>
+<svelte:head>
+  <title>DixScript Registry — Importable Packages</title>
+  <meta name="description" content="Browse and download importable .mdix packages for DixScript. Game dev, API config, ML pipelines and more." />
+</svelte:head>
 
-<div class="reg-wrap">
-  <div class="reg-header">
-    <h1>Registry</h1>
-    <p class="reg-sub">
-      Importable <code>.mdix</code> files hosted on Cloudflare R2.
-      Reference them in your <code>@IMPORTS</code> section using <code>from_cloud</code>.
-    </p>
+<!-- Modal -->
+{#if modalOpen}
+  <RegistryModal
+    filename={modalFile}
+    content={modalContent}
+    loading={modalLoading}
+    error={modalError}
+    on:close={closeModal}
+  />
+{/if}
+
+<div class="registry-page">
+
+  <!-- ── Hero header ── -->
+  <div class="reg-hero">
+    <div class="reg-hero-inner">
+      <div class="hero-kicker">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+        </svg>
+        Cloud Package Registry
+      </div>
+      <h1 class="hero-title">DixScript Registry</h1>
+      <p class="hero-sub">
+        Importable <code>.mdix</code> packages hosted on Cloudflare R2.
+        Reference them in your files using <code>from_cloud</code>.
+      </p>
+      <div class="hero-usage">
+        <span class="usage-label">Usage</span>
+        <code class="usage-code">Base from_cloud "https://dixscript-docs.pages.dev/api/registry/base_types.mdix"</code>
+      </div>
+    </div>
   </div>
 
-  {#if data.error}
-    <div class="notice error">⚠️ {data.error} — showing 0 packages.</div>
-  {:else if packages.length === 0}
-    <div class="notice warn">
-      No packages uploaded yet. Add <code>.mdix</code> files to the
-      <code>registry/</code> folder in the repo and push — the sync
-      workflow will upload them automatically.
-    </div>
-  {:else}
-    <div class="notice info">
-      <strong>How to use:</strong> Copy the URL from any package below and use it in your file:
-      <code>Base from_cloud "https://dixscript-docs.pages.dev/api/registry/base_types.mdix"</code>
-    </div>
-  {/if}
+  <div class="reg-body">
 
-  {#if packages.length > 0}
-    <div class="search-row">
-      <input
-        class="search-box"
-        type="text"
-        placeholder="Search packages…"
-        bind:value={search}
+    <!-- Error / empty notices -->
+    {#if data.error}
+      <div class="notice notice--error">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        <span>Registry unavailable: {data.error}. Check back later or see the <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener">GitHub repo</a>.</span>
+      </div>
+    {:else if packages.length === 0}
+      <div class="notice notice--warn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.051 3.378c.866-1.5 3.032-1.5 3.898 0l7.354 12.748ZM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        <span>No packages uploaded yet. Add <code>.mdix</code> files to <code>registry/</code> in the repo and push — the sync workflow uploads them automatically.</span>
+      </div>
+    {/if}
+
+    <!-- Filters -->
+    {#if packages.length > 0}
+      <RegistryFilters
+        {activeCategory}
+        {search}
+        totalCount={packages.length}
+        filteredCount={filtered.length}
+        on:categoryChange={(e) => (activeCategory = e.detail)}
+        on:searchChange={(e) => (search = e.detail)}
       />
-      <span class="pkg-count">{filtered.length} package{filtered.length !== 1 ? 's' : ''}</span>
-    </div>
+    {/if}
 
-    {#if filtered.length === 0}
-      <div class="empty">No packages match "{search}"</div>
-    {:else}
+    <!-- Results -->
+    {#if filtered.length === 0 && packages.length > 0}
+      <div class="empty-state">
+        <div class="empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+          </svg>
+        </div>
+        <p class="empty-title">No packages found</p>
+        <p class="empty-sub">Try a different search term or category.</p>
+        <button class="empty-reset" on:click={() => { search = ''; activeCategory = 'all'; }}>
+          Clear filters
+        </button>
+      </div>
+    {:else if filtered.length > 0}
       <div class="pkg-grid">
-        {#each filtered as pkg}
-          <div class="pkg-card">
-            <div class="pkg-top">
-              <div class="pkg-name">
-                {pkg.displayName}
-                <span class="pkg-ext">.mdix</span>
-              </div>
-              <div class="pkg-desc">{pkg.desc}</div>
-            </div>
-
-            <div class="pkg-tags">
-              {#each pkg.tags as tag}
-                <span class="tag">{tag}</span>
-              {/each}
-            </div>
-
-            <div class="pkg-meta">
-              <span class="meta-item">📦 {formatSize(pkg.size)}</span>
-              <span class="meta-item">📅 {formatDate(pkg.uploaded)}</span>
-            </div>
-
-            <div class="import-snippet">
-              <span class="snip-label">Import URL</span>
-              <code class="snip-url">https://dixscript-docs.pages.dev{pkg.downloadUrl}</code>
-            </div>
-
-            <div class="pkg-actions">
-              <a
-                href={pkg.downloadUrl}
-                class="action-btn primary"
-                target="_blank"
-                rel="noopener"
-                download
-              >
-                ⬇ Download
-              </a>
-              <button
-                class="action-btn"
-                on:click={() =>
-                  navigator.clipboard.writeText(
-                    `https://dixscript-docs.pages.dev${pkg.downloadUrl}`
-                  )}
-              >
-                📋 Copy URL
-              </button>
-            </div>
-          </div>
+        {#each filtered as pkg (pkg.name)}
+          <RegistryCard
+            name={pkg.name}
+            displayName={pkg.displayName}
+            description={pkg.desc}
+            tags={pkg.tags}
+            category={pkg.category}
+            size={pkg.size}
+            uploaded={pkg.uploaded}
+            downloadUrl={pkg.downloadUrl}
+            addedBy={pkg.addedBy}
+            on:view={(e) => openView(e.detail)}
+          />
         {/each}
       </div>
     {/if}
-  {/if}
 
-  <div class="reg-footer-note">
-    Want to add a package? Drop a <code>.mdix</code> file into the
-    <code>registry/</code> folder in the
-    <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener">
-      DixScript-Rust repo
-    </a>
-    and push. The sync workflow uploads it to R2 automatically.
+    <!-- Footer note -->
+    <div class="reg-footer">
+      <div class="reg-footer-inner">
+        <div class="footer-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+          </svg>
+        </div>
+        <p>
+          Want to publish a package? Drop a <code>.mdix</code> file into the
+          <code>registry/</code> folder in the
+          <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener">DixScript-Rust repo</a>
+          and push — the sync workflow uploads it to Cloudflare R2 automatically.
+        </p>
+      </div>
+    </div>
+
   </div>
 </div>
+
 <style>
-  .reg-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
-  h1 { font-size: 1.8rem; margin-bottom: 8px; }
-  .reg-sub { color: var(--muted); font-size: 0.875rem; line-height: 1.6; }
-  .reg-header { margin-bottom: 20px; }
+  /* ── Page shell ── */
+  .registry-page {
+    min-height: calc(100vh - 4rem);
+    background: var(--background);
+  }
 
+  /* ── Hero ── */
+  .reg-hero {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 1.5rem 2.5rem;
+  }
+  .reg-hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .hero-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--primary);
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.875rem;
+    border-radius: 9999px;
+    width: fit-content;
+    font-family: var(--font-mono);
+  }
+
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--foreground);
+    margin: 0;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--muted-foreground);
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0;
+  }
+
+  .hero-usage {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.625rem 0.875rem;
+    flex-wrap: wrap;
+  }
+  .usage-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+  .usage-code {
+    font-size: 0.8125rem;
+    color: var(--foreground);
+    word-break: break-all;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  /* ── Body ── */
+  .reg-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Notices */
   .notice {
-    border-radius: 8px; padding: 12px 16px; margin-bottom: 24px;
-    font-size: 0.875rem; line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    border: 1px solid;
   }
-  .notice.info    { background: rgba(88,166,255,.06);   border: 1px solid rgba(88,166,255,.2);   color: var(--blue);   }
-  .notice.warn    { background: rgba(227,179,65,.06);   border: 1px solid rgba(227,179,65,.2);   color: var(--yellow); }
-  .notice.error   { background: rgba(248,81,73,.06);    border: 1px solid rgba(248,81,73,.2);    color: #f85149;       }
-  .notice strong  { color: var(--text); }
+  .notice svg { flex-shrink: 0; margin-top: 2px; }
+  .notice--error { background: rgba(181,74,53,.06); border-color: rgba(181,74,53,.25); color: var(--foreground); }
+  .notice--error svg { color: var(--destructive); }
+  .notice--warn  { background: rgba(166,124,82,.06); border-color: rgba(166,124,82,.25); color: var(--foreground); }
+  .notice--warn svg  { color: var(--primary); }
+  .notice a { color: var(--primary); text-decoration: underline; }
 
-  .search-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-  .search-box {
-    flex: 1; background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); padding: 8px 14px; border-radius: 8px;
-    font-size: 0.875rem; outline: none; transition: border-color 0.15s;
-  }
-  .search-box:focus { border-color: var(--accent); }
-  .search-box::placeholder { color: var(--faint); }
-  .pkg-count { font-size: 0.80rem; color: var(--faint); white-space: nowrap; }
-
+  /* Grid */
   .pkg-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 16px;
-  }
-  .pkg-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 20px;
-    display: flex; flex-direction: column; gap: 12px;
-    transition: border-color 0.15s;
-  }
-  .pkg-card:hover { border-color: var(--accent); }
-
-  .pkg-name {
-    font-size: 1rem; font-weight: 700; font-family: var(--font-mono);
-    display: flex; align-items: center; gap: 4px; margin-bottom: 6px;
-  }
-  .pkg-ext { color: var(--faint); font-weight: 400; }
-  .pkg-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
-
-  .pkg-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-  .tag {
-    font-size: 0.68rem; background: var(--surface2);
-    border: 1px solid var(--border2); color: var(--muted);
-    padding: 2px 8px; border-radius: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.125rem;
   }
 
-  .pkg-meta { display: flex; gap: 14px; }
-  .meta-item { font-size: 0.72rem; color: var(--faint); }
+  /* Empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .empty-icon {
+    width: 3.5rem; height: 3.5rem;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted-foreground);
+    margin-bottom: 0.5rem;
+  }
+  .empty-title { font-family: var(--font-serif); font-size: 1.125rem; font-weight: 700; color: var(--foreground); }
+  .empty-sub   { font-size: 0.875rem; color: var(--muted-foreground); }
+  .empty-reset {
+    margin-top: 0.5rem;
+    background: var(--primary); color: var(--primary-foreground);
+    border: none; border-radius: var(--radius);
+    padding: 0.5rem 1.25rem; font-size: 0.875rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .empty-reset:hover { opacity: 0.85; }
 
-  .import-snippet {
-    background: var(--surface2); border: 1px solid var(--border2);
-    border-radius: 6px; padding: 8px 12px;
-    display: flex; flex-direction: column; gap: 4px;
+  /* Footer note */
+  .reg-footer {
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
   }
-  .snip-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--faint); }
-  .snip-url {
-    font-size: 0.72rem; color: var(--blue); word-break: break-all;
-    background: none; border: none; padding: 0;
+  .reg-footer-inner {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    line-height: 1.7;
   }
+  .footer-icon { color: var(--primary); flex-shrink: 0; margin-top: 2px; }
+  .reg-footer-inner p { margin: 0; }
+  .reg-footer-inner a { color: var(--primary); text-decoration: underline; }
 
-  .pkg-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .action-btn {
-    display: inline-flex; align-items: center;
-    padding: 6px 14px; border-radius: 6px; font-size: 0.80rem; font-weight: 600;
-    text-decoration: none; transition: all 0.15s; cursor: pointer;
-    background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
-  }
-  .action-btn:hover { color: var(--text); border-color: var(--muted); text-decoration: none; }
-  .action-btn.primary {
-    background: rgba(247,129,102,.1);
-    border-color: rgba(247,129,102,.4);
-    color: var(--accent);
-  }
-  .action-btn.primary:hover { background: rgba(247,129,102,.2); }
-
-  .empty { text-align: center; padding: 48px; color: var(--faint); }
-  .reg-footer-note {
-    margin-top: 32px; padding-top: 20px;
-    border-top: 1px solid var(--border2);
-    font-size: 0.82rem; color: var(--faint); line-height: 1.6;
+  @media (max-width: 640px) {
+    .reg-hero { padding: 2rem 1rem 1.5rem; }
+    .reg-body  { padding: 1.25rem 1rem 2rem; }
+    .pkg-grid  { grid-template-columns: 1fr; }
   }
 </style>
