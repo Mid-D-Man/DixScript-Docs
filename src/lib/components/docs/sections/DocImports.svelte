@@ -1,6 +1,5 @@
+<!-- src/lib/components/docs/sections/DocImports.svelte -->
 <script lang="ts">
-  import DocCallout from '$lib/components/docs/DocCallout.svelte';
-
   const example = `@IMPORTS(
   // Local file
   Base    from "lib/base_types.mdix"
@@ -13,29 +12,25 @@
 )
 
 @DATA(
-  item<object>  = Base.makeItem("W001", "Sword", Base.ItemType.WEAPON, 50)
-  enemy<object> = Helpers.makeEnemy("E001", "Goblin", 100)
+  item  = Base.makeItem("W001", "Sword", 50)
+  enemy = Helpers.makeEnemy("E001", "Goblin", 100)
 )`;
 </script>
 
-<section id="imports" class="doc-section">
-  <h2>@IMPORTS</h2>
-  <p>
-    Import enums and functions from other .mdix files — local or via cloud URL.
-    Access imported symbols through the alias namespace.
+<div class="doc-page">
+  <h1>@IMPORTS</h1>
+  <p class="page-lead">
+    Import enums and functions from other <code>.mdix</code> files — local or via cloud URL.
+    Access imported symbols through the alias namespace. Requires <code>features -> "advanced"</code>.
   </p>
   <pre><code>{example}</code></pre>
 
-  <DocCallout type="info">
-    Only functions declared <code>=&gt; global</code> are exported and importable.
-    Circular imports are detected and rejected at compile time.
-  </DocCallout>
-
-  <h3>Path rules</h3>
+  <h2>Path Rules</h2>
   <ul>
+    <li>Only functions declared <code>=> global</code> are exported and importable</li>
+    <li>Circular imports are detected and rejected at compile time</li>
     <li>Use forward slashes — no backslashes, even on Windows</li>
     <li>File extension <code>.mdix</code> is required</li>
-    <li>No spaces in paths — use underscores or hyphens</li>
     <li>Paths are case-sensitive on Unix systems</li>
   </ul>
-</section>
+</div>
