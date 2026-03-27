@@ -1,0 +1,7 @@
+{
+  "desc": "Core game enums (Rarity, ItemType) and QuickFuncs (makeItem, scaledValue). Foundation package for any RPG item system.",
+  "tags": ["enums", "items", "rarity", "quickfuncs", "rpg"],
+  "category": "game",
+  "addedBy": "MidManStudio",
+  "version": "1.0.0"
+}
