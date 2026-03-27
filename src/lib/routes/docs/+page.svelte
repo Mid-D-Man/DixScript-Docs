@@ -6,25 +6,28 @@
   import DocLayout    from '$lib/components/docs/DocLayout.svelte';
   import DocSidebar   from '$lib/components/docs/DocSidebar.svelte';
 
-  import DocIntro         from '$lib/components/docs/sections/DocIntro.svelte';
-  import DocQuickStart    from '$lib/components/docs/sections/DocQuickStart.svelte';
-  import DocTypes         from '$lib/components/docs/sections/DocTypes.svelte';
-  import DocVariables     from '$lib/components/docs/sections/DocVariables.svelte';
-  import DocConfig        from '$lib/components/docs/sections/DocConfig.svelte';
-  import DocEnums         from '$lib/components/docs/sections/DocEnums.svelte';
-  import DocData          from '$lib/components/docs/sections/DocData.svelte';
-  import DocQuickFuncs    from '$lib/components/docs/sections/DocQuickFuncs.svelte';
-  import DocSecurity      from '$lib/components/docs/sections/DocSecurity.svelte';
-  import DocDLM           from '$lib/components/docs/sections/DocDLM.svelte';
-  import DocImports       from '$lib/components/docs/sections/DocImports.svelte';
-  import DocCLI           from '$lib/components/docs/sections/DocCLI.svelte';
-  import DocFFI           from '$lib/components/docs/sections/DocFFI.svelte';
+  import DocIntro           from '$lib/components/docs/sections/DocIntro.svelte';
+  import DocQuickStart      from '$lib/components/docs/sections/DocQuickStart.svelte';
+  import DocTypes           from '$lib/components/docs/sections/DocTypes.svelte';
+  import DocVariables       from '$lib/components/docs/sections/DocVariables.svelte';
+  import DocConfig          from '$lib/components/docs/sections/DocConfig.svelte';
+  import DocEnums           from '$lib/components/docs/sections/DocEnums.svelte';
+  import DocData            from '$lib/components/docs/sections/DocData.svelte';
+  import DocQuickFuncs      from '$lib/components/docs/sections/DocQuickFuncs.svelte';
+  import DocSecurity        from '$lib/components/docs/sections/DocSecurity.svelte';
+  import DocDLM             from '$lib/components/docs/sections/DocDLM.svelte';
+  import DocImports         from '$lib/components/docs/sections/DocImports.svelte';
+  import DocCLI             from '$lib/components/docs/sections/DocCLI.svelte';
+  import DocFFI             from '$lib/components/docs/sections/DocFFI.svelte';
   import DocBuiltinMath     from '$lib/components/docs/sections/DocBuiltinMath.svelte';
   import DocBuiltinArray    from '$lib/components/docs/sections/DocBuiltinArray.svelte';
   import DocBuiltinDateTime from '$lib/components/docs/sections/DocBuiltinDateTime.svelte';
   import DocBuiltinRandom   from '$lib/components/docs/sections/DocBuiltinRandom.svelte';
   import DocBuiltinString   from '$lib/components/docs/sections/DocBuiltinString.svelte';
   import DocBuiltinNumber   from '$lib/components/docs/sections/DocBuiltinNumber.svelte';
+  import DocBuiltinRegex    from '$lib/components/docs/sections/DocBuiltinRegex.svelte';
+  import DocBuiltinTuple    from '$lib/components/docs/sections/DocBuiltinTuple.svelte';
+  import DocBuiltinBlob     from '$lib/components/docs/sections/DocBuiltinBlob.svelte';
   import DocBuiltinDix      from '$lib/components/docs/sections/DocBuiltinDix.svelte';
 
   let activeSection = 'intro';
@@ -59,7 +62,6 @@
     />
   </svelte:fragment>
 
-  <!-- Only the active section is rendered — Unity-style page swap -->
   {#if activeSection === 'intro'}
     <DocIntro />
   {:else if activeSection === 'quickstart'}
@@ -94,6 +96,12 @@
     <DocBuiltinString />
   {:else if activeSection === 'builtin-number'}
     <DocBuiltinNumber />
+  {:else if activeSection === 'builtin-regex'}
+    <DocBuiltinRegex />
+  {:else if activeSection === 'builtin-tuple'}
+    <DocBuiltinTuple />
+  {:else if activeSection === 'builtin-blob'}
+    <DocBuiltinBlob />
   {:else if activeSection === 'builtin-dix'}
     <DocBuiltinDix />
   {:else if activeSection === 'cli'}
