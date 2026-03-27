@@ -1,0 +1,56 @@
+@CONFIG(
+  version     -> "1.0.0"
+  features    -> "advanced"
+  description -> "Multi-service production config template"
+)
+
+@ENUMS(
+  Environment { DEV = 0, STAGING = 1, PROD = 2 }
+  LogLevel    { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 }
+)
+
+@QUICKFUNCS(
+  ~dbHost<string>(svcName<string>, env<enum>) {
+    suffix = env == Environment.PROD    ? "prod.internal"    :
+             env == Environment.STAGING ? "staging.internal" : "dev.internal"
+    return $"postgres.{svcName}.{suffix}"
+  }
+
+  ~redisUrl<string>(svcName<string>, env<enum>) {
+    suffix = env == Environment.PROD    ? "prod.internal"    :
+             env == Environment.STAGING ? "staging.internal" : "dev.internal"
+    return $"redis://{svcName}-cache.{suffix}:6379"
+  }
+
+  ~service<object>(name<string>, image<string>, port<int>, replicas<int>, cpu<string>, memory<string>, env<enum>) {
+    return {
+      name      = name
+      image     = image
+      port      = port
+      replicas  = replicas
+      resources = { cpu = cpu, memory = memory }
+      env = {
+        DB_HOST   = dbHost(name, env)
+        DB_PORT   = "5432"
+        DB_USER   = "app"
+        REDIS_URL = redisUrl(name, env)
+        LOG_LEVEL = "INFO"
+        ENV       = env == Environment.PROD ? "production" : "development"
+      }
+      healthcheck = { path = "/health", interval = "30s", timeout = "3s" }
+    }
+  }
+)
+
+@DATA(
+  environment = Environment.PROD
+
+  logging:
+    default_level = LogLevel.INFO
+    json_output   = true
+
+  feature_flags:
+    checkout_v2     = false
+    recommendations = true
+    beta_banner     = false
+)
