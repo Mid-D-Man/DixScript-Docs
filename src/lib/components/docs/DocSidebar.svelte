@@ -57,6 +57,9 @@
         { id: 'builtin-random',   label: 'Random'         },
         { id: 'builtin-string',   label: 'String Methods' },
         { id: 'builtin-number',   label: 'Number Methods' },
+        { id: 'builtin-regex',    label: 'Regex Methods'  },
+        { id: 'builtin-tuple',    label: 'Tuple Methods'  },
+        { id: 'builtin-blob',     label: 'Blob Methods'   },
         { id: 'builtin-dix',      label: 'Dix Utilities'  },
       ],
     },
@@ -87,7 +90,6 @@
         .filter(g => g.items.length > 0)
     : groups;
 
-  // Auto-open the group that contains the active section
   $: if (activeSection) {
     groups = groups.map(g => ({
       ...g,
@@ -95,14 +97,8 @@
     }));
   }
 
-  function navigate(id: string): void {
-    dispatch('navigate', id);
-  }
-
-  function close(): void {
-    dispatch('close');
-  }
-
+  function navigate(id: string): void { dispatch('navigate', id); }
+  function close(): void { dispatch('close'); }
   function toggle(id: string): void {
     groups = groups.map(g => (g.id === id ? { ...g, open: !g.open } : g));
   }
@@ -110,7 +106,6 @@
 
 <div class="sidebar-wrap">
 
-  <!-- Sidebar header with title + close button -->
   <div class="sidebar-head">
     <span class="sidebar-title">Documentation</span>
     <button class="close-btn" on:click={close} aria-label="Close navigation">
@@ -120,7 +115,6 @@
     </button>
   </div>
 
-  <!-- Search -->
   <div class="search-wrap">
     <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
@@ -141,7 +135,6 @@
     {/if}
   </div>
 
-  <!-- Nav groups -->
   <nav class="nav" aria-label="Documentation sections">
     {#each filtered as group}
       <div class="nav-group">
@@ -191,7 +184,6 @@
     {/if}
   </nav>
 
-  <!-- Footer links -->
   <div class="sidebar-footer">
     <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener noreferrer" class="footer-link">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
@@ -216,7 +208,6 @@
     background: var(--background);
   }
 
-  /* ── Header ── */
   .sidebar-head {
     display: flex;
     align-items: center;
@@ -250,7 +241,6 @@
   }
   .close-btn:hover { background: var(--muted); color: var(--foreground); }
 
-  /* ── Search ── */
   .search-wrap {
     position: relative;
     padding: 0.625rem 0.75rem;
@@ -298,7 +288,6 @@
   }
   .search-clear:hover { color: var(--foreground); }
 
-  /* ── Nav ── */
   .nav {
     flex: 1;
     overflow-y: auto;
@@ -373,7 +362,6 @@
     color: var(--muted-foreground);
   }
 
-  /* ── Footer ── */
   .sidebar-footer {
     padding: 0.625rem 0.75rem;
     border-top: 1px solid var(--border);
@@ -395,7 +383,6 @@
   }
   .footer-link:hover { color: var(--foreground); background: var(--secondary); }
 
-  /* ── Mobile ── */
   @media (max-width: 900px) {
     .close-btn { display: flex; }
   }
