@@ -3,6 +3,7 @@
   import PlaygroundHeader from '$lib/components/playground/PlaygroundHeader.svelte';
   import PlaygroundEditor from '$lib/components/playground/PlaygroundEditor.svelte';
   import PlaygroundOutput from '$lib/components/playground/PlaygroundOutput.svelte';
+  import RegistryPicker  from '$lib/components/playground/RegistryPicker.svelte';
 
   const DEFAULT_SOURCE = `@CONFIG(
   version  -> "1.0.0"
@@ -16,12 +17,12 @@
 @QUICKFUNCS(
   ~item<object>(id<string>, name<string>, rarity<enum>, value<int>) {
     return {
-      id        = id
-      name      = name
-      rarity    = rarity
-      value     = value
-      sell      = value / 2
-      buy       = value * 4
+      id     = id
+      name   = name
+      rarity = rarity
+      value  = value
+      sell   = value / 2
+      buy    = value * 4
     }
   }
 )
@@ -39,12 +40,12 @@
   let source = DEFAULT_SOURCE;
   let output = '';
   let status: 'idle' | 'running' | 'done' | 'error' = 'idle';
+  let showPicker = false;
 
   function run() {
     status = 'running';
     setTimeout(() => {
-      output = `// WASM runtime not yet connected.
-// Simulated parse preview:
+      output = `// WASM runtime not yet connected — simulated parse preview:
 
 {
   "game_title": "DixScript Demo",
@@ -61,46 +62,51 @@
 
   function reset() {
     source = DEFAULT_SOURCE;
-    output = '';
-    status = 'idle';
+    output = ''; status = 'idle';
+  }
+
+  function onRegistryLoad(e: CustomEvent<string>) {
+    source = e.detail;
+    showPicker = false;
+    output = ''; status = 'idle';
   }
 </script>
 
 <svelte:head>
   <title>DixScript Playground</title>
-  <meta name="description" content="Try DixScript in the browser. Live editor with simulated output — WASM runtime coming soon." />
+  <meta name="description" content="Try DixScript in the browser — load from registry or write your own." />
 </svelte:head>
 
+{#if showPicker}
+  <RegistryPicker on:load={onRegistryLoad} on:close={() => (showPicker = false)} />
+{/if}
+
 <div class="pg-page">
+  <PlaygroundHeader {status} on:run={run} on:openRegistry={() => (showPicker = true)} />
 
-  <PlaygroundHeader {status} on:run={run} />
-
-  <!-- Notice bar -->
   <div class="pg-notice">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;color:var(--primary)">
       <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
     </svg>
     <span>
-      The WASM runtime is not yet published. The editor is functional —
-      execution will be wired in once <code>mdix-wasm</code> ships.
-      See <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">mdix-wasm on GitHub</a>.
+      WASM runtime not yet published. Editor is fully functional — execution is wired in once
+      <code>mdix-wasm</code> ships. See
+      <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">mdix-wasm on GitHub</a>.
     </span>
   </div>
 
-  <!-- Editor + output split -->
   <div class="pg-workspace">
     <PlaygroundEditor bind:source />
     <PlaygroundOutput {output} {status} />
   </div>
 
-  <!-- Footer bar -->
   <div class="pg-footer">
     <div class="footer-links">
       <a href="/docs" class="footer-link">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
         </svg>
-        Documentation
+        Docs
       </a>
       <a href="/registry" class="footer-link">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -119,61 +125,40 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
       </svg>
-      Reset to default
+      Reset
     </button>
   </div>
-
 </div>
 
 <style>
   .pg-page {
-    max-width: 1360px;
-    margin: 0 auto;
+    max-width: 1360px; margin: 0 auto;
     padding: 2rem 1.5rem 2.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
+    display: flex; flex-direction: column; gap: 1.25rem;
     min-height: calc(100vh - 4rem);
   }
 
-  /* Notice */
   .pg-notice {
     display: flex; align-items: flex-start; gap: 0.625rem;
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--primary);
-    border-radius: var(--radius);
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    color: var(--foreground);
-    line-height: 1.6;
+    background: var(--secondary); border: 1px solid var(--border);
+    border-left: 3px solid var(--primary); border-radius: var(--radius);
+    padding: 0.75rem 1rem; font-size: 0.875rem;
+    color: var(--foreground); line-height: 1.6;
   }
-  .pg-notice svg { flex-shrink: 0; margin-top: 2px; color: var(--primary); }
   .pg-notice a { color: var(--primary); text-decoration: underline; }
 
-  /* Workspace */
   .pg-workspace {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    flex: 1;
-    min-height: 520px;
-    max-height: 680px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    flex: 1; min-height: 520px; max-height: 680px;
   }
 
-  /* Footer */
   .pg-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-    padding-top: 0.75rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; flex-wrap: wrap; padding-top: 0.75rem;
     border-top: 1px solid var(--border);
   }
 
   .footer-links { display: flex; gap: 0.25rem; flex-wrap: wrap; }
-
   .footer-link {
     display: inline-flex; align-items: center; gap: 0.35rem;
     font-size: 0.8125rem; color: var(--muted-foreground);
@@ -195,6 +180,6 @@
 
   @media (max-width: 900px) {
     .pg-page { padding: 1.25rem 1rem; }
-    .pg-workspace { grid-template-columns: 1fr; max-height: none; }
+    .pg-workspace { grid-template-columns: 1fr; max-height: none; min-height: 0; }
   }
 </style>
