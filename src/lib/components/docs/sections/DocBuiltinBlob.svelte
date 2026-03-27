@@ -9,60 +9,69 @@
     { name: '.slice(start, end)',   returns: 'blob',   desc: 'Sub-blob from byte offset start to end (exclusive)' },
   ];
 
-  const usageExample = `@QUICKFUNCS(
-  ~certSize<int>(cert<blob>) {
-    return cert.size()
-  }
+  // b\u003A is Unicode for b: — avoids esbuild treating it as a JS label inside template literals
+  const usageExample = [
+    '@QUICKFUNCS(',
+    '  ~certSize<int>(cert<blob>) {',
+    '    return cert.size()',
+    '  }',
+    '',
+    '  ~isImage<bool>(data<blob>) {',
+    '    let mime = data.mimeType()',
+    '    return mime.startsWith("image/")',
+    '  }',
+    '',
+    '  ~byteSummary<string>(data<blob>) {',
+    '    let bytes = data.size()',
+    '    return $"{bytes.toString()} bytes ({data.mimeType()})"',
+    '  }',
+    ')',
+    '',
+    '@DATA(',
+    '  // Inline base64 blob — useful for embedding small binary assets',
+    '  icon<blob>        = b\u003A("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==")',
+    '  certificate<blob> = b\u003A("LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t")',
+    '',
+    '  // MIME type detected at compile time:',
+    '  icon_type   = isImage(icon)       // true',
+    '  icon_bytes  = certSize(icon)      // 68',
+    '  cert_info   = byteSummary(certificate)',
+    ')',
+  ].join('\n');
 
-  ~isImage<bool>(data<blob>) {
-    let mime = data.mimeType()
-    return mime.startsWith("image/")
-  }
+  const constructionExample = [
+    '// Blob constructor — value must be valid Base64:',
+    'icon<blob>  = b\u003A("iVBORw0KGgo=")',
+    'cert<blob>  = b\u003A("LS0tLS1CRUdJTi==")',
+    '',
+    '// Inside a QuickFunc:',
+    'let data<blob> = b\u003A("SGVsbG8gV29ybGQ=")',
+  ].join('\n');
 
-  ~byteSummary<string>(data<blob>) {
-    let bytes = data.size()
-    return $"{bytes.toString()} bytes ({data.mimeType()})"
-  }
-)
-
-@DATA(
-  // Inline base64 blob — useful for embedding small binary assets
-  icon<blob>        = b:("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==")
-  certificate<blob> = b:("LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0t")
-
-  // MIME type detected at compile time:
-  icon_type   = isImage(icon)       // true
-  icon_bytes  = certSize(icon)      // 68
-  cert_info   = byteSummary(certificate)
-)</code></pre>
-
-  const encodingNote = `// Blobs use standard Base64 encoding (RFC 4648).
-// To embed a binary file, base64-encode it first:
-//
-//   Unix:     base64 -i myfile.png | tr -d '\\n'
-//   Windows:  [Convert]::ToBase64String([IO.File]::ReadAllBytes("myfile.png"))
-//   Node.js:  fs.readFileSync('myfile.png').toString('base64')
-//
-// Then wrap it in the b:() constructor:
-icon = b:("iVBORw0KGgo...")`;
+  const encodingNote = [
+    '// Blobs use standard Base64 encoding (RFC 4648).',
+    '// To embed a binary file, base64-encode it first:',
+    '//',
+    "//   Unix:     base64 -i myfile.png | tr -d '\\n'",
+    '//   Windows:  [Convert]::ToBase64String([IO.File]::ReadAllBytes("myfile.png"))',
+    "//   Node.js:  fs.readFileSync('myfile.png').toString('base64')",
+    '//',
+    '// Then wrap it in the b:() constructor:',
+    'icon = b\u003A("iVBORw0KGgo...")',
+  ].join('\n');
 </script>
 
 <div class="doc-page">
   <h1>Blob Methods</h1>
   <p class="page-lead">
-    Instance methods available on <code>blob</code> values (constructed with <code>b:("base64…")</code>).
+    Instance methods available on <code>blob</code> values (constructed with <code>b:()</code>).
     Blobs hold raw binary data encoded as Base64. They are useful for embedding certificates,
     icons, checksums, and other binary assets directly in a <code>.mdix</code> file without
     external file references.
   </p>
 
   <h2>Construction</h2>
-  <pre><code>// Blob constructor — value must be valid Base64:
-icon<blob>  = b:("iVBORw0KGgo=")
-cert<blob>  = b:("LS0tLS1CRUdJTi==")
-
-// Inside a QuickFunc:
-let data<blob> = b:("SGVsbG8gV29ybGQ=")</code></pre>
+  <pre><code>{constructionExample}</code></pre>
 
   <h2>Encoding Note</h2>
   <pre><code>{encodingNote}</code></pre>
