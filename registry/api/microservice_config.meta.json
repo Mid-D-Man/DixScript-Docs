@@ -1,0 +1,7 @@
+{
+  "desc": "Production microservice config template. Derives DB hosts, Redis URLs and healthchecks from a single ~service() function. Swap environment once, all services update.",
+  "tags": ["microservices", "config", "docker", "kubernetes", "production"],
+  "category": "api",
+  "addedBy": "MidManStudio",
+  "version": "1.0.0"
+}
