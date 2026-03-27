@@ -1,0 +1,7 @@
+{
+  "desc": "Cyclic import test file B. Imports circular_cloud_a which imports back — second half of the circular import detection test pair.",
+  "tags": ["test", "circular", "imports", "edge-case", "compiler"],
+  "category": "utils",
+  "addedBy": "MidManStudio",
+  "version": "1.0.0"
+}
