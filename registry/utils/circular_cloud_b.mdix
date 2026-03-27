@@ -1,0 +1,14 @@
+@CONFIG(
+  version  -> "1.0.0"
+  author   -> "Cloud Cyclic Detection — File B"
+  features -> "advanced"
+)
+
+@IMPORTS(
+  A from_cloud "https://dixscript-docs.pages.dev/api/registry/utils/circular_cloud_a.mdix"
+)
+
+@DATA(
+  source = "circular_cloud_b"
+  note   = "Forms a cycle with circular_cloud_a — compiler must detect and reject this"
+)
