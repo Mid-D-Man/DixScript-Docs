@@ -1,0 +1,7 @@
+{
+  "desc": "Enemy and loot table generation helpers. Imports base_types — demonstrates transitive cloud imports. Includes Difficulty and EnemyType enums.",
+  "tags": ["enemies", "loot", "difficulty", "imports", "rpg"],
+  "category": "game",
+  "addedBy": "MidManStudio",
+  "version": "1.0.0"
+}
