@@ -1,15 +1,21 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
 function checkAuth(request: Request, platform: App.Platform | undefined): boolean {
-  const adminKey = platform?.env?.ADMIN_KEY;
+  const adminKey = platform?.env?.ADMIN_KEY?.trim();
   if (!adminKey) return false;
-  const auth = request.headers.get('Authorization');
-  return auth === `Bearer ${adminKey}`;
+  const auth = request.headers.get('Authorization') ?? '';
+  const provided = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  return provided === adminKey && provided.length > 0;
 }
 
 export const GET: RequestHandler = async ({ request, platform }) => {
   if (!checkAuth(request, platform)) {
-    return new Response('Unauthorized', { status: 401 });
+    // Return a hint in dev if ADMIN_KEY simply isn't bound yet
+    const keyBound = !!platform?.env?.ADMIN_KEY;
+    return new Response(
+      JSON.stringify({ error: 'Unauthorized', keyBound }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
   }
 
   const bucket = platform?.env?.MDIX_REGISTRY;
@@ -38,6 +44,7 @@ export const GET: RequestHandler = async ({ request, platform }) => {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (err) {
+    console.error('[admin list]', err);
     return new Response(JSON.stringify({ error: 'List failed' }), { status: 500 });
   }
 };
