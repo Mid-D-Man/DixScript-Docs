@@ -48,7 +48,7 @@
 
   // Derived via QuickFunc
   score_range = bounds([12, 5, 99, 34, 7])
-)</code></pre>
+)`;
 </script>
 
 <div class="doc-page">
