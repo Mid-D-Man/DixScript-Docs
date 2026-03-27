@@ -20,18 +20,20 @@
   ];
 
   const cmpRows = [
-    { feature: 'Compile-time functions', json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Built-in encryption',    json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Built-in compression',   json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Enums / constants',      json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Comments',               json: false, yaml: true,  toml: true,  dix: true },
-    { feature: 'Optional trailing comma',json: false, yaml: true,  toml: false, dix: true },
-    { feature: 'Zero runtime deps',      json: true,  yaml: false, toml: true,  dix: true },
-    { feature: 'Import system',          json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Blob / binary type',     json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Regex type',             json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Tuple type',             json: false, yaml: false, toml: false, dix: true },
-    { feature: 'Date / Timestamp type',  json: false, yaml: true,  toml: true,  dix: true },
+    { feature: 'Compile-time functions', json: false, yaml: false, toml: false, jsonnet: true,  cue: true,  hcl: true,  dix: true },
+    { feature: 'Built-in encryption',    json: false, yaml: false, toml: false, jsonnet: false, cue: false, hcl: false, dix: true },
+    { feature: 'Built-in compression',   json: false, yaml: false, toml: false, jsonnet: false, cue: false, hcl: false, dix: true },
+    { feature: 'Enums / constants',      json: false, yaml: false, toml: false, jsonnet: true,  cue: true,  hcl: false, dix: true },
+    { feature: 'Comments',               json: false, yaml: true,  toml: true,  jsonnet: true,  cue: true,  hcl: true,  dix: true },
+    { feature: 'Optional trailing comma',json: false, yaml: true,  toml: false, jsonnet: true,  cue: true,  hcl: true,  dix: true },
+    { feature: 'Zero runtime deps',      json: true,  yaml: false, toml: true,  jsonnet: false, cue: false, hcl: false, dix: true },
+    { feature: 'Import system',          json: false, yaml: false, toml: false, jsonnet: true,  cue: true,  hcl: true,  dix: true },
+    { feature: 'Blob / binary type',     json: false, yaml: false, toml: false, jsonnet: false, cue: false, hcl: false, dix: true },
+    { feature: 'Regex type',             json: false, yaml: false, toml: false, jsonnet: false, cue: true,  hcl: false, dix: true },
+    { feature: 'Tuple type',             json: false, yaml: false, toml: false, jsonnet: false, cue: false, hcl: true,  dix: true },
+    { feature: 'Date / Timestamp type',  json: false, yaml: true,  toml: true,  jsonnet: false, cue: true,  hcl: false, dix: true },
+    { feature: 'Type validation',        json: false, yaml: false, toml: false, jsonnet: false, cue: true,  hcl: false, dix: true },
+    { feature: 'Schema enforcement',     json: false, yaml: false, toml: false, jsonnet: false, cue: true,  hcl: false, dix: true },
   ];
 
   const usageExample = `@DATA(
@@ -92,12 +94,18 @@
     evaluated at compile time.
   </p>
   <pre><code>@QUICKFUNCS(
-  ~endpoint<string>(host<string>, port<int>) {
-    return $"https://{host}:{port.toString()}/api"
-  }
+  ~endpoint&lt;string&gt;(host&lt;string&gt;, port&lt;int&gt;) {"{"}
+    return $"https://{"{"}host{"}"}:{"{"}port.toString(){"}"}/api"
+  {"}"}
 )</code></pre>
 
   <h2>Format Comparison</h2>
+  <p>
+    How DixScript compares to common configuration and data formats across key features.
+    Jsonnet and CUE offer programmable configs with imports and type support.
+    HCL (HashiCorp Configuration Language) supports functions and modules in Terraform.
+    None support built-in encryption, compression, or binary blob types.
+  </p>
   <div class="table-scroll">
     <table>
       <thead>
@@ -106,6 +114,9 @@
           <th>JSON</th>
           <th>YAML</th>
           <th>TOML</th>
+          <th>Jsonnet</th>
+          <th>CUE</th>
+          <th>HCL</th>
           <th class="th-dix">DixScript</th>
         </tr>
       </thead>
@@ -113,13 +124,20 @@
         {#each cmpRows as row}
           <tr>
             <td style="font-weight:500">{row.feature}</td>
-            <td class={row.json ? 'td-yes' : 'td-no'}>{row.json ? '✓' : '✗'}</td>
-            <td class={row.yaml ? 'td-yes' : 'td-no'}>{row.yaml ? '✓' : '✗'}</td>
-            <td class={row.toml ? 'td-yes' : 'td-no'}>{row.toml ? '✓' : '✗'}</td>
+            <td class={row.json    ? 'td-yes' : 'td-no'}>{row.json    ? '✓' : '✗'}</td>
+            <td class={row.yaml    ? 'td-yes' : 'td-no'}>{row.yaml    ? '✓' : '✗'}</td>
+            <td class={row.toml   ? 'td-yes' : 'td-no'}>{row.toml    ? '✓' : '✗'}</td>
+            <td class={row.jsonnet ? 'td-yes' : 'td-no'}>{row.jsonnet ? '✓' : '✗'}</td>
+            <td class={row.cue    ? 'td-yes' : 'td-no'}>{row.cue     ? '✓' : '✗'}</td>
+            <td class={row.hcl    ? 'td-yes' : 'td-no'}>{row.hcl     ? '✓' : '✗'}</td>
             <td class="td-dix {row.dix ? 'td-yes' : 'td-no'}">{row.dix ? '✓' : '✗'}</td>
           </tr>
         {/each}
       </tbody>
     </table>
   </div>
+
+  <p style="font-size:0.8125rem; color:var(--muted-foreground); margin-top:-0.5rem">
+    ✓ = native or first-class support &nbsp;·&nbsp; ✗ = not supported or requires external tooling
+  </p>
 </div>
