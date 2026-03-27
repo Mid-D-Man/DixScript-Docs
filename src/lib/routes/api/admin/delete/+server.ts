@@ -1,9 +1,11 @@
 import type { RequestHandler } from '@sveltejs/kit';
 
 function checkAuth(request: Request, platform: App.Platform | undefined): boolean {
-  const adminKey = platform?.env?.ADMIN_KEY;
+  const adminKey = platform?.env?.ADMIN_KEY?.trim();
   if (!adminKey) return false;
-  return request.headers.get('Authorization') === `Bearer ${adminKey}`;
+  const auth = request.headers.get('Authorization') ?? '';
+  const provided = auth.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+  return provided === adminKey && provided.length > 0;
 }
 
 export const DELETE: RequestHandler = async ({ request, platform }) => {
