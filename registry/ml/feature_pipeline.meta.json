@@ -1,0 +1,7 @@
+{
+  "desc": "ML feature pipeline config for user churn prediction. Covers raw features, window aggregations, normalization strategies, and model serving parameters.",
+  "tags": ["ml", "features", "pipeline", "churn", "xgboost", "serving"],
+  "category": "ml",
+  "addedBy": "MidManStudio",
+  "version": "2.1.0"
+}
