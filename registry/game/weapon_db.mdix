@@ -1,0 +1,49 @@
+@CONFIG(
+  version  -> "1.0.0"
+  features -> "advanced"
+)
+
+@ENUMS(
+  WeaponType { SWORD, BOW, STAFF, DAGGER, AXE }
+  Rarity     { COMMON = 0, UNCOMMON = 1, RARE = 2, EPIC = 3, LEGENDARY = 4 }
+  DamageType { PHYSICAL, FIRE, ICE, LIGHTNING, POISON, ARCANE }
+)
+
+@QUICKFUNCS(
+  ~weapon<object>(id<string>, name<string>, type<enum>, rarity<enum>, dmgType<enum>, damage<int>, crit<float>, speed<float>, durability<int>, weight<float>, level<int>) {
+    return {
+      id            = id
+      name          = name
+      weapon_type   = type
+      rarity        = rarity
+      damage_type   = dmgType
+      base_damage   = damage
+      crit_chance   = crit
+      attack_speed  = speed
+      durability    = durability
+      weight        = weight
+      required_level = level
+      sell_price    = damage * 2
+      buy_price     = damage * 8
+      stackable     = false
+      is_quest_item = false
+    }
+  }
+)
+
+@DATA(
+  package_name    = "weapon_db"
+  package_version = "1.0.0"
+
+  weapons::
+    weapon("IRON_SWORD",     "Iron Sword",     WeaponType.SWORD, Rarity.COMMON,    DamageType.PHYSICAL,   25, 0.05f, 1.2f, 100, 3.5f,  1),
+    weapon("STEEL_SWORD",    "Steel Sword",    WeaponType.SWORD, Rarity.UNCOMMON,  DamageType.PHYSICAL,   45, 0.08f, 1.3f, 150, 4.0f, 10),
+    weapon("ELVEN_BLADE",    "Elven Blade",    WeaponType.SWORD, Rarity.RARE,      DamageType.ARCANE,     80, 0.15f, 1.6f, 120, 2.8f, 25),
+    weapon("SHADOWFANG",     "Shadowfang",     WeaponType.SWORD, Rarity.EPIC,      DamageType.POISON,    120, 0.22f, 1.8f, 200, 3.2f, 40),
+    weapon("EXCALIBUR",      "Excalibur",      WeaponType.SWORD, Rarity.LEGENDARY, DamageType.LIGHTNING, 200, 0.35f, 2.0f, 999, 4.5f, 60),
+    weapon("HUNTING_BOW",    "Hunting Bow",    WeaponType.BOW,   Rarity.COMMON,    DamageType.PHYSICAL,   20, 0.12f, 0.8f,  80, 1.5f,  1),
+    weapon("STORM_BOW",      "Storm Bow",      WeaponType.BOW,   Rarity.RARE,      DamageType.LIGHTNING,  70, 0.25f, 1.1f, 140, 2.0f, 28),
+    weapon("OAK_STAFF",      "Oak Staff",      WeaponType.STAFF, Rarity.COMMON,    DamageType.ARCANE,     18, 0.08f, 0.7f,  90, 2.0f,  1),
+    weapon("CRYSTAL_STAFF",  "Crystal Staff",  WeaponType.STAFF, Rarity.RARE,      DamageType.ICE,        65, 0.18f, 0.9f, 130, 2.5f, 22),
+    weapon("ARCANE_SCEPTER", "Arcane Scepter", WeaponType.STAFF, Rarity.EPIC,      DamageType.ARCANE,    110, 0.28f, 1.0f, 180, 2.2f, 45)
+)
