@@ -1,0 +1,72 @@
+@CONFIG(
+  version  -> "1.0.0"
+  features -> "advanced"
+)
+
+@ENUMS(
+  FeatureType  { NUMERIC = 0, CATEGORICAL = 1, TEXT = 2, EMBEDDING = 3, BOOLEAN = 4 }
+  NormStrategy { NONE = 0, MINMAX = 1, ZSCORE = 2, LOG = 3 }
+  Aggregation  { MEAN = 0, SUM = 1, MAX = 2, MIN = 3, COUNT = 4, LAST = 5 }
+)
+
+@QUICKFUNCS(
+  ~feature<object>(name<string>, type<enum>, norm<enum>, required<bool>) {
+    return {
+      name       = name
+      type       = type
+      normalize  = norm
+      required   = required
+      fillna     = type == FeatureType.NUMERIC     ? 0.0   :
+                   type == FeatureType.CATEGORICAL ? "UNK" : null
+    }
+  }
+
+  ~windowFeature<object>(source<string>, agg<enum>, window_days<int>) {
+    return {
+      source      = source
+      aggregation = agg
+      window_days = window_days
+      feature_name = $"{source}_{window_days}d_{agg}"
+    }
+  }
+
+  ~modelConfig<object>(name<string>, version<string>, threshold<float>, batch_size<int>) {
+    return {
+      name       = name
+      version    = version
+      threshold  = threshold
+      batch_size = batch_size
+      endpoint   = $"/models/{name}/v{version}/predict"
+    }
+  }
+)
+
+@DATA(
+  pipeline_name    = "user_churn_v2"
+  pipeline_version = "2.1.0"
+
+  features::
+    feature("user_age_days",    FeatureType.NUMERIC,     NormStrategy.ZSCORE, true),
+    feature("plan_tier",        FeatureType.CATEGORICAL,  NormStrategy.NONE,   true),
+    feature("country_code",     FeatureType.CATEGORICAL,  NormStrategy.NONE,   true),
+    feature("has_mobile_app",   FeatureType.BOOLEAN,      NormStrategy.NONE,   false),
+    feature("support_tickets",  FeatureType.NUMERIC,      NormStrategy.LOG,    false),
+    feature("product_category", FeatureType.CATEGORICAL,  NormStrategy.NONE,   true)
+
+  window_features::
+    windowFeature("page_views",       Aggregation.SUM,  7),
+    windowFeature("page_views",       Aggregation.SUM,  30),
+    windowFeature("login_events",     Aggregation.COUNT, 7),
+    windowFeature("login_events",     Aggregation.COUNT, 30),
+    windowFeature("purchase_amount",  Aggregation.SUM,  30),
+    windowFeature("support_tickets",  Aggregation.COUNT, 14)
+
+  model:
+    production = modelConfig("churn_xgb",  "2.1.0", 0.42f, 512)
+    shadow     = modelConfig("churn_mlp",  "1.0.0", 0.38f, 256)
+
+  serving:
+    max_latency_ms  = 120
+    cache_ttl_s     = 300
+    fallback_score  = 0.5f
+)
