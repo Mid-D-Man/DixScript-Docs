@@ -3,6 +3,7 @@ declare global {
     interface Platform {
       env: {
         MDIX_REGISTRY: R2Bucket;
+        ADMIN_KEY: string;
       };
     }
   }
