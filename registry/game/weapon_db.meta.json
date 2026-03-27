@@ -1,0 +1,7 @@
+{
+  "desc": "Complete RPG weapon database with 10 weapons across 3 types. Demonstrates the QuickFunc deduplication pattern — pricing is a formula, not hardcoded per-item.",
+  "tags": ["weapons", "rpg", "enums", "quickfuncs", "database"],
+  "category": "game",
+  "addedBy": "MidManStudio",
+  "version": "1.0.0"
+}
