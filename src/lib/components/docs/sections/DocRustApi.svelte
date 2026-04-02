@@ -269,7 +269,7 @@ use std::collections::HashMap;
 fn converter_examples() -> Result<(), String> {
     let converter = DixConverter::new();
 
-    // --- HashMap → AST → .mdix text ---
+    // --- HashMap -> AST -> .mdix text ---
     let mut data = HashMap::new();
     data.insert("port".into(),    dixscript::Runtime::DixValue::Int(8080));
     data.insert("host".into(),    dixscript::Runtime::DixValue::String("localhost".into()));
@@ -279,27 +279,27 @@ fn converter_examples() -> Result<(), String> {
     let mdix = converter.to_mdix(&ast, None)?;
     println!("{}", mdix);
 
-    // --- AST → JSON ---
-    let json_pretty = converter.to_json(&ast, true)?;
+    // --- AST -> JSON ---
+    let json_pretty  = converter.to_json(&ast, true)?;
     let json_compact = converter.to_json(&ast, false)?;
 
-    // --- JSON string → AST ---
+    // --- JSON string -> AST ---
     let json_input = r#"{"port": 8080, "host": "localhost"}"#;
     let from_json  = converter.from_json(json_input)?;
 
-    // --- AST → TOML ---
+    // --- AST -> TOML ---
     let toml = converter.to_toml(&ast)?;
 
-    // --- TOML string → AST ---
+    // --- TOML string -> AST ---
     let toml_input = "port = 8080\nhost = \"localhost\"";
     let from_toml  = converter.from_toml(toml_input)?;
 
     // --- Custom format options ---
-    let opts = DixFormatOptions::pretty();      // 4-space indent, sorted keys, type annotations
-    let opts = DixFormatOptions::minified();    // smallest possible output
-    let opts = DixFormatOptions::compact();     // no comments, no @CONFIG section
+    let opts_pretty   = DixFormatOptions::pretty();
+    let opts_minified = DixFormatOptions::minified();
+    let opts_compact  = DixFormatOptions::compact();
 
-    let styled = converter.to_mdix(&ast, Some(&opts))?;
+    let styled = converter.to_mdix(&ast, Some(&opts_pretty))?;
     Ok(())
 }`;
 
@@ -307,10 +307,10 @@ fn converter_examples() -> Result<(), String> {
 
 fn format_options_reference() {
     // Built-in presets:
-    let default   = DixFormatOptions::new();       // indented, 2 spaces, all sections
-    let pretty    = DixFormatOptions::pretty();    // 4 spaces, sorted keys, type annotations
-    let compact   = DixFormatOptions::compact();   // no comments, no @CONFIG
-    let minified  = DixFormatOptions::minified();  // strip everything, smallest output
+    let default   = DixFormatOptions::new();
+    let pretty    = DixFormatOptions::pretty();
+    let compact   = DixFormatOptions::compact();
+    let minified  = DixFormatOptions::minified();
 
     // Manual construction:
     let custom = DixFormatOptions {
@@ -322,15 +322,14 @@ fn format_options_reference() {
         sort_keys:               false,
         include_type_annotations:false,
         escape_unicode:          false,
-        max_line_length:         0,        // 0 = no limit
+        max_line_length:         0,
         include_config_section:  true,
         include_version:         true,
     };
 
-    // Indentation helpers:
     println!("{:?}", custom.get_indentation(1)); // "  "
     println!("{:?}", custom.get_indentation(2)); // "    "
-    println!("{:?}", custom.get_newline());       // "\n"
+    println!("{:?}", custom.get_newline());       // "\\n"
     println!("{:?}", custom.get_space());         // " "
 }`;
 
@@ -349,50 +348,40 @@ fn compactor_examples() {
         )
     "#;
 
-    // Remove all unnecessary whitespace (smallest output)
-    let minified = DixCompactor::minify(source);
-
-    // Remove trailing whitespace, collapse multiple blank lines
-    let compacted = DixCompactor::compact(source);
-
-    // Strip comments only, preserve all structure
+    let minified    = DixCompactor::minify(source);
+    let compacted   = DixCompactor::compact(source);
     let no_comments = DixCompactor::remove_comments(source);
 
-    // Measure how much smaller the result is:
     let ratio = DixCompactor::get_compression_ratio(source, &minified);
     println!("Minified by {:.1}%", ratio * 100.0);
-    // Preserves string contents — whitespace inside strings is never removed
 }`;
 
   const tryFromApi = `use dixscript::Runtime::{DixData, DixValue};
 
-// DixData.get<T>() works for any T that implements TryFrom<DixValue>.
-// The following conversions are provided out of the box:
-
 fn try_from_examples(data: &DixData) -> Result<(), String> {
-    // String ← DixValue::String | Date | Timestamp | HexColor
+    // String <- DixValue::String | Date | Timestamp | HexColor
     let host: String = data.get("server.host")?;
 
-    // i32 ← DixValue::Int | Float | Double | Enum
+    // i32 <- DixValue::Int | Float | Double | Enum
     let port: i32 = data.get("server.port")?;
 
-    // f64 ← DixValue::Int | Float | Double
+    // f64 <- DixValue::Int | Float | Double
     let ratio: f64 = data.get("compression.ratio")?;
 
-    // bool ← DixValue::Bool
+    // bool <- DixValue::Bool
     let debug: bool = data.get("debug")?;
 
-    // Vec<DixValue> ← DixValue::Array
+    // Vec<DixValue> <- DixValue::Array
     let tags: Vec<DixValue> = data.get("tags")?;
 
-    // HashMap<String, DixValue> ← DixValue::Object
+    // HashMap<String, DixValue> <- DixValue::Object
     use std::collections::HashMap;
     let db_obj: HashMap<String, DixValue> = data.get("database")?;
 
     Ok(())
 }
 
-// You can implement TryFrom<DixValue> for your own types:
+// Implement TryFrom<DixValue> for your own types:
 use dixscript::Runtime::DixValue;
 
 struct ServerConfig { host: String, port: i32 }
@@ -415,17 +404,10 @@ impl TryFrom<DixValue> for ServerConfig {
   const selectManyExample = `use dixscript::Runtime::DixData;
 
 fn wildcard_queries(data: &DixData) {
-    // Select all enemy names: "enemies.0.name", "enemies.1.name", ...
     let names: Vec<String> = data.select_many("enemies.*.name");
-
-    // Select all service ports: "services.0.port", "services.1.port", ...
-    let ports: Vec<i32> = data.select_many("services.*.port");
-
-    // Single-level wildcard only — "*" matches exactly one segment
-    // "a.*.b.*.c" would match "a.x.b.y.c" etc.
+    let ports: Vec<i32>    = data.select_many("services.*.port");
     let nested: Vec<String> = data.select_many("config.*.host");
 
-    // get_keys gives direct children of a path (useful for iteration):
     let service_indices = data.get_keys("services");
     for idx in service_indices {
         let path = format!("services.{}.host", idx);
@@ -549,7 +531,8 @@ fn wildcard_queries(data: &DixData) {
     </table>
   </div>
 
-  <h2>TryFrom<DixValue> Implementations</h2>
+  <!-- THE FIX: escaped angle brackets so Svelte doesn't treat <DixValue> as an HTML tag -->
+  <h2>TryFrom&lt;DixValue&gt; Implementations</h2>
   <p>
     <code>DixData.get&lt;T&gt;()</code> works for any <code>T</code> that implements
     <code>TryFrom&lt;DixValue&gt;</code>. The following are provided out of the box.
