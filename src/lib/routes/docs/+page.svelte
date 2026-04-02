@@ -19,6 +19,7 @@
   import DocImports         from '$lib/components/docs/sections/DocImports.svelte';
   import DocCLI             from '$lib/components/docs/sections/DocCLI.svelte';
   import DocFFI             from '$lib/components/docs/sections/DocFFI.svelte';
+  import DocRustApi         from '$lib/components/docs/sections/DocRustApi.svelte';
   import DocBuiltinMath     from '$lib/components/docs/sections/DocBuiltinMath.svelte';
   import DocBuiltinArray    from '$lib/components/docs/sections/DocBuiltinArray.svelte';
   import DocBuiltinDateTime from '$lib/components/docs/sections/DocBuiltinDateTime.svelte';
@@ -28,6 +29,9 @@
   import DocBuiltinRegex    from '$lib/components/docs/sections/DocBuiltinRegex.svelte';
   import DocBuiltinTuple    from '$lib/components/docs/sections/DocBuiltinTuple.svelte';
   import DocBuiltinBlob     from '$lib/components/docs/sections/DocBuiltinBlob.svelte';
+  import DocBuiltinGuid     from '$lib/components/docs/sections/DocBuiltinGuid.svelte';
+  import DocBuiltinIpAddress from '$lib/components/docs/sections/DocBuiltinIpAddress.svelte';
+  import DocBuiltinUniversal from '$lib/components/docs/sections/DocBuiltinUniversal.svelte';
   import DocBuiltinDix      from '$lib/components/docs/sections/DocBuiltinDix.svelte';
 
   let activeSection = 'intro';
@@ -102,11 +106,19 @@
     <DocBuiltinTuple />
   {:else if activeSection === 'builtin-blob'}
     <DocBuiltinBlob />
+  {:else if activeSection === 'builtin-guid'}
+    <DocBuiltinGuid />
+  {:else if activeSection === 'builtin-ipaddress'}
+    <DocBuiltinIpAddress />
+  {:else if activeSection === 'builtin-universal'}
+    <DocBuiltinUniversal />
   {:else if activeSection === 'builtin-dix'}
     <DocBuiltinDix />
   {:else if activeSection === 'cli'}
     <DocCLI />
   {:else if activeSection === 'ffi'}
     <DocFFI />
+  {:else if activeSection === 'rust-api'}
+    <DocRustApi />
   {/if}
 </DocLayout>
