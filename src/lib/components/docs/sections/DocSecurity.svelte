@@ -51,7 +51,7 @@
 // Compile: mdix compile secrets.mdix
 // Decrypt: mdix decrypt secrets.mdix.enc --key /path/to/secrets.mdix.key`;
 
-  const argon2Config = `// Advanced: customise Argon2id KDF parameters (password mode only).
+  const argon2Config = `// Customise Argon2id KDF parameters (password mode only).
 // Higher memory/iterations = more brute-force resistant but slower.
 @SECURITY(
   encryption -> {
@@ -68,16 +68,16 @@
   encryption -> { mode = "keyfile", algorithm = "chacha20-poly1305" }
 
   validation -> {
-    checksum_algorithm = "sha256"   // algorithm used to hash the source
-    verify_on_load     = true       // check hash when decrypting
-    strict             = true       // fail if hash mismatch (vs warn)
+    checksum_algorithm = "sha256"
+    verify_on_load     = true
+    strict             = true       // fail hard on hash mismatch (vs warn)
   }
 )`;
 
   const algorithmTable = [
-    { algo: 'aes128-gcm',         bits: 128, type: 'Symmetric',    note: 'Fast. Sufficient for most use cases.' },
-    { algo: 'aes256-gcm',         bits: 256, type: 'Symmetric',    note: 'Recommended. Strong, widely supported.' },
-    { algo: 'chacha20-poly1305',   bits: 256, type: 'Stream',       note: 'Modern. Preferred on devices without AES hardware acceleration.' },
+    { algo: 'aes128-gcm',        bits: 128, type: 'Symmetric', note: 'Fast. Sufficient for most use cases.' },
+    { algo: 'aes256-gcm',        bits: 256, type: 'Symmetric', note: 'Recommended. Strong, widely supported.' },
+    { algo: 'chacha20-poly1305', bits: 256, type: 'Stream',    note: 'Modern. Preferred on hardware without AES acceleration.' },
   ];
 
   const blockDescriptions = [
@@ -99,6 +99,18 @@
     Blocks within the section are also optional — include only what you need.
   </p>
 
+  <div class="warn-callout">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008z"/>
+    </svg>
+    <span>
+      <strong>Section isolation:</strong> <code>@SECURITY</code> values are limited to
+      string literals, integers, booleans, the keyword <code>auto</code>, and hex literals.
+      Enum references, QuickFunc calls, and expressions are <strong>not</strong> valid in
+      this section — it is processed independently of the QuickFuncs and Data pipelines.
+    </span>
+  </div>
+
   <h2>Full Syntax</h2>
   <pre><code>{fullSyntax}</code></pre>
 
@@ -116,6 +128,28 @@
         {/each}
       </tbody>
     </table>
+  </div>
+
+  <h2>Valid Field Values</h2>
+  <p>
+    Every field inside a <code>@SECURITY</code> block must be one of these literal types.
+    No expressions, enum references, or function calls are accepted.
+  </p>
+  <div class="kv-table">
+    {#each [
+      { key: 'StringLiteral', type: '"…"',      desc: 'A double-quoted string. Used for algorithm names, paths, and labels.' },
+      { key: 'Integer',       type: 'int',       desc: 'A plain integer. Used for kdf_memory, kdf_iterations, kdf_parallelism.' },
+      { key: 'Boolean',       type: 'true/false',desc: 'Used for verify_on_load, strict, force_recompile, allow_downgrade.' },
+      { key: 'auto',          type: 'keyword',   desc: 'Compiler-determined value. Used where the compiler can infer the best setting.' },
+      { key: 'HexLiteral',    type: '0xFF…',     desc: 'A hexadecimal integer literal.' },
+      { key: 'Date',          type: 'YYYY-MM-DD',desc: 'ISO 8601 date literal. Used for the expires field in the metadata block.' },
+    ] as row}
+      <div class="kv-row">
+        <code class="kv-key">{row.key}</code>
+        <span class="kv-type">{row.type}</span>
+        <span class="kv-desc">{row.desc}</span>
+      </div>
+    {/each}
   </div>
 
   <h2>Encryption Algorithms</h2>
