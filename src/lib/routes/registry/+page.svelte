@@ -4,6 +4,8 @@
   import RegistryFilters from '$lib/components/registry/RegistryFilters.svelte';
   import RegistryModal   from '$lib/components/registry/RegistryModal.svelte';
 
+  const MMS_ACCOUNTS = 'https://mms-accounts.pages.dev';
+
   export let data: { files: any[]; error: string | null };
 
   interface Package {
@@ -47,7 +49,6 @@
   let modalError: string | null = null;
 
   async function openView(filename: string) {
-    // Find the package to get its full downloadUrl (includes subpath)
     const pkg = packages.find((p) => p.name === filename);
     if (!pkg) return;
 
@@ -103,6 +104,29 @@
 
   <div class="reg-body">
 
+    <!-- MMS Accounts callout -->
+    <div class="mms-banner">
+      <div class="mms-banner-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="mms-banner-body">
+        <p class="mms-banner-title">Submit Your Own Packages</p>
+        <p class="mms-banner-text">
+          Sign in to <a href={MMS_ACCOUNTS} target="_blank" rel="noopener noreferrer">MmS Accounts</a>
+          to submit <code>.mdix</code> packages for review. You'll need a free MidManStudio account
+          and the DixScript Registry service enabled. Approved packages appear here automatically.
+        </p>
+        <a href={MMS_ACCOUNTS} class="mms-banner-btn" target="_blank" rel="noopener noreferrer">
+          Go to MmS Accounts
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
     {#if data.error}
       <div class="notice notice--error">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -115,7 +139,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
         </svg>
-        <span>No packages found. Add <code>.mdix</code> files with a <code>.meta.json</code> sidecar to <code>registry/</code> and push — the sync workflow uploads them automatically.</span>
+        <span>No packages yet. Submit one via <a href={MMS_ACCOUNTS} target="_blank" rel="noopener noreferrer">MmS Accounts</a>, or add <code>.mdix</code> files to <code>registry/</code> in the repo.</span>
       </div>
     {/if}
 
@@ -133,7 +157,7 @@
       <div class="empty-state">
         <div class="empty-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607Z"/>
           </svg>
         </div>
         <p class="empty-title">No packages match</p>
@@ -168,10 +192,13 @@
         </svg>
         <div>
           <p>
-            To publish a package, add a <code>.mdix</code> file and a <code>.meta.json</code> sidecar
-            to a subdirectory of <code>registry/</code> in the
+            To publish via the web, head to
+            <a href={MMS_ACCOUNTS} target="_blank" rel="noopener noreferrer">MmS Accounts</a>
+            → Services → Enable DixScript Registry → Registry tab.
+            To publish via the repo, add a <code>.mdix</code> + <code>.meta.json</code> sidecar
+            to <code>registry/</code> in the
             <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener">DixScript-Rust repo</a>
-            and push. The sync workflow uploads both to Cloudflare R2 automatically.
+            and push.
           </p>
           <p class="footer-meta-note">
             The <code>.meta.json</code> sidecar holds the description, tags, category and author —
@@ -223,6 +250,39 @@
     font-size: 0.8125rem; color: var(--foreground);
     word-break: break-all; background: none; border: none; padding: 0;
   }
+
+  /* MMS Accounts banner */
+  .mms-banner {
+    display: flex; align-items: flex-start; gap: 1rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-left: 3px solid var(--primary); border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .mms-banner-icon {
+    width: 2.5rem; height: 2.5rem; flex-shrink: 0;
+    background: var(--secondary); border: 1px solid var(--border);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: var(--primary);
+  }
+
+  .mms-banner-body { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; min-width: 0; }
+
+  .mms-banner-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 700; color: var(--foreground); margin: 0; }
+
+  .mms-banner-text { font-size: 0.875rem; color: var(--muted-foreground); line-height: 1.7; margin: 0; }
+  .mms-banner-text a { color: var(--primary); text-decoration: underline; font-weight: 600; }
+  .mms-banner-text code { font-size: 0.8125em; }
+
+  .mms-banner-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--primary); color: var(--primary-foreground);
+    border: none; border-radius: var(--radius);
+    padding: 0.5rem 1.125rem; font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; transition: opacity 0.15s; width: fit-content;
+    font-family: var(--font-sans);
+  }
+  .mms-banner-btn:hover { opacity: 0.88; }
 
   /* Body */
   .reg-body { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 3rem; display: flex; flex-direction: column; gap: 1.5rem; }
@@ -276,5 +336,6 @@
     .reg-hero { padding: 2rem 1rem 1.5rem; }
     .reg-body  { padding: 1.25rem 1rem 2rem; }
     .pkg-grid  { grid-template-columns: 1fr; }
+    .mms-banner { flex-direction: column; }
   }
 </style>
