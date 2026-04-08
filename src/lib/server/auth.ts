@@ -1,6 +1,4 @@
 // src/lib/server/auth.ts
-// Shared admin JWT verification helper for all dixscript-docs admin endpoints.
-// Verifies a Supabase JWT then checks the caller's profile role === 'admin'.
 
 export interface AdminAuthResult {
   ok:      boolean;
@@ -17,7 +15,11 @@ export async function verifyAdminJwt(
   const serviceRoleKey = platform?.env?.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !anonKey || !serviceRoleKey) {
-    return { ok: false, error: 'Server misconfiguration — Supabase credentials not set.' };
+    return {
+      ok:    false,
+      error: 'Server misconfiguration — Supabase credentials not set. ' +
+             `(url=${!!supabaseUrl} anon=${!!anonKey} service=${!!serviceRoleKey})`,
+    };
   }
 
   const authHeader = request.headers.get('Authorization') ?? '';
@@ -26,11 +28,9 @@ export async function verifyAdminJwt(
   }
 
   const jwt = authHeader.slice(7).trim();
-  if (!jwt) {
-    return { ok: false, error: 'Empty token.' };
-  }
+  if (!jwt) return { ok: false, error: 'Empty token.' };
 
-  // Step 1: verify the JWT and extract user id
+  // Step 1 — verify JWT and extract user id
   let userId: string;
   try {
     const userRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
@@ -53,7 +53,7 @@ export async function verifyAdminJwt(
     return { ok: false, error: 'Failed to verify token with Supabase.' };
   }
 
-  // Step 2: check profile role using service_role key (bypasses RLS)
+  // Step 2 — check profile role via service_role key (bypasses RLS)
   try {
     const profileRes = await fetch(
       `${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=role&limit=1`,
