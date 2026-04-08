@@ -1,23 +1,24 @@
 // src/lib/routes/api/admin/r2/upload/+server.ts
-// JWT-authenticated admin upload — replaces the old ADMIN_KEY route for direct admin uploads.
 import type { RequestHandler } from '@sveltejs/kit';
 import { verifyAdminJwt } from '$lib/server/auth';
+import { preflight, json } from '$lib/server/cors';
+
+export const OPTIONS: RequestHandler = async ({ request }) => {
+  return preflight(request) ?? new Response(null, { status: 204 });
+};
 
 export const POST: RequestHandler = async ({ request, platform }) => {
+  const pre = preflight(request);
+  if (pre) return pre;
+
   const auth = await verifyAdminJwt(request, platform);
   if (!auth.ok) {
-    return new Response(JSON.stringify({ ok: false, error: auth.error }), {
-      status: 403,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ ok: false, error: auth.error }, 403, request);
   }
 
   const bucket = platform?.env?.MDIX_REGISTRY;
   if (!bucket) {
-    return new Response(JSON.stringify({ ok: false, error: 'R2 bucket not bound.' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ ok: false, error: 'R2 bucket not bound.' }, 500, request);
   }
 
   try {
@@ -30,24 +31,15 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     const addedBy  = (form.get('addedBy')  as string ?? 'MidManStudio').trim();
 
     if (!file || !file.name.endsWith('.mdix')) {
-      return new Response(JSON.stringify({ ok: false, error: 'A .mdix file is required.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return json({ ok: false, error: 'A .mdix file is required.' }, 400, request);
     }
 
     if (!category) {
-      return new Response(JSON.stringify({ ok: false, error: 'category is required.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return json({ ok: false, error: 'category is required.' }, 400, request);
     }
 
     if (!desc) {
-      return new Response(JSON.stringify({ ok: false, error: 'desc is required.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return json({ ok: false, error: 'desc is required.' }, 400, request);
     }
 
     const filename = file.name;
@@ -64,15 +56,9 @@ export const POST: RequestHandler = async ({ request, platform }) => {
       httpMetadata: { contentType: 'application/json; charset=utf-8' },
     });
 
-    return new Response(JSON.stringify({ ok: true, path: r2Key }), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ ok: true, path: r2Key }, 201, request);
   } catch (err) {
     console.error('[admin r2 upload]', err);
-    return new Response(JSON.stringify({ ok: false, error: 'Upload failed.' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return json({ ok: false, error: 'Upload failed.' }, 500, request);
   }
 };
