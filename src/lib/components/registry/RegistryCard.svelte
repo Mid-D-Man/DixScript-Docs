@@ -11,6 +11,7 @@
   export let uploaded: string | null;
   export let downloadUrl: string;
   export let addedBy: string = 'MidManStudio';
+  export let verifyHash: string = '';
 
   const dispatch = createEventDispatcher<{ view: string }>();
 
@@ -33,7 +34,8 @@
     utils:      'chip--utils',
   };
 
-  let urlCopied = false;
+  let urlCopied  = false;
+  let hashCopied = false;
 
   async function copyUrl(e: MouseEvent) {
     e.stopPropagation();
@@ -48,10 +50,21 @@
     setTimeout(() => (urlCopied = false), 2000);
   }
 
+  async function copyHash(e: MouseEvent) {
+    e.stopPropagation();
+    try { await navigator.clipboard.writeText(verifyHash); }
+    catch {
+      const ta = document.createElement('textarea');
+      ta.value = verifyHash; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    }
+    hashCopied = true;
+    setTimeout(() => (hashCopied = false), 2000);
+  }
+
   function stopProp(e: MouseEvent) { e.stopPropagation(); }
 </script>
 
-<!-- The whole card is clickable to open view -->
 <button class="reg-card" on:click={() => dispatch('view', name)} aria-label="View {displayName}.mdix">
 
   <!-- Head -->
@@ -101,11 +114,44 @@
     </span>
   </div>
 
-  <!-- Import snippet -->
+  <!-- from_cloud URL snippet -->
   <div class="import-snippet">
     <span class="snippet-label">from_cloud URL</span>
     <code class="snippet-url">https://dixscript-docs.pages.dev{downloadUrl}</code>
   </div>
+
+  <!-- SHA-256 verification hash — shown when present -->
+  {#if verifyHash}
+    <div class="hash-block">
+      <div class="hash-header">
+        <span class="hash-label">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+          </svg>
+          SHA-256 Verification Hash
+        </span>
+        <button
+          class="hash-copy-btn"
+          on:click={copyHash}
+          aria-label="Copy SHA-256 hash"
+        >
+          {#if hashCopied}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+            </svg>
+            Copied
+          {:else}
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"/>
+            </svg>
+            Copy Hash
+          {/if}
+        </button>
+      </div>
+      <code class="hash-value">{verifyHash}</code>
+    </div>
+  {/if}
 
   <!-- Click hint + actions -->
   <div class="card-footer">
@@ -130,7 +176,8 @@
           Copy URL
         {/if}
       </button>
-      <a class="action-btn action-btn--dl" href={downloadUrl} download target="_blank" rel="noopener noreferrer" on:click={stopProp} aria-label="Download">
+      <a class="action-btn action-btn--dl" href={downloadUrl} download target="_blank"
+         rel="noopener noreferrer" on:click={stopProp} aria-label="Download">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
         </svg>
@@ -159,14 +206,12 @@
   .reg-card:hover {
     border-color: var(--primary);
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    background: var(--card);
   }
   .reg-card:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
 
-  /* Head */
   .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.625rem; }
   .card-name-row { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
   .card-file-icon {
@@ -179,23 +224,20 @@
   .card-name { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 700; color: var(--foreground); }
   .card-ext  { font-family: var(--font-mono); font-size: 0.9375rem; color: var(--muted-foreground); font-weight: 400; }
 
-  /* Category chip */
   .cat-chip {
     font-size: 0.625rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.08em; padding: 0.2rem 0.625rem; border-radius: 9999px;
     white-space: nowrap; flex-shrink: 0; font-family: var(--font-mono); border: 1px solid;
   }
-  .chip--game      { background: rgba(166,124,82,.12); color: var(--primary);        border-color: rgba(166,124,82,.35); }
-  .chip--ml        { background: rgba(88,166,255,.10); color: #4d82c4;               border-color: rgba(88,166,255,.3);  }
-  .chip--api       { background: rgba(63,185,80,.10);  color: #2e8a41;               border-color: rgba(63,185,80,.3);   }
-  .chip--crypto    { background: rgba(181,74,53,.10);  color: var(--destructive);     border-color: rgba(181,74,53,.3);   }
-  .chip--ecommerce { background: rgba(200,155,50,.10); color: #8a6a1a;               border-color: rgba(200,155,50,.3);  }
+  .chip--game      { background: rgba(166,124,82,.12); color: var(--primary);         border-color: rgba(166,124,82,.35); }
+  .chip--ml        { background: rgba(88,166,255,.10); color: #4d82c4;                border-color: rgba(88,166,255,.3);  }
+  .chip--api       { background: rgba(63,185,80,.10);  color: #2e8a41;                border-color: rgba(63,185,80,.3);   }
+  .chip--crypto    { background: rgba(181,74,53,.10);  color: var(--destructive);      border-color: rgba(181,74,53,.3);   }
+  .chip--ecommerce { background: rgba(200,155,50,.10); color: #8a6a1a;                border-color: rgba(200,155,50,.3);  }
   .chip--utils     { background: var(--secondary);     color: var(--muted-foreground); border-color: var(--border);       }
 
-  /* Desc */
   .card-desc { font-size: 0.875rem; color: var(--muted-foreground); line-height: 1.7; margin: 0; }
 
-  /* Tags */
   .card-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; }
   .tag {
     font-size: 0.6875rem; background: var(--secondary);
@@ -204,7 +246,6 @@
     font-family: var(--font-mono);
   }
 
-  /* Meta */
   .card-meta { display: flex; flex-wrap: wrap; gap: 0.75rem; }
   .meta-item {
     display: flex; align-items: center; gap: 0.3rem;
@@ -212,7 +253,6 @@
   }
   .meta-author { color: var(--primary); font-weight: 600; }
 
-  /* Snippet */
   .import-snippet {
     background: var(--muted); border: 1px solid var(--border);
     border-radius: 6px; padding: 0.5rem 0.75rem;
@@ -227,7 +267,71 @@
     background: none; border: none; padding: 0; font-family: var(--font-mono);
   }
 
-  /* Footer */
+  /* ── Hash block ─────────────────────────────────────────────── */
+  .hash-block {
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--primary);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .hash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .hash-label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  .hash-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.6875rem;
+    font-family: var(--font-mono);
+    color: var(--muted-foreground);
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .hash-copy-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--card);
+  }
+
+  .hash-value {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    color: var(--foreground);
+    word-break: break-all;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1.5;
+    opacity: 0.75;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────────── */
   .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; margin-top: auto; }
 
   .click-hint {
@@ -236,7 +340,6 @@
     font-style: italic; opacity: 0.7;
   }
 
-  /* Actions */
   .card-actions { display: flex; gap: 0.375rem; }
   .action-btn {
     display: inline-flex; align-items: center; gap: 0.35rem;
@@ -247,8 +350,6 @@
     color: var(--foreground); font-family: var(--font-sans);
   }
   .action-btn:hover { background: var(--secondary); border-color: var(--primary); color: var(--primary); }
-
-  .action-btn--copy { }
   .action-btn--dl { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
   .action-btn--dl:hover { opacity: 0.85; color: var(--primary-foreground); background: var(--primary); }
 </style>
