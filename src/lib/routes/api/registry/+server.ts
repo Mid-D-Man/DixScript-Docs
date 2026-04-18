@@ -1,11 +1,13 @@
+// src/lib/routes/api/registry/+server.ts
 import type { RequestHandler } from '@sveltejs/kit';
 
 interface PackageMeta {
-  desc:     string;
-  tags:     string[];
-  category: string;
-  addedBy:  string;
-  version:  string;
+  desc:        string;
+  tags:        string[];
+  category:    string;
+  addedBy:     string;
+  version:     string;
+  verifyHash?: string;
 }
 
 const DEFAULT_META: PackageMeta = {
@@ -22,20 +24,24 @@ export const GET: RequestHandler = async ({ platform }) => {
   if (!bucket) {
     return new Response(
       JSON.stringify({ error: 'R2 bucket not bound', files: [] }),
-      { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
+      {
+        status: 500,
+        headers: {
+          'Content-Type':                'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
     );
   }
 
   try {
     const listed = await bucket.list({ prefix: 'packages/' });
 
-    // Separate .mdix from .meta.json
     const mdixObjects = listed.objects.filter(obj => obj.key.endsWith('.mdix'));
 
-    // For each .mdix, attempt to load its sidecar .meta.json
     const files = await Promise.all(
       mdixObjects.map(async (obj) => {
-        const metaKey  = obj.key.replace('.mdix', '.meta.json');
+        const metaKey = obj.key.replace('.mdix', '.meta.json');
         let meta: PackageMeta = { ...DEFAULT_META };
 
         try {
@@ -48,7 +54,6 @@ export const GET: RequestHandler = async ({ platform }) => {
           // sidecar missing — use defaults
         }
 
-        // e.g. "packages/game/base_types.mdix" → subpath = "game/base_types.mdix"
         const subpath  = obj.key.replace('packages/', '');
         const segments = subpath.split('/');
         const filename = segments[segments.length - 1];
@@ -60,7 +65,12 @@ export const GET: RequestHandler = async ({ platform }) => {
           size:        obj.size,
           uploaded:    obj.uploaded?.toISOString() ?? null,
           downloadUrl: `/api/registry/${subpath}`,
-          ...meta,
+          desc:        meta.desc,
+          tags:        meta.tags,
+          category:    meta.category,
+          addedBy:     meta.addedBy,
+          version:     meta.version,
+          verifyHash:  meta.verifyHash ?? '',
         };
       })
     );
@@ -76,7 +86,13 @@ export const GET: RequestHandler = async ({ platform }) => {
     console.error('[registry list]', err);
     return new Response(
       JSON.stringify({ error: 'Failed to list bucket', files: [] }),
-      { status: 500, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' } }
+      {
+        status: 500,
+        headers: {
+          'Content-Type':                'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }
     );
   }
 };
