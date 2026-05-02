@@ -210,7 +210,7 @@
           Copy URL
         {/if}
       </button>
-      
+      <a
         class="action-btn action-btn--dl"
         href={downloadUrl}
         download
