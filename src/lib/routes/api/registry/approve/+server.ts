@@ -13,6 +13,7 @@ interface RegistrySubmission {
   tags:                  string[];
   version:               string;
   status:                string;
+  sha256:                string | null;
   supabase_storage_path: string | null;
 }
 
@@ -49,7 +50,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     return json({ ok: false, error: 'submission_id is required.' }, 400, request);
   }
 
-  // Fetch submission row
+  // ── Fetch submission ───────────────────────────────────────────
   const subRes = await fetch(
     `${supabaseUrl}/rest/v1/registry_submissions?id=eq.${encodeURIComponent(submissionId)}&select=*&limit=1`,
     {
@@ -79,7 +80,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     return json({ ok: false, error: 'No file path stored for this submission.' }, 422, request);
   }
 
-  // Fetch file from Supabase Storage (R2 pending bucket)
+  // ── Fetch file from Supabase Storage ──────────────────────────
   const storageRes = await fetch(
     `${supabaseUrl}/storage/v1/object/${sub.supabase_storage_path}`,
     {
@@ -96,7 +97,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 
   const fileBytes = await storageRes.arrayBuffer();
 
-  // Write to R2 packages/
+  // ── Write to R2 packages/ ──────────────────────────────────────
   const r2Key   = `packages/${sub.category}/${sub.filename}`;
   const metaKey = r2Key.replace('.mdix', '.meta.json');
 
@@ -104,19 +105,21 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     httpMetadata: { contentType: 'text/plain; charset=utf-8' },
   });
 
+  // Include verifyHash so the registry card can display and copy it
   const meta = {
-    desc:     sub.description,
-    tags:     Array.isArray(sub.tags) ? sub.tags : [],
-    category: sub.category,
-    addedBy:  sub.mid_id,
-    version:  sub.version,
+    desc:       sub.description,
+    tags:       Array.isArray(sub.tags) ? sub.tags : [],
+    category:   sub.category,
+    addedBy:    sub.mid_id,
+    version:    sub.version,
+    verifyHash: sub.sha256 ?? '',
   };
 
   await bucket.put(metaKey, JSON.stringify(meta, null, 2), {
     httpMetadata: { contentType: 'application/json; charset=utf-8' },
   });
 
-  // Delete from Supabase Storage
+  // ── Clean up Supabase Storage ──────────────────────────────────
   try {
     await fetch(
       `${supabaseUrl}/storage/v1/object/${sub.supabase_storage_path}`,
@@ -132,7 +135,7 @@ export const POST: RequestHandler = async ({ request, platform }) => {
     console.warn('[approve] Failed to delete source file from Supabase Storage');
   }
 
-  // Update submission status
+  // ── Update submission row ──────────────────────────────────────
   const updateRes = await fetch(
     `${supabaseUrl}/rest/v1/registry_submissions?id=eq.${encodeURIComponent(submissionId)}`,
     {
