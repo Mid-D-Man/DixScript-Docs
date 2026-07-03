@@ -2,11 +2,13 @@
 <script lang="ts">
   const types = [
     { type: 'int',       example: '42, -17, 0',                    desc: 'Signed 32-bit integer',                    ideal: 'Counts, ports, IDs, version numbers' },
+    { type: 'long',       example: '9_000_000_000L, 0xDEAD_BEEFL',   desc: 'Signed 64-bit integer — L/l suffix, or auto-promoted when a plain integer overflows i32', ideal: 'Timestamps in ms, large IDs (Discord/Snowflake-style), file sizes, counters that can exceed 2^31' },
     { type: 'float',     example: '3.14f, -2.5f, 42f',             desc: 'Single-precision — f suffix required',      ideal: 'Game physics, weights, factors where f suffix makes intent clear' },
     { type: 'double',    example: '3.14159, 2.718e10',              desc: 'Double-precision float',                   ideal: 'Scientific values, monetary ratios, coordinates' },
     { type: 'string',    example: '"hello", \'world\'',             desc: 'Double or single quoted',                  ideal: 'Names, URLs, messages, paths, labels' },
     { type: 'bool',      example: 'true, false',                    desc: 'Boolean',                                  ideal: 'Feature flags, enabled/disabled switches, SSL' },
-    { type: 'hex',       example: '0xFF, 0xDEADBEEF',              desc: 'Hex integer literal',                      ideal: 'Bitmasks, memory addresses, raw byte values' },
+    { type: 'hex',       example: '0xFF, 0xDEAD_BEEF',              desc: 'Hex integer literal (int, or long with L suffix / overflow)', ideal: 'Bitmasks, memory addresses, raw byte values' },
+    { type: 'binary',    example: '0b1010_1100, 0b1111L',           desc: 'Binary integer literal — 0b/0B prefix (int, or long with L suffix / overflow)', ideal: 'Flag bytes, protocol bitfields, permission masks' },
     { type: 'hex color', example: '#FF5733, #F00, #FF5733CC',       desc: 'RGB or RGBA hex colour',                   ideal: 'Theme colours, UI palette, brand values' },
     { type: 'date',      example: '2025-01-15',                     desc: 'ISO 8601 date (no time component)',         ideal: 'Expiry dates, release dates, start/end dates' },
     { type: 'timestamp', example: '2025-01-15T10:30:00Z',           desc: 'ISO 8601 timestamp with optional TZ',      ideal: 'Created-at, updated-at, exact event times' },
@@ -32,6 +34,7 @@
     { feature: 'Regex type',             json: false, yaml: false, toml: false, jsonnet: false, cue: true,  hcl: false, dix: true },
     { feature: 'Tuple type',             json: false, yaml: false, toml: false, jsonnet: false, cue: false, hcl: true,  dix: true },
     { feature: 'Date / Timestamp type',  json: false, yaml: true,  toml: true,  jsonnet: false, cue: true,  hcl: false, dix: true },
+    { feature: '64-bit integer type',    json: false, yaml: true,  toml: true,  jsonnet: false, cue: true,  hcl: false, dix: true },
     { feature: 'Type validation',        json: false, yaml: false, toml: false, jsonnet: false, cue: true,  hcl: false, dix: true },
     { feature: 'Schema enforcement',     json: false, yaml: false, toml: false, jsonnet: false, cue: true,  hcl: false, dix: true },
   ];
@@ -39,11 +42,15 @@
   const usageExample = `@DATA(
   // Practical examples of each type
   port<int>          = 8080
+  session_id<long>   = 9_000_000_000L       // explicit L suffix
+  file_size<long>    = 3_000_000_000        // auto-promoted — overflows i32
   ratio<float>       = 0.75f
   pi<double>         = 3.14159265358979
   name<string>       = "MyService"
   enabled<bool>      = true
-  flags<hex>         = 0b00001111           // also valid: 0x0F
+  mask<hex>          = 0xFF_FF              // underscores allowed as a separator
+  flags<hex>         = 0b0000_1111          // binary literal, same <hex> annotation
+  wide_flags<long>   = 0b1111_0000_1111L    // binary + L suffix -> Long
   brand<hex>         = #2D6A9F
   launch<date>       = 2025-06-01
   built<timestamp>   = 2025-01-15T08:00:00Z
@@ -55,13 +62,37 @@
   env<enum>          = Environment.PROD
   optional           = null
 )`;
+
+  const numericRulesExample = `// UNDERSCORE SEPARATORS — any integer, hex, or binary literal may
+// contain '_' between digits as a visual separator. Stripped before parsing.
+big     = 1_000_000        // Integer(1000000)
+mask    = 0xFF_FF          // Integer(65535)
+flags   = 0b1111_0000      // Integer(240)
+// NOTE: underscores are NOT supported inside date/timestamp literals.
+
+// LONG (64-BIT) — append L or l to any integer literal (decimal, hex, or
+// binary). Valid combos: decimal+L, hex+L, binary+L.
+users   = 9_000_000_000L     // Long(9000000000)
+addr    = 0xDEAD_BEEFL       // Long(3735928559)
+wide    = 0b1111_0000_1111L  // Long(3855)
+
+// AUTO-PROMOTION — a plain integer with no suffix that overflows i32 is
+// silently emitted as Long. No 'L' needed:
+huge    = 3_000_000_000      // Long(3000000000)
+big_hex = 0xFF_FF_FF_FF      // Long(4294967295) — overflows i32
+
+// FLOAT vs DOUBLE — 'f'/'F' suffix -> f32 (Float). No suffix + decimal
+// point -> f64 (Double). 'L' and 'f'/'F' are mutually exclusive; putting
+// 'L' on a float literal is a lex error.
+rate    = 3.14f              // Float (f32)
+pi      = 3.14159265358979   // Double (f64)`;
 </script>
 
 <div class="doc-page">
   <h1>Data Types</h1>
   <p class="page-lead">
     Types are inferred from the assigned value. Add explicit annotations
-    (<code>&lt;int&gt;</code>, <code>&lt;float&gt;</code>, <code>&lt;enum&gt;</code> etc.)
+    (<code>&lt;int&gt;</code>, <code>&lt;long&gt;</code>, <code>&lt;float&gt;</code>, <code>&lt;enum&gt;</code> etc.)
     where you want the compiler to enforce a specific type. The table below shows each
     type, its syntax, and what it is best suited for.
   </p>
@@ -86,6 +117,17 @@
 
   <h2>Usage Examples</h2>
   <pre><code>{usageExample}</code></pre>
+
+  <h2>Numeric Literal Rules</h2>
+  <p>
+    Decimal, hex, and binary integer literals all follow the same three rules:
+    underscore separators, an optional <code>L</code>/<code>l</code> suffix for
+    64-bit values, and silent auto-promotion to <code>long</code> on overflow.
+    <code>long</code> uses the same <code>&lt;hex&gt;</code> annotation family as
+    <code>int</code> for its hex/binary forms — the distinction is the value's
+    magnitude and suffix, not a separate annotation.
+  </p>
+  <pre><code>{numericRulesExample}</code></pre>
 
   <h2>Interpolated Strings</h2>
   <p>
