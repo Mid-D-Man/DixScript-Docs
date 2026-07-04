@@ -356,6 +356,134 @@ fn compactor_examples() {
     println!("Minified by {:.1}%", ratio * 100.0);
 }`;
 
+  const schemaApi = `use dixscript::Runtime::{SchemaBuilder, ExpectedValueType, ValidationErrorKind};
+
+let schema = SchemaBuilder::new()
+    .require_string("app_name")
+    .require_int("server.port")
+    .require_bool("ssl")
+    .require_long("session_id")
+    .require_array("enemies")
+    .require_enum("log_level")
+    .optional_string("description")
+    .optional_bool("debug")
+    // Generic form for any type, or with a custom validator closure:
+    .require("custom.path", ExpectedValueType::Float)
+    .require_with("port", ExpectedValueType::Int, |v| {
+        matches!(v.as_i64(), Some(p) if p > 1024)
+    })
+    .with_description("basic app config");
+
+let report = schema.validate(&data);
+// or, equivalently: let report = data.validate_schema(schema);
+
+if !report.is_valid() {
+    for kind_err in report.errors_of_kind(&ValidationErrorKind::TypeMismatch) {
+        println!("{}", kind_err);
+    }
+    println!("{} failed field(s): {:?}", report.error_count(), report.failed_paths());
+}`;
+
+  const mergeApi = `use dixscript::Runtime::{MdixMerger, MdixMergeInput, MdixMergeStrategy, ArrayMergeStrategy};
+
+// Two sources
+let merger = MdixMerger::new()
+    .with_strategy(MdixMergeStrategy::WeightedPriority) // or PrimaryWins / SecondaryWins / ThrowOnConflict
+    .with_array_strategy(ArrayMergeStrategy::ConcatDedup); // or Concat / Replace
+
+let primary   = MdixMergeInput::new(base_ast).with_weight(1.0).with_label("base");
+let secondary = MdixMergeInput::new(overlay_ast).with_weight(0.5).with_label("overlay");
+
+let result = merger.merge(primary, secondary); // MdixMergeResult
+let merged = result.unwrap(); // panics if a conflict was unresolved under ThrowOnConflict
+
+// Or handle conflicts explicitly instead of unwrapping:
+match result.into_result() {
+    Ok((merged, conflicts)) => {
+        for c in &conflicts { println!("resolved: {:?}", c); }
+    }
+    Err(msg) => eprintln!("merge failed: {msg}"),
+}
+
+// Any number of sources, left to right
+let combined = merger.merge_all(vec![primary, secondary, tertiary]);
+
+// Straight from files
+let from_files = MdixMerger::new().merge_files(&["base.mdix", "overrides.mdix"])?;
+let weighted   = MdixMerger::new().merge_files_weighted(&[("base.mdix", 1.0), ("local.mdix", 0.8)])?;
+
+// Guarantees regardless of input ordering or strategy:
+// - Tier-1 @DATA properties always precede tier-2 in the merged output.
+// - AST-level merge — Long/Float/Double/ScientificNotation/EnumValue survive
+//   exactly, unlike a JSON round-trip merge.
+// - TableProperty / SecurityEntry / EnumDeclaration sharing a path/name are
+//   deep-merged field-by-field rather than one replacing the other outright.`;
+
+  const serializeApi = `use dixscript::Runtime::{DixDataBuilder, DixSerialize, DataBuilder, dix_set_str, dix_set_int};
+
+struct ServerConfig { host: String, port: i32 }
+
+impl DixSerialize for ServerConfig {
+    fn to_dix(&self, d: &mut DataBuilder, prefix: &str) -> Result<(), String> {
+        dix_set_str(d, prefix, "host", &self.host);
+        dix_set_int(d, prefix, "port", self.port);
+        Ok(())
+    }
+}
+
+let data = DixDataBuilder::new()
+    .serialize_at("server", &ServerConfig { host: "localhost".into(), port: 8080 })
+    .build()
+    .unwrap();
+
+// Scalar arrays (Vec<i32>, Vec<String>, Vec<bool>, ...) implement DixSerialize
+// directly via a blanket impl, writing a GroupArray at prefix:
+let data = DixDataBuilder::new()
+    .serialize_at("scores", &vec![10, 20, 30])
+    .build()
+    .unwrap();
+
+// Struct arrays use dix_set_array_of — the write-side mirror of dix_array_of:
+let data = DixDataBuilder::new()
+    .data(|d| {
+        d.with_string("title", "Cluster");
+        dix_set_array_of(d, "", "servers", &servers).unwrap();
+    })
+    .build()
+    .unwrap();`;
+
+  const deserializeApi = `use dixscript::Runtime::{DixData, DixDeserialize, dix_get, dix_get_or};
+
+#[derive(Debug)]
+pub struct ServerConfig {
+    pub host: String,
+    pub port: i32,
+    pub ssl:  bool,
+}
+
+impl DixDeserialize for ServerConfig {
+    fn from_dix(data: &DixData, prefix: &str) -> Result<Self, String> {
+        Ok(ServerConfig {
+            host: dix_get(data, prefix, "host")?,
+            port: dix_get(data, prefix, "port")?,
+            ssl:  dix_get_or(data, prefix, "ssl", false),
+        })
+    }
+}
+
+// .mdix source:
+// @DATA(
+//   server: host = "api.example.com", port = 443, ssl = true
+// )
+
+let loader = DixLoader::new();
+let data   = loader.load_text("config.mdix", &DixLoadOptions::new())?;
+let server: ServerConfig = data.deserialize_at("server")?;
+println!("{}", server.host); // api.example.com
+
+// All field paths inside from_dix() are resolved relative to prefix.
+// Pass "" to deserialize_at() to read from the top level instead of a nested path.`;
+
   const tryFromApi = `use dixscript::Runtime::{DixData, DixValue};
 
 fn try_from_examples(data: &DixData) -> Result<(), String> {
@@ -597,4 +725,116 @@ fn wildcard_queries(data: &DixData) {
 
   <h2>DixCompactor — Minification</h2>
   <pre><code>{compactorApi}</code></pre>
+
+  <h2>SchemaBuilder — Validation</h2>
+  <p>
+    Fluent, declarative validation against a loaded <code>DixData</code>.
+    Typed <code>require_*</code>/<code>optional_*</code> shorthands cover
+    the common cases; <code>require</code>/<code>require_with</code> take
+    an <code>ExpectedValueType</code> directly (with an optional validator
+    closure) for anything else.
+  </p>
+  <pre><code>{schemaApi}</code></pre>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: '.require(path, type) / .require_with(path, type, f)', d: 'Declare a required field, optionally with a custom validator closure over the DixValue.' },
+          { m: '.require_string/int/long/float/double/bool/array/object/enum(path)', d: 'Typed shorthands for .require().' },
+          { m: '.optional(path, type) / .optional_with(path, type, f)', d: 'Same as require, but absence is not an error.' },
+          { m: '.optional_string/int/long/float/double/bool/array/object(path)', d: 'Typed shorthands for .optional().' },
+          { m: '.with_description(text)',   d: 'Attach a description to the schema for tooling/error output.' },
+          { m: '.field_count() / .paths()', d: 'Introspect the declared schema.' },
+          { m: '.validate(&data)',          d: 'Run validation — returns ValidationReport.' },
+          { m: 'data.validate_schema(schema)', d: 'Same as .validate(), called from the DixData side instead.' },
+          { m: 'report.is_valid()',         d: 'True if every required field matched and no type mismatches occurred.' },
+          { m: 'report.error_count()',      d: 'Total validation errors.' },
+          { m: 'report.errors_of_kind(kind)', d: 'Filter errors by ValidationErrorKind.' },
+          { m: 'report.failed_paths()',     d: 'Paths that failed validation.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>MdixMerger — Combining Databases</h2>
+  <p>
+    AST-level merging — no JSON round-trip, so <code>Long</code>,
+    <code>Float</code>, <code>Double</code>, <code>ScientificNotation</code>,
+    and <code>EnumValue</code> all survive a merge exactly as-is. The
+    two-tier <code>@DATA</code> ordering guarantee is enforced by
+    construction in the merged output regardless of input order.
+  </p>
+  <pre><code>{mergeApi}</code></pre>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Strategy</th><th>Behaviour</th></tr></thead>
+      <tbody>
+        {#each [
+          { s: 'MdixMergeStrategy::WeightedPriority', d: 'Default. Each source carries a weight in [0.0, 1.0] — higher wins. Equal-weight ties fall back to primary (lower index) wins.' },
+          { s: 'MdixMergeStrategy::PrimaryWins',       d: 'The source with the lower index always wins conflicts.' },
+          { s: 'MdixMergeStrategy::SecondaryWins',      d: 'The source with the higher index always wins conflicts.' },
+          { s: 'MdixMergeStrategy::ThrowOnConflict',    d: 'Any conflicting key returns Err instead of picking a winner.' },
+          { s: 'ArrayMergeStrategy::ConcatDedup',       d: 'Default for GroupArray entries sharing a path. Winner\'s items first, exact-duplicate primitives removed.' },
+          { s: 'ArrayMergeStrategy::Concat',            d: 'Concatenate everything, keep duplicates.' },
+          { s: 'ArrayMergeStrategy::Replace',           d: 'Winner\'s array entirely replaces the loser\'s.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.s}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>DixSerialize — Writing Structs</h2>
+  <p>
+    The write-side mirror of <code>DixDeserialize</code> below. Implement
+    <code>to_dix</code> for a struct and hand it to
+    <code>DixDataBuilder::serialize</code> /
+    <code>DixDataBuilder::serialize_at</code>. Scalar arrays get a blanket
+    impl for free; struct arrays go through <code>dix_set_array_of</code>.
+  </p>
+  <pre><code>{serializeApi}</code></pre>
+
+  <h2>DixDeserialize — Reading Structs</h2>
+  <p>
+    Implement <code>from_dix</code> for a struct, then call
+    <code>DixData::deserialize_at</code> (or <code>deserialize</code> for
+    the top level) to read it back out. All field paths inside
+    <code>from_dix</code> resolve relative to the given <code>prefix</code>.
+  </p>
+  <pre><code>{deserializeApi}</code></pre>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Helper</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'dix_get::<T>(data, prefix, field)',        d: 'Read a required field, resolved as prefix.field. Errors if missing/wrong type.' },
+          { m: 'dix_get_or::<T>(data, prefix, field, def)', d: 'Read an optional field with a fallback default.' },
+          { m: 'dix_nested::<T>(data, prefix, field)',      d: 'Read a nested struct implementing DixDeserialize.' },
+          { m: 'dix_array_of::<T>(data, prefix, field)',    d: 'Read a GroupArray of structs implementing DixDeserialize.' },
+          { m: 'dix_value(data, prefix, field)',            d: 'Raw Option<&DixValue> access, bypassing the trait system.' },
+          { m: 'dix_path(prefix, field)',                   d: 'Utility — joins prefix and field into a dotted path.' },
+          { m: 'dix_set_str/int/long/float/double/bool(d, prefix, field, value)', d: 'Write-side primitives, mirror of the dix_get_* family.' },
+          { m: 'dix_set_nested::<T>(d, prefix, field, value)', d: 'Write a nested struct implementing DixSerialize.' },
+          { m: 'dix_set_array_of::<T>(d, prefix, field, values)', d: 'Write a GroupArray of structs implementing DixSerialize.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
