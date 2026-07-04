@@ -20,6 +20,13 @@
   import DocCLI             from '$lib/components/docs/sections/DocCLI.svelte';
   import DocFFI             from '$lib/components/docs/sections/DocFFI.svelte';
   import DocRustApi         from '$lib/components/docs/sections/DocRustApi.svelte';
+  import DocCSharpApi       from '$lib/components/docs/sections/DocCSharpApi.svelte';
+  import DocGoApi           from '$lib/components/docs/sections/DocGoApi.svelte';
+  import DocJavaApi         from '$lib/components/docs/sections/DocJavaApi.svelte';
+  import DocPhpApi          from '$lib/components/docs/sections/DocPhpApi.svelte';
+  import DocPythonApi       from '$lib/components/docs/sections/DocPythonApi.svelte';
+  import DocWasmApi         from '$lib/components/docs/sections/DocWasmApi.svelte';
+  import DocOdinApi         from '$lib/components/docs/sections/DocOdinApi.svelte';
   import DocBuiltinMath     from '$lib/components/docs/sections/DocBuiltinMath.svelte';
   import DocBuiltinArray    from '$lib/components/docs/sections/DocBuiltinArray.svelte';
   import DocBuiltinDateTime from '$lib/components/docs/sections/DocBuiltinDateTime.svelte';
@@ -120,5 +127,19 @@
     <DocFFI />
   {:else if activeSection === 'rust-api'}
     <DocRustApi />
+  {:else if activeSection === 'csharp-api'}
+    <DocCSharpApi />
+  {:else if activeSection === 'go-api'}
+    <DocGoApi />
+  {:else if activeSection === 'java-api'}
+    <DocJavaApi />
+  {:else if activeSection === 'php-api'}
+    <DocPhpApi />
+  {:else if activeSection === 'python-api'}
+    <DocPythonApi />
+  {:else if activeSection === 'wasm-api'}
+    <DocWasmApi />
+  {:else if activeSection === 'odin-api'}
+    <DocOdinApi />
   {/if}
 </DocLayout>
