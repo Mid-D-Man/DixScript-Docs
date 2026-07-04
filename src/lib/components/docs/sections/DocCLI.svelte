@@ -15,9 +15,12 @@ mdix compile secrets.mdix --password     # supply password for DLM password mode
   const decryptCmds = `# Decrypt a .mdix.enc file
 mdix decrypt secrets.mdix.enc                            # auto-detect key file
 mdix decrypt secrets.mdix.enc --key /vault/secrets.mdix.key
-mdix decrypt secrets.mdix.enc --password                 # prompt for password
-mdix decrypt secrets.mdix.enc --password "mypassword"   # inline (avoid in prod)
-mdix decrypt secrets.mdix.enc -o ./output               # output directory`;
+mdix decrypt secrets.mdix.enc --password "mypassword"    # inline value (avoid in prod)
+mdix decrypt secrets.mdix.enc --password-prompt          # force an interactive prompt
+mdix decrypt secrets.mdix.enc -o ./output                # output directory
+
+# --password and --password-prompt conflict — pass only one. With neither,
+# MDIX_DLM_PASSWORD is checked first, then the tool prompts interactively.`;
 
   const convertCmds = `# Convert between .mdix and other formats
 mdix convert config.mdix --to json
@@ -26,6 +29,28 @@ mdix convert config.mdix --to toml
 mdix convert data.json --to dixscript
 mdix convert data.json --to mdix               # 'mdix' and 'dixscript' are aliases
 mdix convert config.toml --to mdix`;
+
+  const mergeCmds = `# Merge two or more .mdix (or json/toml) sources into one file.
+# Order matters: it's the tie-breaker for "weighted" strategy ties, and the
+# sole rule for "primary" / "secondary".
+mdix merge base.mdix overrides.mdix -o merged.mdix
+
+# Strategy: weighted (default) | primary | secondary | throw
+mdix merge base.mdix env.mdix local.mdix --strategy primary
+mdix merge base.mdix overrides.mdix --strategy throw        # any conflict is an error
+
+# Explicit weights (comma-separated, one per file) — only used by "weighted"
+mdix merge base.mdix overrides.mdix --weights 1.0,0.5
+
+# Array merge strategy for GroupArray / array-valued properties:
+#   concat-dedup (default) | concat | replace
+mdix merge base.mdix overrides.mdix --array-strategy concat
+
+# Output format inferred from -o's extension, or --to if -o is omitted
+mdix merge base.mdix overrides.mdix --to json -o merged.json
+
+# Labels for conflict reports, and printing every resolved conflict
+mdix merge base.mdix overrides.mdix --labels base,overrides --show-conflicts`;
 
   const createCmds = `# Scaffold a new .mdix file from a built-in template
 mdix create config.mdix                         # basic template (default)
@@ -72,6 +97,22 @@ mdix config set color_output false
 mdix config set key_search_paths /etc/keys,/vault
 mdix config reset default_indent_size   # reset one key to default
 mdix config reset                       # reset all keys to defaults`;
+
+  const debugCmds = `# [DEBUG] Print the full token stream — positions + section tags.
+# Verifies @CONFIG tokens carry SectionId::Config and every section's
+# tokens are correctly stamped. Use to tell tokenizer bugs from parser bugs.
+mdix debug-tokens config.mdix
+mdix debug-tokens config.mdix --section-filter DATA
+
+# [DEBUG] Print the parsed (and optionally enhanced) AST
+mdix debug-ast config.mdix
+mdix debug-ast config.mdix --section DATA
+
+# [DEBUG] Print the symbol table from semantic analysis — registered enums,
+# QuickFuncs, @DATA variables, namespaces, and builtin statics.
+mdix debug-symbols config.mdix
+mdix debug-symbols config.mdix --section ENUMS
+mdix debug-symbols config.mdix --section DATA --verbose`;
 
   const globalFlags = `# Global flags accepted by every command:
 --verbose       # per-stage timing and extra detail
@@ -142,20 +183,26 @@ mdix --no-color inspect config.mdix`;
   }
 }`;
 
-  const installCmd = `# Via cargo (not yet published to crates.io — build from source):
-cargo install --path ./mdix-cli
+  const installCmd = `# Published on crates.io:
+cargo install mdix-cli
 
-# Or build the debug binary directly:
-cargo build -p mdix-cli
-# Binary at: ./target/debug/mdix`;
+# Or build from source:
+git clone https://github.com/Mid-D-Man/DixScript-Rust
+cd DixScript-Rust
+cargo build -p mdix-cli --release
+# binary at target/release/mdix`;
 </script>
 
 <div class="doc-page">
   <h1>CLI Reference</h1>
   <p class="page-lead">
-    The <code>mdix</code> command-line tool. Most commands are implemented and functional
-    via the C# prototype. The Rust port's CLI is progressing — track status on the
-    <a href="/results">CI Results</a> page.
+    The <code>mdix</code> command-line tool. Feature-complete in the Rust core
+    and published on crates.io — <code>validate</code>, <code>compile</code>,
+    <code>decrypt</code>, <code>convert</code>, <code>merge</code>,
+    <code>create</code>, <code>format</code>, <code>compact</code>,
+    <code>inspect</code>, <code>key</code>, and <code>config</code>, plus
+    three development-only <code>debug-*</code> commands. Track build/test
+    status on the <a href="/results">CI Results</a> page.
   </p>
 
   <h2>Installation</h2>
@@ -212,6 +259,16 @@ cargo build -p mdix-cli
     are accepted as target format names for the native format.
   </p>
   <pre><code>{convertCmds}</code></pre>
+
+  <h2>merge</h2>
+  <p>
+    Merge two or more <code>.mdix</code> (or JSON/TOML) sources into one
+    file. Not yet listed in mdix-cli's own command table, but implemented
+    and registered as a real subcommand — order of the input files matters
+    for every strategy except <code>weighted</code> with explicit
+    <code>--weights</code>.
+  </p>
+  <pre><code>{mergeCmds}</code></pre>
 
   <h2>create</h2>
   <p>Scaffold a new <code>.mdix</code> file from a built-in template.</p>
@@ -279,6 +336,15 @@ cargo build -p mdix-cli
     </table>
   </div>
 
+  <h2>debug-tokens / debug-ast / debug-symbols <span class="dev-badge">development</span></h2>
+  <p>
+    Three inspection commands for compiler development, not typical
+    end-user workflows: dump the raw token stream, the parsed AST, or the
+    symbol table produced by semantic analysis. Useful when diagnosing
+    whether a bug is in the tokenizer, the parser, or semantic analysis.
+  </p>
+  <pre><code>{debugCmds}</code></pre>
+
   <h2>JSON Output Envelope</h2>
   <p>
     All commands support <code>--json</code>. Successful results go to stdout inside a
@@ -286,3 +352,19 @@ cargo build -p mdix-cli
   </p>
   <pre><code>{jsonEnvelope}</code></pre>
 </div>
+
+<style>
+  .dev-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: rgba(160, 160, 160, 0.14);
+    color: var(--muted-foreground);
+    border: 1px solid rgba(160, 160, 160, 0.35);
+    vertical-align: middle;
+    margin-left: 0.4rem;
+  }
+</style>
