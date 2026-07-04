@@ -26,6 +26,14 @@ export const docsSections = [
   { id: 'types',       label: 'Data Types'          },
   { id: 'cli',         label: 'CLI Reference'       },
   { id: 'ffi',         label: 'Language Bindings'   },
+  { id: 'rust-api',    label: 'Rust Runtime API'    },
+  { id: 'csharp-api',  label: 'C# Runtime API'      },
+  { id: 'go-api',      label: 'Go Runtime API'      },
+  { id: 'java-api',    label: 'Java Runtime API'    },
+  { id: 'php-api',     label: 'PHP Runtime API'     },
+  { id: 'python-api',  label: 'Python Runtime API'  },
+  { id: 'wasm-api',    label: 'WASM / JS Runtime API' },
+  { id: 'odin-api',    label: 'Odin Runtime API'    },
 ];
 
 export const CI_BASE = 'https://mid-d-man.github.io/DixScript-Rust';
