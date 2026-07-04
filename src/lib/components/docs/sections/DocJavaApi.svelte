@@ -164,7 +164,7 @@ c.jsonRoundTrip(db);   // db -> JSON -> db, useful for deep-cloning a Database`;
   <h2>Kotlin</h2>
   <p>
     No separate Kotlin package — the Java API is used as-is. Kotlin's
-    <code>.use { }</code> extension on <code>AutoCloseable</code> works
+    <code>.use &#123; &#125;</code> extension on <code>AutoCloseable</code> works
     directly in place of try-with-resources:
   </p>
   <pre><code>{kotlinExample}</code></pre>
