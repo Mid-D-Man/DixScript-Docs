@@ -42,22 +42,28 @@
   let status: 'idle' | 'running' | 'done' | 'error' = 'idle';
   let showPicker = false;
 
-  function run() {
-    status = 'running';
-    setTimeout(() => {
-      output = `// WASM runtime not yet connected — simulated parse preview:
+  // Loaded lazily on first Run — keeps the WASM module out of the initial
+  // page bundle, and this file only ever runs client-side anyway (see
+  // +page.ts -> ssr = false).
+  let corePromise: Promise<typeof import('@dixscript/core')> | null = null;
 
-{
-  "game_title": "DixScript Demo",
-  "version": "1.0.0",
-  "loot": [
-    { "id": "I001", "name": "Rusty Sword",   "rarity": { "name": "COMMON",    "value": 0 }, "value": 25,  "sell": 12,  "buy": 100  },
-    { "id": "I002", "name": "Mystic Staff",  "rarity": { "name": "RARE",      "value": 2 }, "value": 120, "sell": 60,  "buy": 480  },
-    { "id": "I003", "name": "Dragon Shield", "rarity": { "name": "LEGENDARY", "value": 4 }, "value": 500, "sell": 250, "buy": 2000 }
-  ]
-}`;
-      status = 'done';
-    }, 700);
+  async function run() {
+    status = 'running';
+    try {
+      if (!corePromise) corePromise = import('@dixscript/core');
+      const { MdixDatabase } = await corePromise;
+
+      const db = MdixDatabase.loadStr(source);
+      try {
+        output = db.toJson(true);
+        status = 'done';
+      } finally {
+        db.free(); // WASM memory isn't garbage collected
+      }
+    } catch (err) {
+      output = err instanceof Error ? err.message : String(err);
+      status = 'error';
+    }
   }
 
   function reset() {
@@ -86,12 +92,12 @@
 
   <div class="pg-notice">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;color:var(--primary)">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286z"/>
     </svg>
     <span>
-      WASM runtime not yet published. Editor is fully functional — execution is wired in once
-      <code>mdix-wasm</code> ships. See
-      <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">mdix-wasm on GitHub</a>.
+      Running on <code>@dixscript/core</code>, compiled from the Rust core to WebAssembly —
+      loaded and executed entirely in your browser, nothing is sent to a server.
+      See it on <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">GitHub</a>.
     </span>
   </div>
 
