@@ -1,5 +1,7 @@
 <!-- src/lib/components/docs/sections/DocOdinApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
+
   const install = `# 1. Build the native library from DixScript-Rust:
 cargo build --release -p mdix-ffi
 # Linux:   target/release/libmdix_ffi.so
@@ -142,10 +144,10 @@ b2 := mdix.builder_from_database(db)`;
   </p>
 
   <h2>Build &amp; Link</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="bash" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="odin" />
 
   <h2>The (value, ok) Pattern</h2>
   <p>
@@ -154,19 +156,19 @@ b2 := mdix.builder_from_database(db)`;
     caller-owned string — you <code>delete()</code> it. Values passed in go
     through <code>context.temp_allocator</code>.
   </p>
-  <pre><code>{valueOkPattern}</code></pre>
+  <CodeBlock code={valueOkPattern} lang="odin" />
 
   <h2>Loading</h2>
-  <pre><code>{loadApi}</code></pre>
+  <CodeBlock code={loadApi} lang="odin" />
 
   <h2>Reading Values</h2>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="odin" />
 
   <h2>Export &amp; Source Transforms</h2>
-  <pre><code>{exportApi}</code></pre>
+  <CodeBlock code={exportApi} lang="odin" />
 
   <h2>Building Programmatically</h2>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="odin" />
 
   <h2>vs the raw C API</h2>
   <div class="table-scroll">
