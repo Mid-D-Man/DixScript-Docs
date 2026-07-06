@@ -21,8 +21,6 @@
     "vite-plugin-top-level-await": "^1.4.0",
     "vite-plugin-wasm": "^3.3.0"
   },
-  "dependencies": {
-    "@dixscript/core": "^1.0.0"
-  },
+  "dependencies": {},
   "type": "module"
 }
