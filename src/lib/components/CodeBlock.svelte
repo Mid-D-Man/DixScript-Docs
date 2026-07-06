@@ -2,11 +2,13 @@
 <script lang="ts">
   import Prism from 'prismjs';
   // Prism's official language components — each registers itself on import.
+  import 'prismjs/components/prism-markup';
   import 'prismjs/components/prism-clike';
   import 'prismjs/components/prism-rust';
   import 'prismjs/components/prism-csharp';
   import 'prismjs/components/prism-go';
   import 'prismjs/components/prism-java';
+  import 'prismjs/components/prism-kotlin';
   import 'prismjs/components/prism-php';
   import 'prismjs/components/prism-python';
   import 'prismjs/components/prism-lua';
