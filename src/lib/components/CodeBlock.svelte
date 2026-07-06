@@ -3,6 +3,10 @@
   import Prism from 'prismjs';
   // Prism's official language components — each registers itself on import.
   import 'prismjs/components/prism-markup';
+  // php's component registers a global before-tokenize hook that expects
+  // markup-templating to already exist — without this, EVERY highlight()
+  // call throws, not just php ones, since the hook runs unconditionally.
+  import 'prismjs/components/prism-markup-templating';
   import 'prismjs/components/prism-clike';
   import 'prismjs/components/prism-rust';
   import 'prismjs/components/prism-csharp';
