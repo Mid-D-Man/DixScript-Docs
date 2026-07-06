@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocPythonApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `pip install midmanstudio-mdix
 
 # Pre-built wheels — no Rust toolchain required.
@@ -235,10 +236,10 @@ cfg2 = MdixMLConfig.builder()  # -> MdixBuilder pre-shaped for ML config convent
   </p>
 
   <h2>Install</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="bash" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="python" />
 
   <h2>MdixResult — Railway Programming</h2>
   <p>
@@ -247,13 +248,13 @@ cfg2 = MdixMLConfig.builder()  # -> MdixBuilder pre-shaped for ML config convent
     operations with <code>and_then</code>/<code>map</code>/<code>ensure</code>
     instead of nested try/except.
   </p>
-  <pre><code>{railway}</code></pre>
+  <CodeBlock code={railway} lang="python" />
 
   <h2>Loading</h2>
-  <pre><code>{loadingApi}</code></pre>
+  <CodeBlock code={loadingApi} lang="python" />
 
   <h2>Reading Values</h2>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="python" />
 
   <h2>MdixBuilder — Building Programmatically</h2>
   <p>
@@ -261,13 +262,13 @@ cfg2 = MdixMLConfig.builder()  # -> MdixBuilder pre-shaped for ML config convent
     be added before any table properties or group arrays, same as every
     other language binding.
   </p>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="python" />
 
   <h2>MdixMerger — Combining Sources</h2>
-  <pre><code>{mergerApi}</code></pre>
+  <CodeBlock code={mergerApi} lang="python" />
 
   <h2>MdixSchemaBuilder — Validation</h2>
-  <pre><code>{schemaApi}</code></pre>
+  <CodeBlock code={schemaApi} lang="python" />
 
   <div class="table-scroll">
     <table>
@@ -301,16 +302,16 @@ cfg2 = MdixMLConfig.builder()  # -> MdixBuilder pre-shaped for ML config convent
   </p>
 
   <h3>MdixNumpy — array storage</h3>
-  <pre><code>{mlNumpy}</code></pre>
+  <CodeBlock code={mlNumpy} lang="python" />
 
   <h3>MdixTensor — framework-agnostic tensor loading</h3>
-  <pre><code>{mlTensor}</code></pre>
+  <CodeBlock code={mlTensor} lang="python" />
 
   <h3>MdixDataFrame — pandas DataFrames</h3>
-  <pre><code>{mlDataFrame}</code></pre>
+  <CodeBlock code={mlDataFrame} lang="python" />
 
   <h3>MdixMLConfig — experiment config convention layer</h3>
-  <pre><code>{mlConfig}</code></pre>
+  <CodeBlock code={mlConfig} lang="python" />
 </div>
 
 <style>

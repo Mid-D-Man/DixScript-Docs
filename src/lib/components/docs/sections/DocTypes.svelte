@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocTypes.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const types = [
     { type: 'int',       example: '42, -17, 0',                    desc: 'Signed 32-bit integer',                    ideal: 'Counts, ports, IDs, version numbers' },
     { type: 'long',       example: '9_000_000_000L, 0xDEAD_BEEFL',   desc: 'Signed 64-bit integer — L/l suffix, or auto-promoted when a plain integer overflows i32', ideal: 'Timestamps in ms, large IDs (Discord/Snowflake-style), file sizes, counters that can exceed 2^31' },
@@ -86,6 +87,12 @@ big_hex = 0xFF_FF_FF_FF      // Long(4294967295) — overflows i32
 // 'L' on a float literal is a lex error.
 rate    = 3.14f              // Float (f32)
 pi      = 3.14159265358979   // Double (f64)`;
+
+  const interpolatedExample = `@QUICKFUNCS(
+  ~endpoint<string>(host<string>, port<int>) {
+    return $"https://{host}:{port.toString()}/api"
+  }
+)`;
 </script>
 
 <div class="doc-page">
@@ -116,7 +123,7 @@ pi      = 3.14159265358979   // Double (f64)`;
   </div>
 
   <h2>Usage Examples</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>Numeric Literal Rules</h2>
   <p>
@@ -127,7 +134,7 @@ pi      = 3.14159265358979   // Double (f64)`;
     <code>int</code> for its hex/binary forms — the distinction is the value's
     magnitude and suffix, not a separate annotation.
   </p>
-  <pre><code>{numericRulesExample}</code></pre>
+  <CodeBlock code={numericRulesExample} lang="dixscript" />
 
   <h2>Interpolated Strings</h2>
   <p>
@@ -135,11 +142,7 @@ pi      = 3.14159265358979   // Double (f64)`;
     <code>&#123;expression&#125;</code> syntax. Interpolated strings are fully
     evaluated at compile time.
   </p>
-  <pre><code>@QUICKFUNCS(
-  ~endpoint&lt;string&gt;(host&lt;string&gt;, port&lt;int&gt;) {"{"}
-    return $"https://{"{"}host{"}"}:{"{"}port.toString(){"}"}/api"
-  {"}"}
-)</code></pre>
+  <CodeBlock code={interpolatedExample} lang="dixscript" />
 
   <h2>Format Comparison</h2>
   <p>

@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocCLI.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const validateCmds = `# Validate syntax and semantics without producing output
 mdix validate config.mdix
 mdix validate --strict config.mdix       # treat warnings as errors (exit 1)
@@ -206,10 +207,10 @@ cargo build -p mdix-cli --release
   </p>
 
   <h2>Installation</h2>
-  <pre><code>{installCmd}</code></pre>
+  <CodeBlock code={installCmd} lang="bash" />
 
   <h2>Global Flags</h2>
-  <pre><code>{globalFlags}</code></pre>
+  <CodeBlock code={globalFlags} lang="bash" />
 
   <h2>Exit Codes</h2>
   <p>All commands use a consistent set of exit codes.</p>
@@ -232,7 +233,7 @@ cargo build -p mdix-cli --release
     Run the full parse and semantic analysis pipeline. No output files are produced.
     Use in CI to confirm a file is correct before committing.
   </p>
-  <pre><code>{validateCmds}</code></pre>
+  <CodeBlock code={validateCmds} lang="bash" />
 
   <h2>compile</h2>
   <p>
@@ -241,7 +242,7 @@ cargo build -p mdix-cli --release
     The <code>MDIX_DLM_PASSWORD</code> environment variable can supply the password
     in non-interactive contexts.
   </p>
-  <pre><code>{compileCmds}</code></pre>
+  <CodeBlock code={compileCmds} lang="bash" />
 
   <h2>decrypt</h2>
   <p>
@@ -250,7 +251,7 @@ cargo build -p mdix-cli --release
     The <code>MDIX_DLM_PASSWORD</code> environment variable can supply the password instead
     of <code>--password</code>.
   </p>
-  <pre><code>{decryptCmds}</code></pre>
+  <CodeBlock code={decryptCmds} lang="bash" />
 
   <h2>convert</h2>
   <p>
@@ -258,7 +259,7 @@ cargo build -p mdix-cli --release
     auto-detected from the file extension. Both <code>mdix</code> and <code>dixscript</code>
     are accepted as target format names for the native format.
   </p>
-  <pre><code>{convertCmds}</code></pre>
+  <CodeBlock code={convertCmds} lang="bash" />
 
   <h2>merge</h2>
   <p>
@@ -268,7 +269,7 @@ cargo build -p mdix-cli --release
     for every strategy except <code>weighted</code> with explicit
     <code>--weights</code>.
   </p>
-  <pre><code>{mergeCmds}</code></pre>
+  <CodeBlock code={mergeCmds} lang="bash" />
 
   <h2>create</h2>
   <p>Scaffold a new <code>.mdix</code> file from a built-in template.</p>
@@ -285,24 +286,24 @@ cargo build -p mdix-cli --release
       </tbody>
     </table>
   </div>
-  <pre><code>{createCmds}</code></pre>
+  <CodeBlock code={createCmds} lang="bash" />
 
   <h2>format</h2>
   <p>
     Format a <code>.mdix</code> file in-place. The <code>--check</code> flag makes it
     non-destructive — useful in CI to enforce formatting without writing files.
   </p>
-  <pre><code>{formatCmds}</code></pre>
+  <CodeBlock code={formatCmds} lang="bash" />
 
   <h2>compact</h2>
   <p>
     Reduce file size by removing whitespace or comments. Three modes are available.
   </p>
-  <pre><code>{compactCmds}</code></pre>
+  <CodeBlock code={compactCmds} lang="bash" />
 
   <h2>inspect</h2>
   <p>Display the structure, sections, key count, and data keys of a <code>.mdix</code> file.</p>
-  <pre><code>{inspectCmds}</code></pre>
+  <CodeBlock code={inspectCmds} lang="bash" />
 
   <h2>key</h2>
   <p>
@@ -311,14 +312,14 @@ cargo build -p mdix-cli --release
     source file. The compiler generates the production key file automatically during
     <code>compile</code>.
   </p>
-  <pre><code>{keyCmds}</code></pre>
+  <CodeBlock code={keyCmds} lang="bash" />
 
   <h2>config</h2>
   <p>
     Manage CLI preferences. Settings are stored at
     <code>~/.dixscript/config.toml</code> and applied to every subsequent command.
   </p>
-  <pre><code>{configCmds}</code></pre>
+  <CodeBlock code={configCmds} lang="bash" />
 
   <div class="table-scroll">
     <table>
@@ -343,14 +344,14 @@ cargo build -p mdix-cli --release
     symbol table produced by semantic analysis. Useful when diagnosing
     whether a bug is in the tokenizer, the parser, or semantic analysis.
   </p>
-  <pre><code>{debugCmds}</code></pre>
+  <CodeBlock code={debugCmds} lang="bash" />
 
   <h2>JSON Output Envelope</h2>
   <p>
     All commands support <code>--json</code>. Successful results go to stdout inside a
     <code>data</code> field. Errors go to stderr inside an <code>error</code> field.
   </p>
-  <pre><code>{jsonEnvelope}</code></pre>
+  <CodeBlock code={jsonEnvelope} lang="json" />
 </div>
 
 <style>

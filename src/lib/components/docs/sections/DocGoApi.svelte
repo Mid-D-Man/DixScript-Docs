@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocGoApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `go get github.com/Mid-D-Man/dixscript-go
 
 # Requirements:
@@ -129,16 +130,16 @@ minified,  err := dixscript.Convert.MinifySource(src)`;
   </p>
 
   <h2>Install</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="bash" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="go" />
 
   <h2>Loading</h2>
-  <pre><code>{loadApi}</code></pre>
+  <CodeBlock code={loadApi} lang="go" />
 
   <h2>Reading Values</h2>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="go" />
 
   <h2>Error Handling</h2>
   <p>
@@ -146,7 +147,7 @@ minified,  err := dixscript.Convert.MinifySource(src)`;
     The error type is <code>*MdixError</code> — use <code>errors.As</code>
     to inspect its <code>Kind</code>.
   </p>
-  <pre><code>{errorApi}</code></pre>
+  <CodeBlock code={errorApi} lang="go" />
 
   <div class="table-scroll">
     <table>
@@ -167,13 +168,13 @@ minified,  err := dixscript.Convert.MinifySource(src)`;
   </div>
 
   <h2>Building Programmatically</h2>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="go" />
 
   <h2>Format Conversion</h2>
-  <pre><code>{converterApi}</code></pre>
+  <CodeBlock code={converterApi} lang="go" />
 
   <h2>Package Layout</h2>
-  <pre><code>{layout}</code></pre>
+  <CodeBlock code={layout} lang="text" />
 
   <h2>vs C#</h2>
   <div class="table-scroll">

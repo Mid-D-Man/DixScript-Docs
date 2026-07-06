@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocWasmApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `npm install @dixscript/core
 # or: pnpm add @dixscript/core / yarn add @dixscript/core
 
@@ -181,13 +182,13 @@ if (watcher.hasChanged(newSourceText)) {
   </div>
 
   <h2>Install</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="bash" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="javascript" />
 
   <h2>Reading Values</h2>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="javascript" />
 
   <div class="table-scroll">
     <table>
@@ -218,7 +219,7 @@ if (watcher.hasChanged(newSourceText)) {
     <code>tryGet</code> if you'd rather branch on a result object than catch
     exceptions.
   </p>
-  <pre><code>{resultPattern}</code></pre>
+  <CodeBlock code={resultPattern} lang="javascript" />
 
   <h2>Building Programmatically</h2>
   <p>
@@ -227,7 +228,7 @@ if (watcher.hasChanged(newSourceText)) {
     arrays. A violation throws immediately, at the call that broke the order
     — not at <code>.toDatabase()</code>.
   </p>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="javascript" />
 
   <div class="table-scroll">
     <table>
@@ -256,7 +257,7 @@ if (watcher.hasChanged(newSourceText)) {
   </div>
 
   <h2>Format Conversion</h2>
-  <pre><code>{converterApi}</code></pre>
+  <CodeBlock code={converterApi} lang="javascript" />
 
   <h2 id="crate-gap">Beyond the npm package: Merge, Schema &amp; Watch</h2>
   <p>
@@ -270,7 +271,7 @@ if (watcher.hasChanged(newSourceText)) {
     exact method names as provisional until they're wired into
     <code>src/index.ts</code> and published.
   </p>
-  <pre><code>{cratePreview}</code></pre>
+  <CodeBlock code={cratePreview} lang="javascript" />
 
   <p>
     If your project needs these today, the fastest path is building

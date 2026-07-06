@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocJavaApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `<!-- Maven -->
 <dependency>
     <groupId>com.midmanstudio</groupId>
@@ -136,13 +137,13 @@ c.jsonRoundTrip(db);   // db -> JSON -> db, useful for deep-cloning a Database`;
   </p>
 
   <h2>Install</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="text" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="java" />
 
   <h2>DixScript Facade</h2>
-  <pre><code>{facadeApi}</code></pre>
+  <CodeBlock code={facadeApi} lang="java" />
 
   <h2>Reading Values</h2>
   <p>
@@ -150,16 +151,16 @@ c.jsonRoundTrip(db);   // db -> JSON -> db, useful for deep-cloning a Database`;
     <code>MdixException</code> if the path is missing or the wrong type,
     and a form that takes a default value instead.
   </p>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="java" />
 
   <h2>Error Handling</h2>
-  <pre><code>{exceptionApi}</code></pre>
+  <CodeBlock code={exceptionApi} lang="java" />
 
   <h2>Building Programmatically</h2>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="java" />
 
   <h2>Format Conversion</h2>
-  <pre><code>{converterApi}</code></pre>
+  <CodeBlock code={converterApi} lang="java" />
 
   <h2>Kotlin</h2>
   <p>
@@ -167,5 +168,5 @@ c.jsonRoundTrip(db);   // db -> JSON -> db, useful for deep-cloning a Database`;
     <code>.use &#123; &#125;</code> extension on <code>AutoCloseable</code> works
     directly in place of try-with-resources:
   </p>
-  <pre><code>{kotlinExample}</code></pre>
+  <CodeBlock code={kotlinExample} lang="kotlin" />
 </div>

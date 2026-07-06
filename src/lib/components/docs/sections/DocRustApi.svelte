@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocRustApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const loaderBasic = `// Add to Cargo.toml:
 // dixscript = { path = "../dixscript" }
 // (or version once published to crates.io)
@@ -572,13 +573,13 @@ fn wildcard_queries(data: &DixData) {
   <h2>DixLoader — Loading Files</h2>
 
   <h3>Load a plain .mdix file</h3>
-  <pre><code>{loaderBasic}</code></pre>
+  <CodeBlock code={loaderBasic} lang="rust" />
 
   <h3>Load from a string</h3>
-  <pre><code>{loaderFromStr}</code></pre>
+  <CodeBlock code={loaderFromStr} lang="rust" />
 
   <h3>Load encrypted files</h3>
-  <pre><code>{loaderEncrypted}</code></pre>
+  <CodeBlock code={loaderEncrypted} lang="rust" />
 
   <h2>DixLoader Method Reference</h2>
   <div class="table-scroll">
@@ -602,7 +603,7 @@ fn wildcard_queries(data: &DixData) {
   </div>
 
   <h2>DixLoadOptions — Configuring the Loader</h2>
-  <pre><code>{loadOptionsApi}</code></pre>
+  <CodeBlock code={loadOptionsApi} lang="rust" />
 
   <div class="table-scroll">
     <table>
@@ -629,10 +630,10 @@ fn wildcard_queries(data: &DixData) {
   </div>
 
   <h2>DixData — Querying Loaded Data</h2>
-  <pre><code>{dixDataApi}</code></pre>
+  <CodeBlock code={dixDataApi} lang="rust" />
 
   <h3>Wildcard queries with select_many</h3>
-  <pre><code>{selectManyExample}</code></pre>
+  <CodeBlock code={selectManyExample} lang="rust" />
 
   <h2>DixData Method Reference</h2>
   <div class="table-scroll">
@@ -666,10 +667,10 @@ fn wildcard_queries(data: &DixData) {
     <code>TryFrom&lt;DixValue&gt;</code>. The following are provided out of the box.
     You can implement the trait for your own types.
   </p>
-  <pre><code>{tryFromApi}</code></pre>
+  <CodeBlock code={tryFromApi} lang="rust" />
 
   <h2>DixValue — The Runtime Value Enum</h2>
-  <pre><code>{dixValueVariants}</code></pre>
+  <CodeBlock code={dixValueVariants} lang="rust" />
 
   <h2>DixDataBuilder — Building Data Programmatically</h2>
   <p>
@@ -678,10 +679,10 @@ fn wildcard_queries(data: &DixData) {
     flat properties must be added before any table properties or group arrays.
     Violations are collected rather than panicking so all errors are reported at once.
   </p>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="rust" />
 
   <h3>Two-tier violations return Err — they never panic</h3>
-  <pre><code>{builderViolation}</code></pre>
+  <CodeBlock code={builderViolation} lang="rust" />
 
   <h2>DixDataBuilder Method Reference</h2>
   <div class="table-scroll">
@@ -718,13 +719,13 @@ fn wildcard_queries(data: &DixData) {
   </div>
 
   <h2>DixConverter — Format Conversion</h2>
-  <pre><code>{converterApi}</code></pre>
+  <CodeBlock code={converterApi} lang="rust" />
 
   <h2>DixFormatOptions — Controlling Output</h2>
-  <pre><code>{formatOptionsApi}</code></pre>
+  <CodeBlock code={formatOptionsApi} lang="rust" />
 
   <h2>DixCompactor — Minification</h2>
-  <pre><code>{compactorApi}</code></pre>
+  <CodeBlock code={compactorApi} lang="rust" />
 
   <h2>SchemaBuilder — Validation</h2>
   <p>
@@ -734,7 +735,7 @@ fn wildcard_queries(data: &DixData) {
     an <code>ExpectedValueType</code> directly (with an optional validator
     closure) for anything else.
   </p>
-  <pre><code>{schemaApi}</code></pre>
+  <CodeBlock code={schemaApi} lang="rust" />
 
   <div class="table-scroll">
     <table>
@@ -771,7 +772,7 @@ fn wildcard_queries(data: &DixData) {
     two-tier <code>@DATA</code> ordering guarantee is enforced by
     construction in the merged output regardless of input order.
   </p>
-  <pre><code>{mergeApi}</code></pre>
+  <CodeBlock code={mergeApi} lang="rust" />
 
   <div class="table-scroll">
     <table>
@@ -803,7 +804,7 @@ fn wildcard_queries(data: &DixData) {
     <code>DixDataBuilder::serialize_at</code>. Scalar arrays get a blanket
     impl for free; struct arrays go through <code>dix_set_array_of</code>.
   </p>
-  <pre><code>{serializeApi}</code></pre>
+  <CodeBlock code={serializeApi} lang="rust" />
 
   <h2>DixDeserialize — Reading Structs</h2>
   <p>
@@ -812,7 +813,7 @@ fn wildcard_queries(data: &DixData) {
     the top level) to read it back out. All field paths inside
     <code>from_dix</code> resolve relative to the given <code>prefix</code>.
   </p>
-  <pre><code>{deserializeApi}</code></pre>
+  <CodeBlock code={deserializeApi} lang="rust" />
 
   <div class="table-scroll">
     <table>

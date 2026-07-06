@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocPhpApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `composer require midmanstudio/mdix
 
 # Requires the PHP FFI extension enabled (ffi.enable=true in php.ini —
@@ -141,19 +142,19 @@ MdixConverter::tryFormatSource($source): MdixResult;`;
   </p>
 
   <h2>Install</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="bash" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="php" />
 
   <h2>Loading</h2>
-  <pre><code>{loadApi}</code></pre>
+  <CodeBlock code={loadApi} lang="php" />
 
   <h2>Reading Values</h2>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="php" />
 
   <h2>MdixResult — Railway Programming</h2>
-  <pre><code>{resultApi}</code></pre>
+  <CodeBlock code={resultApi} lang="php" />
 
   <div class="table-scroll">
     <table>
@@ -183,8 +184,8 @@ MdixConverter::tryFormatSource($source): MdixResult;`;
   </div>
 
   <h2>Building Programmatically</h2>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="php" />
 
   <h2>Format Conversion</h2>
-  <pre><code>{converterApi}</code></pre>
+  <CodeBlock code={converterApi} lang="php" />
 </div>

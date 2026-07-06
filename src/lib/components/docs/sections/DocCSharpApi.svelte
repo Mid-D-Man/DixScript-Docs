@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocCSharpApi.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `<!-- .csproj -->
 <PackageReference Include="MidManStudio.Mdix.Core" Version="*" />
 
@@ -286,10 +287,10 @@ Dix.ClearSerializerCache();`;
   </p>
 
   <h2>Install</h2>
-  <pre><code>{install}</code></pre>
+  <CodeBlock code={install} lang="markup" />
 
   <h2>Quick Start</h2>
-  <pre><code>{quickStart}</code></pre>
+  <CodeBlock code={quickStart} lang="csharp" />
 
   <h2>MdixResult&lt;T&gt; — Error Handling</h2>
   <p>
@@ -298,13 +299,13 @@ Dix.ClearSerializerCache();`;
     with functional combinators — the same shape used throughout every
     other language binding, just C#-flavoured.
   </p>
-  <pre><code>{mdixResult}</code></pre>
+  <CodeBlock code={mdixResult} lang="csharp" />
 
   <h2>Loading — Sync, Async &amp; Hot Reload</h2>
-  <pre><code>{loadingApi}</code></pre>
+  <CodeBlock code={loadingApi} lang="csharp" />
 
   <h2>Reading Values</h2>
-  <pre><code>{readApi}</code></pre>
+  <CodeBlock code={readApi} lang="csharp" />
 
   <div class="table-scroll">
     <table>
@@ -334,7 +335,7 @@ Dix.ClearSerializerCache();`;
     aggregate a group array at a path without hand-rolling
     <code>GetArray&lt;T&gt;(path)</code> + LINQ every time.
   </p>
-  <pre><code>{queryApi}</code></pre>
+  <CodeBlock code={queryApi} lang="csharp" />
 
   <h2>Dynamic Access</h2>
   <p>
@@ -344,10 +345,10 @@ Dix.ClearSerializerCache();`;
     <code>Get&lt;T&gt;</code>/<code>Deserialize&lt;T&gt;</code> for anything
     that ships to production; <code>dynamic</code> loses compile-time safety.
   </p>
-  <pre><code>{dynamicApi}</code></pre>
+  <CodeBlock code={dynamicApi} lang="csharp" />
 
   <h2>POCO Deserialization</h2>
-  <pre><code>{deserializeApi}</code></pre>
+  <CodeBlock code={deserializeApi} lang="csharp" />
 
   <h2>MdixBuilder — Building Programmatically</h2>
   <p>
@@ -355,16 +356,16 @@ Dix.ClearSerializerCache();`;
     as every other binding: flat properties before table properties or
     group arrays.
   </p>
-  <pre><code>{builderApi}</code></pre>
+  <CodeBlock code={builderApi} lang="csharp" />
 
   <h2>Merging Databases</h2>
-  <pre><code>{mergeApi}</code></pre>
+  <CodeBlock code={mergeApi} lang="csharp" />
 
   <h2>Schema Validation</h2>
-  <pre><code>{schemaApi}</code></pre>
+  <CodeBlock code={schemaApi} lang="csharp" />
 
   <h2>Format Conversion</h2>
-  <pre><code>{converterApi}</code></pre>
+  <CodeBlock code={converterApi} lang="csharp" />
 
   <h2>Dix Facade — Full Method Reference</h2>
   <div class="table-scroll">
