@@ -42,15 +42,23 @@
   let status: 'idle' | 'running' | 'done' | 'error' = 'idle';
   let showPicker = false;
 
-  // Loaded lazily on first Run — keeps the WASM module out of the initial
-  // page bundle, and this file only ever runs client-side anyway (see
-  // +page.ts -> ssr = false).
-  let corePromise: Promise<typeof import('@dixscript/core')> | null = null;
+  // @dixscript/core isn't published to npm yet (see package.json — it's
+  // intentionally left out of "dependencies" for now so `npm ci` doesn't
+  // 404 in CI). /* @vite-ignore */ below stops Vite from trying to
+  // statically resolve/bundle this specifier at build time, so the site
+  // still builds cleanly without it. Once the package is installed for
+  // real — either `npm install @dixscript/core` after publishing it, or
+  // a local `"file:../DixScript-Rust/mdix-npm"` dependency — delete the
+  // /* @vite-ignore */ comment (Vite can then bundle it properly) and
+  // this will start working with zero other changes.
+  let corePromise: Promise<any> | null = null;
 
   async function run() {
     status = 'running';
     try {
-      if (!corePromise) corePromise = import('@dixscript/core');
+      if (!corePromise) {
+        corePromise = import(/* @vite-ignore */ '@dixscript/core');
+      }
       const { MdixDatabase } = await corePromise;
 
       const db = MdixDatabase.loadStr(source);
@@ -61,9 +69,16 @@
         db.free(); // WASM memory isn't garbage collected
       }
     } catch (err) {
-      output = err instanceof Error ? err.message : String(err);
+      output = isModuleNotFound(err)
+        ? '// @dixscript/core isn\'t installed in this build yet.\n// See the comment above run() in +page.svelte for how to wire it in.'
+        : err instanceof Error ? err.message : String(err);
       status = 'error';
     }
+  }
+
+  function isModuleNotFound(err: unknown): boolean {
+    const msg = err instanceof Error ? err.message : String(err);
+    return /Failed to resolve module|Failed to fetch dynamically imported module|Cannot find module|404/i.test(msg);
   }
 
   function reset() {
@@ -95,9 +110,10 @@
       <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286z"/>
     </svg>
     <span>
-      Running on <code>@dixscript/core</code>, compiled from the Rust core to WebAssembly —
-      loaded and executed entirely in your browser, nothing is sent to a server.
-      See it on <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">GitHub</a>.
+      Execution is fully wired to <code>@dixscript/core</code> (compiled from the Rust core to
+      WebAssembly, runs entirely in your browser) — it just needs the package installed to go
+      live on this deployment. See
+      <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">mdix-wasm on GitHub</a>.
     </span>
   </div>
 
