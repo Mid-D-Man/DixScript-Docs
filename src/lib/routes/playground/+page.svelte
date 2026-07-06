@@ -44,20 +44,24 @@
 
   // @dixscript/core isn't published to npm yet (see package.json — it's
   // intentionally left out of "dependencies" for now so `npm ci` doesn't
-  // 404 in CI). /* @vite-ignore */ below stops Vite from trying to
-  // statically resolve/bundle this specifier at build time, so the site
-  // still builds cleanly without it. Once the package is installed for
-  // real — either `npm install @dixscript/core` after publishing it, or
-  // a local `"file:../DixScript-Rust/mdix-npm"` dependency — delete the
-  // /* @vite-ignore */ comment (Vite can then bundle it properly) and
-  // this will start working with zero other changes.
+  // 404 in CI). The specifier below is built at runtime (not a literal
+  // string) specifically so Rollup can't try to statically resolve/bundle
+  // it during `vite build` — a literal `import('@dixscript/core')`, even
+  // with /* @vite-ignore */, still gets traced by Rollup's SSR build pass
+  // and fails the whole build. Once the package is actually installed —
+  // either `npm install @dixscript/core` after publishing it, or a local
+  // `"file:../DixScript-Rust/mdix-npm"` dependency in package.json —
+  // replace DIXSCRIPT_CORE_SPECIFIER usage below with a plain literal
+  // `import('@dixscript/core')` so Vite can bundle it properly instead of
+  // leaving it as an opaque runtime import.
+  const DIXSCRIPT_CORE_SPECIFIER = ['@dixscript', 'core'].join('/');
   let corePromise: Promise<any> | null = null;
 
   async function run() {
     status = 'running';
     try {
       if (!corePromise) {
-        corePromise = import(/* @vite-ignore */ '@dixscript/core');
+        corePromise = import(DIXSCRIPT_CORE_SPECIFIER);
       }
       const { MdixDatabase } = await corePromise;
 
