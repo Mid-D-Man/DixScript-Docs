@@ -125,6 +125,18 @@ pre code {
   font-size: inherit;
 }
 
+/* ── Syntax highlighting (Prism) ──────────────
+   Shared across CodeBlock.svelte and any component that highlights its own
+   code (SyntaxComparison, GameComparison) — one rule set, uses the
+   --syn-* vars above so it already flips with light/dark automatically. */
+.token.comment                                          { color: var(--syn-comment); font-style: italic; }
+.token.string, .token.interpolated-string                { color: var(--syn-string); }
+.token.number, .token.boolean                             { color: var(--syn-number); }
+.token.keyword, .token.section                            { color: var(--syn-keyword); font-weight: 600; }
+.token.function, .token.quickfunc, .token.prefixed        { color: var(--syn-function); }
+.token.class-name, .token.type-annotation, .token.builtin { color: var(--primary); }
+.token.operator, .token.punctuation, .token.property      { color: var(--muted-foreground); }
+
 /* ── Scrollbars ───────────────────────────── */
 ::-webkit-scrollbar        { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track  { background: var(--background); }
@@ -146,4 +158,4 @@ pre code {
 
 @media (max-width: 640px) {
   .container { padding: 0 1rem; }
-}
+   }
