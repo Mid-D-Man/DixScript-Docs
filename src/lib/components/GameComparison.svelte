@@ -1,6 +1,9 @@
 <!-- src/lib/components/GameComparison.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
+  import Prism from 'prismjs';
+  import 'prismjs/components/prism-json';
+  import '$lib/prism/custom-languages';
 
   const jsonCode = `{
   "weapons": [
@@ -156,6 +159,9 @@
   let dixBytes  = 0;
   let savings   = 0;
 
+  $: highlightedJson = Prism.highlight(jsonCode, Prism.languages.json, 'json');
+  $: highlightedDix  = Prism.highlight(dixCode, Prism.languages.dixscript, 'dixscript');
+
   onMount(() => {
     jsonBytes = new Blob([jsonCode]).size;
     dixBytes  = new Blob([dixCode]).size;
@@ -237,7 +243,7 @@
             {jsonCopied ? '✓ Copied' : 'Copy'}
           </button>
         </div>
-        <pre class="code-block"><code>{jsonCode}</code></pre>
+        <pre class="code-block"><code class="language-json">{@html highlightedJson}</code></pre>
         <div class="panel-footer panel-footer--bad">
           <span class="byte-count">{jsonBytes} bytes</span>
           <span class="byte-sep">·</span>
@@ -255,7 +261,7 @@
             {dixCopied ? '✓ Copied' : 'Copy'}
           </button>
         </div>
-        <pre class="code-block"><code>{dixCode}</code></pre>
+        <pre class="code-block"><code class="language-dixscript">{@html highlightedDix}</code></pre>
         <div class="panel-footer panel-footer--good">
           <span class="byte-count">{dixBytes} bytes</span>
           <span class="byte-sep">·</span>
