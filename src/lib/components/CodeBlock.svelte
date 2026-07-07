@@ -126,37 +126,4 @@
     font-family: inherit;
     background: none;
   }
-
-  /* Token colours — tuned to sit on top of the site's existing CSS vars,
-     not a canned Prism theme, so it matches both light and dark mode. */
-  :global(.token.comment) { color: var(--muted-foreground); font-style: italic; }
-  :global(.token.string),
-  :global(.token.interpolated-string) { color: #3fa76a; }
-  :global(.token.number),
-  :global(.token.boolean) { color: #b5762e; }
-  :global(.token.keyword),
-  :global(.token.section) { color: #a6427c; font-weight: 600; }
-  :global(.token.function),
-  :global(.token.quickfunc),
-  :global(.token.prefixed) { color: #3d7dbf; }
-  :global(.token.class-name),
-  :global(.token.type-annotation),
-  :global(.token.builtin) { color: #2b8f8f; }
-  :global(.token.operator),
-  :global(.token.punctuation) { color: var(--muted-foreground); }
-  :global(.token.property) { color: #b5762e; }
-
-  :global(html.dark) :global(.token.comment) { color: var(--muted-foreground); }
-  :global(html.dark) :global(.token.string),
-  :global(html.dark) :global(.token.interpolated-string) { color: #7ed6a5; }
-  :global(html.dark) :global(.token.number),
-  :global(html.dark) :global(.token.boolean) { color: #e0a860; }
-  :global(html.dark) :global(.token.keyword),
-  :global(html.dark) :global(.token.section) { color: #e08fc0; }
-  :global(html.dark) :global(.token.function),
-  :global(html.dark) :global(.token.quickfunc),
-  :global(html.dark) :global(.token.prefixed) { color: #7cb8e8; }
-  :global(html.dark) :global(.token.class-name),
-  :global(html.dark) :global(.token.type-annotation),
-  :global(html.dark) :global(.token.builtin) { color: #6fd0d0; }
 </style>
