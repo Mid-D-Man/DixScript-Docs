@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinDateTime.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: 'DateTime.now()',              returns: 'timestamp', desc: 'Current UTC date and time' },
     { name: 'DateTime.today()',            returns: 'date',      desc: "Today at midnight UTC" },
@@ -30,6 +31,10 @@
     { name: 'DateTime.dayOfWeek(dt)',      returns: 'int',       desc: '0 = Sunday … 6 = Saturday' },
     { name: 'DateTime.dayOfYear(dt)',      returns: 'int',       desc: '1 – 366' },
   ];
+
+  const literalExample = `expiry  = DateTime.addDays(DateTime.today(), 30)
+created = DateTime.format(DateTime.now(), "%Y-%m-%dT%H:%M:%SZ")
+diff    = DateTime.subtract(endDate, startDate)  // days as double`;
 </script>
 
 <div class="doc-page">
@@ -39,9 +44,7 @@
     All methods are called as <code>DateTime.methodName(args)</code>.
   </p>
 
-  <pre><code>expiry  = DateTime.addDays(DateTime.today(), 30)
-created = DateTime.format(DateTime.now(), "%Y-%m-%dT%H:%M:%SZ")
-diff    = DateTime.subtract(endDate, startDate)  // days as double</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <div class="table-scroll">
     <table>

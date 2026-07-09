@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocDLM.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const exampleSection = `@DLM(
   DCompressor.gzip    // compress first
   DEncryptor.aes256   // then encrypt
@@ -131,7 +132,7 @@ compilation_2:
     Modules execute in declaration order: the output of each feeds into the next.
     The typical pipeline is: compress → encrypt → audit.
   </p>
-  <pre><code>{exampleSection}</code></pre>
+  <CodeBlock code={exampleSection} lang="dixscript" />
 
   <h2>Compressors</h2>
   <div class="kv-table">
@@ -146,7 +147,7 @@ compilation_2:
       </div>
     {/each}
   </div>
-  <pre><code>{compressorEx}</code></pre>
+  <CodeBlock code={compressorEx} lang="dixscript" />
 
   <h2>Encryptors</h2>
   <div class="kv-table">
@@ -175,7 +176,7 @@ compilation_2:
       </div>
     {/each}
   </div>
-  <pre><code>{auditorEx}</code></pre>
+  <CodeBlock code={auditorEx} lang="dixscript" />
 
   <h2>Output Files</h2>
   <p>
@@ -211,7 +212,7 @@ compilation_2:
     compiler artifact. <strong>Treat it like a private key. Never commit it to source
     control.</strong>
   </p>
-  <pre><code>{keyFileContent}</code></pre>
+  <CodeBlock code={keyFileContent} lang="dixscript" />
 
   <h2>The Audit File</h2>
   <p>
@@ -221,10 +222,10 @@ compilation_2:
     suffix and a new one is started. The enhanced auditor also embeds a base64-encoded
     AST snapshot in each entry for full diffing capability.
   </p>
-  <pre><code>{auFileContent}</code></pre>
+  <CodeBlock code={auFileContent} lang="dixscript" />
 
   <h2>File Permissions</h2>
-  <pre><code>{readonlyNote}</code></pre>
+  <CodeBlock code={readonlyNote} lang="dixscript" />
 
   <h2>Recommended Project Structure</h2>
   <p>
@@ -233,5 +234,5 @@ compilation_2:
     folder. Never commit the <code>.mdix.key</code> file — store it in a secrets manager,
     environment variable, or secure vault.
   </p>
-  <pre><code>{projectStructure}</code></pre>
+  <CodeBlock code={projectStructure} lang="dixscript" />
 </div>

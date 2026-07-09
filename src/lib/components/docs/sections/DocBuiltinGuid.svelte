@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinGuid.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: 'Guid.new()',                  returns: 'string', desc: 'Generate a new random GUID (UUID v4 format)' },
     { name: 'Guid.parse(str)',             returns: 'string', desc: 'Parse a GUID from string — throws if invalid' },
@@ -113,14 +114,14 @@
   </div>
 
   <h2>Usage Inside @QUICKFUNCS</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>Byte Conversion</h2>
   <p>
     <code>Guid.toBytes()</code> returns an array of exactly 16 integer values (0–255).
     <code>Guid.fromBytes()</code> requires exactly 16 elements — any other length is a compile error.
   </p>
-  <pre><code>{bytesExample}</code></pre>
+  <CodeBlock code={bytesExample} lang="dixscript" />
 
   <h2>Notes</h2>
   <p>

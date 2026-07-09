@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinArray.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const staticMethods = [
     { name: 'Array.range(start, end)',    returns: 'array',  desc: 'Integers from start to end inclusive' },
     { name: 'Array.fill(value, count)',   returns: 'array',  desc: 'count copies of value' },
@@ -43,6 +44,13 @@
     { name: '.max()',          returns: 'double', desc: 'Maximum numeric element' },
     { name: '.min()',          returns: 'double', desc: 'Minimum numeric element' },
   ];
+
+  const literalExample1 = `nums     = Array.range(1, 10)
+defaults = Array.fill(false, 8)
+combined = Array.concat(weapons, armour)`;
+  const literalExample2 = `tags    = rawTags.distinct().sort()
+csv     = items.join(", ")
+safe    = list.slice(0, 100)`;
 </script>
 
 <div class="doc-page">
@@ -53,9 +61,7 @@
   </p>
 
   <h2>Static Methods</h2>
-  <pre><code>nums     = Array.range(1, 10)
-defaults = Array.fill(false, 8)
-combined = Array.concat(weapons, armour)</code></pre>
+  <CodeBlock code={literalExample1} lang="dixscript" />
   <div class="table-scroll">
     <table>
       <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>
@@ -72,9 +78,7 @@ combined = Array.concat(weapons, armour)</code></pre>
   </div>
 
   <h2>Instance Methods</h2>
-  <pre><code>tags    = rawTags.distinct().sort()
-csv     = items.join(", ")
-safe    = list.slice(0, 100)</code></pre>
+  <CodeBlock code={literalExample2} lang="dixscript" />
   <div class="table-scroll">
     <table>
       <thead><tr><th>Method</th><th>Returns</th><th>Description</th></tr></thead>

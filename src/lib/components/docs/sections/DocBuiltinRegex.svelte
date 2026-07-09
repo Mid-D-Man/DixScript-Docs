@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinRegex.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const instanceMethods = [
     { name: '.test(text)',              returns: 'bool',   desc: 'True if the pattern matches anywhere in text' },
     { name: '.match(text)',             returns: 'array',  desc: 'First match + capture groups as array. Empty array if no match.' },
@@ -40,6 +41,20 @@
   // Computed via QuickFunc
   is_valid_admin_email = validateEmail("admin@example.com")
 )`;
+
+  const literalExample1 = `// Regex literal using the r:() constructor:
+email<regex>   = r:("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")
+digits<regex>  = r:("\\d+")     // double-backslash inside the string
+
+// Inside a QuickFunc:
+let pattern<regex> = r:("(\\w+)@(\\w+)\\.(\\w+)")`;
+  const literalExample2 = `// Pattern with 3 capture groups:
+let p = r:("(\\w+)@(\\w+)\\.(\\w+)")
+let m = p.match("user@example.com")
+// m[0] = "user@example.com"  (full match)
+// m[1] = "user"              (group 1)
+// m[2] = "example"           (group 2)
+// m[3] = "com"               (group 3)`;
 </script>
 
 <div class="doc-page">
@@ -52,12 +67,7 @@
   </p>
 
   <h2>Constructing a Regex</h2>
-  <pre><code>// Regex literal using the r:() constructor:
-email<regex>   = r:("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")
-digits<regex>  = r:("\\d+")     // double-backslash inside the string
-
-// Inside a QuickFunc:
-let pattern<regex> = r:("(\\w+)@(\\w+)\\.(\\w+)")</code></pre>
+  <CodeBlock code={literalExample1} lang="dixscript" />
 
   <h2>Instance Methods</h2>
   <div class="table-scroll">
@@ -76,7 +86,7 @@ let pattern<regex> = r:("(\\w+)@(\\w+)\\.(\\w+)")</code></pre>
   </div>
 
   <h2>Usage Examples</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>Match Array Layout</h2>
   <p>
@@ -85,11 +95,5 @@ let pattern<regex> = r:("(\\w+)@(\\w+)\\.(\\w+)")</code></pre>
     they appear in the pattern. <code>null</code> is used for a capture group that did not
     participate in the match.
   </p>
-  <pre><code>// Pattern with 3 capture groups:
-let p = r:("(\\w+)@(\\w+)\\.(\\w+)")
-let m = p.match("user@example.com")
-// m[0] = "user@example.com"  (full match)
-// m[1] = "user"              (group 1)
-// m[2] = "example"           (group 2)
-// m[3] = "com"               (group 3)</code></pre>
+  <CodeBlock code={literalExample2} lang="dixscript" />
 </div>

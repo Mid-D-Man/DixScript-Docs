@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinBlob.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const instanceMethods = [
     { name: '.size()',              returns: 'int',    desc: 'Size of the decoded binary data in bytes' },
     { name: '.mimeType()',          returns: 'string', desc: 'Detect MIME type from magic bytes (e.g. "image/png", "application/pdf")' },
@@ -71,10 +72,10 @@
   </p>
 
   <h2>Construction</h2>
-  <pre><code>{constructionExample}</code></pre>
+  <CodeBlock code={constructionExample} lang="dixscript" />
 
   <h2>Encoding Note</h2>
-  <pre><code>{encodingNote}</code></pre>
+  <CodeBlock code={encodingNote} lang="dixscript" />
 
   <h2>Instance Methods</h2>
   <div class="table-scroll">
@@ -93,7 +94,7 @@
   </div>
 
   <h2>Usage Examples</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>When to Use Blobs</h2>
   <p>

@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocImports.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const syntaxExample = `@IMPORTS(
   // Local file — path relative to the current file
   Base    from "lib/base_types.mdix"
@@ -95,21 +96,21 @@ Bad2 from "lib/base_types"         // missing extension`;
     cloud URLs. Imported symbols are accessed through their alias prefix.
     Requires <code>features -> "advanced"</code> (the default).
   </p>
-  <pre><code>{syntaxExample}</code></pre>
+  <CodeBlock code={syntaxExample} lang="dixscript" />
 
   <h2>Using Imported Enums</h2>
   <p>
     Imported enum types and values are accessed via the import alias.
     Both type annotations and value references must be prefixed.
   </p>
-  <pre><code>{usingImportedEnums}</code></pre>
+  <CodeBlock code={usingImportedEnums} lang="dixscript" />
 
   <h2>Using Imported QuickFuncs</h2>
   <p>
     Imported functions may be called directly in <code>@DATA</code> or inside other
     <code>@QUICKFUNCS</code> bodies. Always prefix with the import alias.
   </p>
-  <pre><code>{usingImportedFuncs}</code></pre>
+  <CodeBlock code={usingImportedFuncs} lang="dixscript" />
 
   <h2>Exporting Functions From Your File</h2>
   <p>
@@ -117,14 +118,14 @@ Bad2 from "lib/base_types"         // missing extension`;
     automatically exportable and importable by other files. To prevent a function
     from being imported, restrict it to a specific data path with a scope declaration.
   </p>
-  <pre><code>{exportingFuncs}</code></pre>
+  <CodeBlock code={exportingFuncs} lang="dixscript" />
 
   <h2>Path Rules</h2>
-  <pre><code>{pathRules}</code></pre>
+  <CodeBlock code={pathRules} lang="dixscript" />
 
   <h2>Circular Imports</h2>
   <p>The compiler detects and rejects circular import chains at compile time.</p>
-  <pre><code>{circularNote}</code></pre>
+  <CodeBlock code={circularNote} lang="dixscript" />
 
   <h2>Integrity Verification</h2>
   <p>

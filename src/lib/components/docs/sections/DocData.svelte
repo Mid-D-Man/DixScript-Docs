@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocData.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const fullExample = `@DATA(
   // ── Tier 1: flat properties ───────────────────────────────
   app_name              = "MyApp"          // bare string
@@ -96,6 +97,10 @@
     { path = "/health", method = "GET",  auth = false },
     { path = "/api",    method = "POST", auth = true  }
 )`;
+
+  const literalExample = `position  = t:(10, 20)
+named_pos = t:(10, 20, "north")
+full      = t:(1, 2.5f, "text", true, #FF0000, null)  // max 6`;
 </script>
 
 <div class="doc-page">
@@ -107,7 +112,7 @@
   </p>
 
   <h2>Complete Example</h2>
-  <pre><code>{fullExample}</code></pre>
+  <CodeBlock code={fullExample} lang="dixscript" />
 
   <h2>Type Annotations</h2>
   <p>
@@ -115,7 +120,7 @@
     The compiler infers types from assigned values. Add an annotation when you want the
     compiler to enforce a specific type and reject values that do not match.
   </p>
-  <pre><code>{typeAnnotationExample}</code></pre>
+  <CodeBlock code={typeAnnotationExample} lang="dixscript" />
 
   <p>Valid annotation types:</p>
   <div class="kv-table">
@@ -148,7 +153,7 @@
     QuickFunc call. Functions are resolved at compile time — no function calls appear
     in the output.
   </p>
-  <pre><code>{nestedTableExample}</code></pre>
+  <CodeBlock code={nestedTableExample} lang="dixscript" />
 
   <h2>Comma Rules</h2>
   <p>
@@ -156,7 +161,7 @@
     They are required inside function argument lists, array literals, object literals,
     and tuple constructors.
   </p>
-  <pre><code>{commaRulesExample}</code></pre>
+  <CodeBlock code={commaRulesExample} lang="dixscript" />
 
   <h2>Tier Structure Reference</h2>
   <div class="tier-grid">
@@ -199,7 +204,5 @@ items::
     <code>t:(…)</code> constructor. A maximum of six elements is allowed.
     Commas between elements are required.
   </p>
-  <pre><code>position  = t:(10, 20)
-named_pos = t:(10, 20, "north")
-full      = t:(1, 2.5f, "text", true, #FF0000, null)  // max 6</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 </div>

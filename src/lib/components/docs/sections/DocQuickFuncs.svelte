@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocQuickFuncs.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   // EBNF-correct syntax:
   // ~Name<ReturnType> => scope(s) (params) { body }
   // Scope declaration comes BEFORE the parameter list, not after.
@@ -326,7 +327,7 @@
   </p>
 
   <h2>Syntax</h2>
-  <pre><code>{syntaxOverview}</code></pre>
+  <CodeBlock code={syntaxOverview} lang="dixscript" />
 
   <div class="kv-table">
     {#each [
@@ -351,11 +352,11 @@
     annotation and the opening parenthesis</strong> of the parameter list. Placing it after
     the closing parenthesis is a syntax error.
   </p>
-  <pre><code>{scopeExample}</code></pre>
+  <CodeBlock code={scopeExample} lang="dixscript" />
 
   <h2>Return Types</h2>
   <p>The return type annotation is always required.</p>
-  <pre><code>{returnTypes}</code></pre>
+  <CodeBlock code={returnTypes} lang="dixscript" />
 
   <h2>Variables</h2>
   <p>
@@ -363,7 +364,7 @@
     <code>let mut</code> allows reassignment. <code>const</code> requires a literal on the
     right-hand side and cannot reference other variables.
   </p>
-  <pre><code>{variablesExample}</code></pre>
+  <CodeBlock code={variablesExample} lang="dixscript" />
 
   <h2>Operators</h2>
   <div class="table-scroll">
@@ -383,7 +384,7 @@
   </div>
 
   <h2>Arithmetic and Operators in Practice</h2>
-  <pre><code>{arithmeticExample}</code></pre>
+  <CodeBlock code={arithmeticExample} lang="dixscript" />
 
   <h2>Control Flow</h2>
   <p>
@@ -392,7 +393,7 @@
     <code>chk:</code> for pattern-matching on enum values or literals.
     The <code>miss</code> keyword is the default/fallthrough arm in a <code>chk:</code> block.
   </p>
-  <pre><code>{controlFlowExample}</code></pre>
+  <CodeBlock code={controlFlowExample} lang="dixscript" />
 
   <h2>Calling Built-ins and Other Functions</h2>
   <p>
@@ -403,10 +404,10 @@
     It may also call other QuickFuncs defined earlier in the same <code>@QUICKFUNCS</code> block.
     Functions from imported namespaces are called with the alias prefix.
   </p>
-  <pre><code>{builtinCallsExample}</code></pre>
+  <CodeBlock code={builtinCallsExample} lang="dixscript" />
 
   <h2>Calling Imported Functions</h2>
-  <pre><code>{importedFunctionsExample}</code></pre>
+  <CodeBlock code={importedFunctionsExample} lang="dixscript" />
 
   <h2>No Loops</h2>
   <p>
@@ -415,10 +416,10 @@
     constructors like <code>Array.range()</code> and <code>Array.fill()</code>.
     Limited recursion is allowed — the compiler enforces a maximum recursion depth.
   </p>
-  <pre><code>{noLoopsExample}</code></pre>
+  <CodeBlock code={noLoopsExample} lang="dixscript" />
 
   <h2>What Is and Is Not Allowed</h2>
-  <pre><code>{invalidExamples}</code></pre>
+  <CodeBlock code={invalidExamples} lang="dixscript" />
 
   <h2>What QuickFuncs Cannot Do</h2>
   <ul>

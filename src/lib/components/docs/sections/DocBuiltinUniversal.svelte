@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinUniversal.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: '.toString()',             returns: 'string', desc: 'Convert any value to its string representation' },
     { name: '.type()',                 returns: 'string', desc: 'Return the type name of the value (e.g. "int", "string", "array")' },
@@ -80,6 +81,15 @@
     'date', 'timestamp', 'hexcolor', 'blob', 'regex',
     'array', 'object', 'tuple', 'enum',
   ];
+
+  const literalExample = `// Chain: trim → check emptiness → fall back to default
+let clean = raw.trim().defaultIfEmpty("unnamed")
+
+// Chain: convert to string → check length
+let label = count.toString().defaultIfEmpty("0")
+
+// Chain: get type → check equality
+let is_int = value.type().equals("int")`;
 </script>
 
 <div class="doc-page">
@@ -134,21 +144,14 @@
   </div>
 
   <h2>Usage Inside @QUICKFUNCS</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>Chaining</h2>
   <p>
     Universal methods chain naturally with type-specific instance methods.
     The chain executes left to right — each call receives the result of the previous.
   </p>
-  <pre><code>// Chain: trim → check emptiness → fall back to default
-let clean = raw.trim().defaultIfEmpty("unnamed")
-
-// Chain: convert to string → check length
-let label = count.toString().defaultIfEmpty("0")
-
-// Chain: get type → check equality
-let is_int = value.type().equals("int")</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <h2>Notes</h2>
   <p>

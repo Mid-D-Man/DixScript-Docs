@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinNumber.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const shared = [
     { method: '.abs()',         returns: 'same',   desc: 'Absolute value' },
     { method: '.toString()',    returns: 'string', desc: 'String representation' },
@@ -26,6 +27,11 @@
     { method: '.isPositive()',  returns: 'bool',   desc: 'True if > 0' },
     { method: '.isNegative()',  returns: 'bool',   desc: 'True if < 0' },
   ];
+
+  const literalExample = `display = score.toString()
+clamped = damage.abs()
+parity  = index.isEven()
+precise = ratio.round(4)`;
 </script>
 
 <div class="doc-page">
@@ -34,10 +40,7 @@
     Instance methods available on <code>int</code>, <code>float</code>, and <code>double</code> values.
   </p>
 
-  <pre><code>display = score.toString()
-clamped = damage.abs()
-parity  = index.isEven()
-precise = ratio.round(4)</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <h2>Shared (int, float, double)</h2>
   <div class="table-scroll">

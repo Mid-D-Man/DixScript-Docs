@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocQuickStart.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const minimal = `@DATA(
   app_name = "MyApp"
   port     = 8080
@@ -40,12 +41,12 @@
 
   <h2>Minimal File</h2>
   <p>This is a valid, complete DixScript file:</p>
-  <pre><code>{minimal}</code></pre>
+  <CodeBlock code={minimal} lang="dixscript" />
 
   <h2>With Advanced Features</h2>
   <p>
     Set <code>features -> "advanced"</code> in <code>@CONFIG</code> to unlock
     <code>@ENUMS</code>, <code>@QUICKFUNCS</code>, <code>@DLM</code>, and <code>@IMPORTS</code>.
   </p>
-  <pre><code>{fuller}</code></pre>
+  <CodeBlock code={fuller} lang="dixscript" />
 </div>

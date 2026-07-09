@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocEnums.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const example = `@ENUMS(
   LogLevel    { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 }
   Environment { DEV = 1, STAGING = 2, PROD = 3 }
@@ -18,7 +19,7 @@
     Named constant sets. Values auto-increment from 0 if not assigned.
     Enum types are enforced at compile time — invalid values are errors, not runtime surprises.
   </p>
-  <pre><code>{example}</code></pre>
+  <CodeBlock code={example} lang="dixscript" />
 
   <h2>Rules</h2>
   <ul>

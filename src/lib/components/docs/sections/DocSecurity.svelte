@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocSecurity.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const fullSyntax = `@SECURITY(
   encryption -> {
     mode      = "password"          // "password" | "keyfile"
@@ -112,7 +113,7 @@
   </div>
 
   <h2>Full Syntax</h2>
-  <pre><code>{fullSyntax}</code></pre>
+  <CodeBlock code={fullSyntax} lang="dixscript" />
 
   <h2>Available Blocks</h2>
   <div class="table-scroll">
@@ -175,7 +176,7 @@
     using <strong>Argon2id</strong> — a memory-hard key derivation function resistant to
     GPU and ASIC brute-force attacks. No key is stored anywhere on disk.
   </p>
-  <pre><code>{passwordMode}</code></pre>
+  <CodeBlock code={passwordMode} lang="dixscript" />
 
   <h2>Keyfile Mode</h2>
   <p>
@@ -183,7 +184,7 @@
     <code>.mdix.key</code> file. That file must be kept secret and distributed to
     consumers separately from the encrypted <code>.mdix.enc</code> file.
   </p>
-  <pre><code>{keyfileMode}</code></pre>
+  <CodeBlock code={keyfileMode} lang="dixscript" />
 
   <h2>Argon2id KDF Parameters (Password Mode)</h2>
   <p>
@@ -191,7 +192,7 @@
     Increasing them makes brute-force attacks harder but also makes compilation and
     decryption slower. The defaults are intentionally conservative.
   </p>
-  <pre><code>{argon2Config}</code></pre>
+  <CodeBlock code={argon2Config} lang="dixscript" />
 
   <div class="kv-table">
     {#each [
@@ -214,5 +215,5 @@
     match and <code>strict = true</code>, decryption fails with an error. With
     <code>strict = false</code>, a warning is issued instead.
   </p>
-  <pre><code>{validationBlock}</code></pre>
+  <CodeBlock code={validationBlock} lang="dixscript" />
 </div>

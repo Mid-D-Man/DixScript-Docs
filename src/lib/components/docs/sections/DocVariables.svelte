@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocVariables.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const example = `// Immutable — cannot be reassigned after declaration
 let name  = "Alice"
 let count = 42
@@ -39,7 +40,7 @@ let meta  = t:("name", 42, true, #FF0000, 2025-01-15, null)  // exactly 6`;
     <code>@QUICKFUNCS</code> function bodies. They cannot appear directly in
     <code>@DATA</code>.
   </p>
-  <pre><code>{example}</code></pre>
+  <CodeBlock code={example} lang="dixscript" />
 
   <div class="kv-table">
     {#each [
@@ -60,7 +61,7 @@ let meta  = t:("name", 42, true, #FF0000, 2025-01-15, null)  // exactly 6`;
     Variables are local to the function body in which they are declared. A variable
     declared in one QuickFunc is not visible in another.
   </p>
-  <pre><code>{scopingExample}</code></pre>
+  <CodeBlock code={scopingExample} lang="dixscript" />
 
   <h2>Tuple Variables</h2>
   <p>
@@ -68,5 +69,5 @@ let meta  = t:("name", 42, true, #FF0000, 2025-01-15, null)  // exactly 6`;
     QuickFuncs when you need to bundle a small group of values without declaring a
     full object. The <code>t:(…)</code> constructor requires comma-separated elements.
   </p>
-  <pre><code>{tupleNote}</code></pre>
+  <CodeBlock code={tupleNote} lang="dixscript" />
 </div>

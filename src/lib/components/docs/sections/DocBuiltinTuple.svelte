@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinTuple.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const instanceMethods = [
     { name: '.length()',          returns: 'int',   desc: 'Number of elements in the tuple (1–6)' },
     { name: '.get(index)',        returns: 'any',   desc: 'Element at zero-based index (0–5)' },
@@ -49,6 +50,14 @@
   // Derived via QuickFunc
   score_range = bounds([12, 5, 99, 34, 7])
 )`;
+
+  const literalExample = `// Up to 6 elements, comma-separated, mixed types:
+point   = t:(10, 20)
+color   = t:(255, 128, 0, 1.0f)       // 4 elements
+full    = t:(1, "a", true, 3.14, null, #FF0000)  // exactly 6 — maximum
+
+// Type annotation:
+pos<tuple> = t:(0, 0, "origin")`;
 </script>
 
 <div class="doc-page">
@@ -61,13 +70,7 @@
   </p>
 
   <h2>Construction</h2>
-  <pre><code>// Up to 6 elements, comma-separated, mixed types:
-point   = t:(10, 20)
-color   = t:(255, 128, 0, 1.0f)       // 4 elements
-full    = t:(1, "a", true, 3.14, null, #FF0000)  // exactly 6 — maximum
-
-// Type annotation:
-pos<tuple> = t:(0, 0, "origin")</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <h2>Instance Methods</h2>
   <div class="table-scroll">
@@ -86,7 +89,7 @@ pos<tuple> = t:(0, 0, "origin")</code></pre>
   </div>
 
   <h2>Usage Examples</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>When to Use a Tuple vs an Object</h2>
   <p>

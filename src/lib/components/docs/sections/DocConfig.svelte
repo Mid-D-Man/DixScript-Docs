@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocConfig.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const example = `@CONFIG(
   version            -> "1.0.0"
   encoding           -> "utf-8"
@@ -40,7 +41,7 @@
     All keys within it are also optional — include only what you need.
     When <code>@CONFIG</code> is omitted entirely, advanced features are available by default.
   </p>
-  <pre><code>{example}</code></pre>
+  <CodeBlock code={example} lang="dixscript" />
 
   <div class="kv-table">
     {#each [

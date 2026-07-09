@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinString.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: '.length()',           returns: 'int',    desc: 'Character count' },
     { name: '.toUpper()',          returns: 'string', desc: 'Uppercase copy' },
@@ -19,6 +20,11 @@
     { name: '.isEmpty()',          returns: 'bool',   desc: 'True if empty string' },
     { name: '.isBlank()',          returns: 'bool',   desc: 'True if empty or whitespace only' },
   ];
+
+  const literalExample = `slug  = name.toLower().replace(" ", "-")
+parts = csv.split(",")
+safe  = input.trim().substring(0, 255)
+hex   = id.padLeft(8, "0")`;
 </script>
 
 <div class="doc-page">
@@ -28,10 +34,7 @@
     Methods can be chained.
   </p>
 
-  <pre><code>slug  = name.toLower().replace(" ", "-")
-parts = csv.split(",")
-safe  = input.trim().substring(0, 255)
-hex   = id.padLeft(8, "0")</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <div class="table-scroll">
     <table>

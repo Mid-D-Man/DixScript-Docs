@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinMath.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: 'Math.max(a, b)',        returns: 'double', desc: 'Maximum of two numbers' },
     { name: 'Math.min(a, b)',        returns: 'double', desc: 'Minimum of two numbers' },
@@ -24,6 +25,10 @@
     { name: 'Math.truncate(x)',      returns: 'int',    desc: 'Integer part (truncate towards zero)' },
     { name: 'Math.remainder(a, b)',  returns: 'double', desc: 'Remainder after division' },
   ];
+
+  const literalExample = `dist   = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
+clamped = Math.clamp(health + regen, 0, maxHealth)
+angle  = Math.degrees(Math.atan2(dy, dx))`;
 </script>
 
 <div class="doc-page">
@@ -32,9 +37,7 @@
     Static mathematical functions. Called as <code>Math.methodName(args)</code>.
   </p>
 
-  <pre><code>dist   = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
-clamped = Math.clamp(health + regen, 0, maxHealth)
-angle  = Math.degrees(Math.atan2(dy, dx))</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <div class="table-scroll">
     <table>

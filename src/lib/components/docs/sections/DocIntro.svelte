@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocIntro.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   // Section cross-reference table
   const sectionAccess = [
     { section: '@CONFIG',     usedBy: ['Compiler'],                            canAccess: ['—'] },
@@ -20,6 +21,14 @@
     { name: '@SECURITY',   req: false, desc: 'Encryption mode and key configuration. Required when using DEncryptor — auto-filled by the compiler if omitted.' },
     { name: '@DLM',        req: false, desc: 'Data Lifecycle Modules: compression, encryption, auditing.' },
   ];
+
+  const literalExample = `@data(          // valid — normalised to @DATA
+  app = "x"
+)
+
+@Config(        // valid — normalised to @CONFIG
+  version -> "1.0.0"
+)`;
 </script>
 
 <div class="doc-page">
@@ -58,13 +67,7 @@
     The conventional form uses all-caps, which is what formatters will normalise to.
   </p>
 
-  <pre><code>@data(          // valid — normalised to @DATA
-  app = "x"
-)
-
-@Config(        // valid — normalised to @CONFIG
-  version -> "1.0.0"
-)</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <h2>File Sections</h2>
   <div class="kv-table">

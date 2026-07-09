@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinDix.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: 'Dix.Log(msg)',          desc: 'Log at Info level' },
     { name: 'Dix.LogInfo(msg)',      desc: 'Log informational message' },
@@ -37,7 +38,7 @@
     <code>debug_mode -&gt; "regular"</code> (or <code>"verbose"</code>) in <code>@CONFIG</code>.
   </p>
 
-  <pre><code>{exampleCode}</code></pre>
+  <CodeBlock code={exampleCode} lang="dixscript" />
 
   <div class="table-scroll">
     <table>
@@ -58,5 +59,5 @@
     <code>Dix.Format</code> uses zero-indexed <code>{placeholderDisplay}</code> placeholders.
     Extra arguments beyond the placeholder count are ignored.
   </p>
-  <pre><code>{formatExample}</code></pre>
+  <CodeBlock code={formatExample} lang="dixscript" />
 </div>

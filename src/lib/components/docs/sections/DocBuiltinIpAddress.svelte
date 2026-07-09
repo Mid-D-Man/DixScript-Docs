@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinIpAddress.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: 'IpAddress.parse(str)',             returns: 'string', desc: 'Parse an IP address string — throws if invalid' },
     { name: 'IpAddress.tryParse(str)',          returns: 'string', desc: 'Parse an IP address, returns null if invalid' },
@@ -106,7 +107,7 @@
   </div>
 
   <h2>Usage Inside @QUICKFUNCS</h2>
-  <pre><code>{usageExample}</code></pre>
+  <CodeBlock code={usageExample} lang="dixscript" />
 
   <h2>Byte Arrays</h2>
   <p>

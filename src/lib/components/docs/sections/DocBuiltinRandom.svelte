@@ -1,5 +1,6 @@
 <!-- src/lib/components/docs/sections/DocBuiltinRandom.svelte -->
 <script lang="ts">
+  import CodeBlock from '$lib/components/CodeBlock.svelte';
   const methods = [
     { name: 'Random.range(min, max)',      returns: 'int',    desc: 'Random integer min..max inclusive' },
     { name: 'Random.float()',              returns: 'float',  desc: 'Random float 0.0..1.0' },
@@ -16,6 +17,11 @@
     { name: 'Random.alphanumeric(len)',    returns: 'string', desc: 'Random A–Za–z0–9 string' },
     { name: 'Random.weighted(vals, wts)', returns: 'any',    desc: 'Weighted random choice' },
   ];
+
+  const literalExample = `loot    = Random.weighted(itemPool, dropWeights)
+token   = Random.alphanumeric(32)
+enemies = Random.sample(spawnPool, 5)
+jitter  = Random.floatRange(-0.1, 0.1)`;
 </script>
 
 <div class="doc-page">
@@ -25,10 +31,7 @@
     Uses a cryptographically seeded PRNG.
   </p>
 
-  <pre><code>loot    = Random.weighted(itemPool, dropWeights)
-token   = Random.alphanumeric(32)
-enemies = Random.sample(spawnPool, 5)
-jitter  = Random.floatRange(-0.1, 0.1)</code></pre>
+  <CodeBlock code={literalExample} lang="dixscript" />
 
   <div class="table-scroll">
     <table>
