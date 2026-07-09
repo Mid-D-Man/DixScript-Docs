@@ -1,7 +1,7 @@
 <!-- src/lib/components/GameComparison.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Prism from 'prismjs';
+  import Prism from '$lib/prism/prism-instance';
   import 'prismjs/components/prism-json';
   import '$lib/prism/custom-languages';
 
