@@ -1,6 +1,6 @@
 <!-- src/lib/components/CodeBlock.svelte -->
 <script lang="ts">
-  import Prism from 'prismjs';
+  import Prism from '$lib/prism/prism-instance';
   // Prism's official language components — each registers itself on import.
   import 'prismjs/components/prism-markup';
   // php's component registers a global before-tokenize hook that expects
