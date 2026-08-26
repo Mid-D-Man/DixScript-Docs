@@ -570,7 +570,7 @@ fn wildcard_queries(data: &DixData) {
     </span>
   </div>
 
-  <h2>DixLoader — Loading Files</h2>
+  <h2 id="loader">DixLoader — Loading Files</h2>
 
   <h3>Load a plain .mdix file</h3>
   <CodeBlock code={loaderBasic} lang="rust" />
@@ -602,7 +602,7 @@ fn wildcard_queries(data: &DixData) {
     </table>
   </div>
 
-  <h2>DixLoadOptions — Configuring the Loader</h2>
+  <h2 id="loader-options">DixLoadOptions — Configuring the Loader</h2>
   <CodeBlock code={loadOptionsApi} lang="rust" />
 
   <div class="table-scroll">
@@ -629,7 +629,7 @@ fn wildcard_queries(data: &DixData) {
     </table>
   </div>
 
-  <h2>DixData — Querying Loaded Data</h2>
+  <h2 id="query">DixData — Querying Loaded Data</h2>
   <CodeBlock code={dixDataApi} lang="rust" />
 
   <h3>Wildcard queries with select_many</h3>
@@ -672,7 +672,7 @@ fn wildcard_queries(data: &DixData) {
   <h2>DixValue — The Runtime Value Enum</h2>
   <CodeBlock code={dixValueVariants} lang="rust" />
 
-  <h2>DixDataBuilder — Building Data Programmatically</h2>
+  <h2 id="builder">DixDataBuilder — Building Data Programmatically</h2>
   <p>
     The fluent builder creates <code>DixData</code> in memory without needing a
     <code>.mdix</code> source file. It enforces DixScript's two-tier ordering rule:
@@ -718,7 +718,7 @@ fn wildcard_queries(data: &DixData) {
     </table>
   </div>
 
-  <h2>DixConverter — Format Conversion</h2>
+  <h2 id="format-conversion">DixConverter — Format Conversion</h2>
   <CodeBlock code={converterApi} lang="rust" />
 
   <h2>DixFormatOptions — Controlling Output</h2>
@@ -727,7 +727,7 @@ fn wildcard_queries(data: &DixData) {
   <h2>DixCompactor — Minification</h2>
   <CodeBlock code={compactorApi} lang="rust" />
 
-  <h2>SchemaBuilder — Validation</h2>
+  <h2 id="schema-validation">SchemaBuilder — Validation</h2>
   <p>
     Fluent, declarative validation against a loaded <code>DixData</code>.
     Typed <code>require_*</code>/<code>optional_*</code> shorthands cover
@@ -764,7 +764,7 @@ fn wildcard_queries(data: &DixData) {
     </table>
   </div>
 
-  <h2>MdixMerger — Combining Databases</h2>
+  <h2 id="merging">MdixMerger — Combining Databases</h2>
   <p>
     AST-level merging — no JSON round-trip, so <code>Long</code>,
     <code>Float</code>, <code>Double</code>, <code>ScientificNotation</code>,
@@ -796,7 +796,7 @@ fn wildcard_queries(data: &DixData) {
     </table>
   </div>
 
-  <h2>DixSerialize — Writing Structs</h2>
+  <h2 id="serde">DixSerialize — Writing Structs</h2>
   <p>
     The write-side mirror of <code>DixDeserialize</code> below. Implement
     <code>to_dix</code> for a struct and hand it to

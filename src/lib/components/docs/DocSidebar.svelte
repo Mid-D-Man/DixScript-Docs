@@ -6,8 +6,19 @@
 
   const dispatch = createEventDispatcher<{ navigate: string; close: void }>();
 
-  interface NavItem  { id: string; label: string; }
+  interface NavItem  { id: string; label: string; children?: NavItem[]; }
   interface NavGroup { id: string; label: string; iconPath: string; items: NavItem[]; open: boolean; }
+
+  // Sub-doc ids are compound: "<parent-id>--<feature-slug>", matching the
+  // anchor ids added to each language's h2 headings (e.g. DocRustApi.svelte's
+  // <h2 id="builder">). docs/+page.svelte's navigate() splits on "--" to
+  // pick the section component AND scroll to the anchor inside it.
+  let expanded = new Set<string>();
+
+  function toggleExpanded(id: string, e: MouseEvent): void {
+    e.stopPropagation();
+    expanded = new Set(expanded.has(id) ? [...expanded].filter((x) => x !== id) : [...expanded, id]);
+  }
 
   let groups: NavGroup[] = [
     {
@@ -74,8 +85,31 @@
       items: [
         { id: 'cli',        label: 'CLI Reference'       },
         { id: 'ffi',        label: 'Language Bindings'   },
-        { id: 'rust-api',   label: 'Rust Runtime API'    },
-        { id: 'csharp-api', label: 'C# Runtime API'      },
+        { id: 'rust-api',   label: 'Rust Runtime API', children: [
+            { id: 'rust-api--loader',           label: 'Loading Files'     },
+            { id: 'rust-api--loader-options',   label: 'Loader Options'    },
+            { id: 'rust-api--query',            label: 'Querying Data'     },
+            { id: 'rust-api--builder',          label: 'Builder API'       },
+            { id: 'rust-api--format-conversion',label: 'Format Conversion' },
+            { id: 'rust-api--schema-validation',label: 'Schema Validation' },
+            { id: 'rust-api--merging',          label: 'Merging Databases' },
+            { id: 'rust-api--serde',            label: 'Serde Support'     },
+          ] },
+        { id: 'csharp-api', label: 'C# Runtime API', children: [
+            { id: 'csharp-api--install',         label: 'Install'          },
+            { id: 'csharp-api--quickstart',       label: 'Quick Start'      },
+            { id: 'csharp-api--error-handling',   label: 'Error Handling'   },
+            { id: 'csharp-api--loading',           label: 'Loading Data'     },
+            { id: 'csharp-api--reading',            label: 'Reading Values'  },
+            { id: 'csharp-api--query',              label: 'Query API'      },
+            { id: 'csharp-api--dynamic-access',     label: 'Dynamic Access' },
+            { id: 'csharp-api--poco',               label: 'POCO Deserialization' },
+            { id: 'csharp-api--builder',            label: 'Builder API'    },
+            { id: 'csharp-api--merging',            label: 'Merging Databases' },
+            { id: 'csharp-api--schema-validation',  label: 'Schema Validation' },
+            { id: 'csharp-api--format-conversion',  label: 'Format Conversion' },
+            { id: 'csharp-api--method-reference',   label: 'Full Method Reference' },
+          ] },
         { id: 'go-api',     label: 'Go Runtime API'      },
         { id: 'java-api',   label: 'Java Runtime API'    },
         { id: 'php-api',    label: 'PHP Runtime API'     },
@@ -93,19 +127,39 @@
         .map(g => ({
           ...g,
           open: true,
-          items: g.items.filter(i =>
-            i.label.toLowerCase().includes(search.toLowerCase()) ||
-            i.id.toLowerCase().includes(search.toLowerCase())
-          ),
+          items: g.items
+            .map((i): NavItem | null => {
+              const q = search.toLowerCase();
+              const selfMatch = i.label.toLowerCase().includes(q) || i.id.toLowerCase().includes(q);
+              if (selfMatch) return i;
+              const matchedChildren = (i.children ?? []).filter(
+                c => c.label.toLowerCase().includes(q) || c.id.toLowerCase().includes(q)
+              );
+              if (matchedChildren.length > 0) return { ...i, children: matchedChildren };
+              return null;
+            })
+            .filter((i): i is NavItem => i !== null),
         }))
         .filter(g => g.items.length > 0)
     : groups;
 
+  // While searching, auto-expand any item whose children matched.
+  $: if (search.trim()) {
+    expanded = new Set([
+      ...expanded,
+      ...filtered.flatMap(g => g.items).filter(i => i.children?.length).map(i => i.id),
+    ]);
+  }
+
   $: if (activeSection) {
+    const parentId = activeSection.split('--')[0];
     groups = groups.map(g => ({
       ...g,
-      open: g.items.some(i => i.id === activeSection) ? true : g.open,
+      open: g.items.some(i => i.id === parentId) ? true : g.open,
     }));
+    if (activeSection.includes('--')) {
+      expanded = new Set([...expanded, parentId]);
+    }
   }
 
   function navigate(id: string): void { dispatch('navigate', id); }
@@ -175,14 +229,47 @@
           <ul class="group-items">
             {#each group.items as item}
               <li>
-                <button
-                  class="nav-item"
-                  class:active={activeSection === item.id}
-                  on:click={() => navigate(item.id)}
-                  aria-current={activeSection === item.id ? 'location' : undefined}
-                >
-                  {item.label}
-                </button>
+                <div class="nav-item-row">
+                  <button
+                    class="nav-item"
+                    class:active={activeSection === item.id}
+                    class:parent-active={item.children && activeSection.startsWith(item.id + '--')}
+                    on:click={() => navigate(item.id)}
+                    aria-current={activeSection === item.id ? 'location' : undefined}
+                  >
+                    {item.label}
+                  </button>
+                  {#if item.children}
+                    <button
+                      class="expand-btn"
+                      class:open={expanded.has(item.id)}
+                      on:click={(e) => toggleExpanded(item.id, e)}
+                      aria-expanded={expanded.has(item.id)}
+                      aria-label="{expanded.has(item.id) ? 'Collapse' : 'Expand'} {item.label} sub-sections"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                      </svg>
+                    </button>
+                  {/if}
+                </div>
+
+                {#if item.children && expanded.has(item.id)}
+                  <ul class="sub-items">
+                    {#each item.children as child}
+                      <li>
+                        <button
+                          class="nav-item nav-item--sub"
+                          class:active={activeSection === child.id}
+                          on:click={() => navigate(child.id)}
+                          aria-current={activeSection === child.id ? 'location' : undefined}
+                        >
+                          {child.label}
+                        </button>
+                      </li>
+                    {/each}
+                  </ul>
+                {/if}
               </li>
             {/each}
           </ul>
@@ -364,6 +451,30 @@
     color: var(--primary);
     background: rgba(166, 124, 82, 0.1);
     font-weight: 600;
+  }
+  .nav-item.parent-active { color: var(--foreground); }
+
+  .nav-item-row { display: flex; align-items: center; }
+  .nav-item-row .nav-item { flex: 1; }
+
+  .expand-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 1.5rem; height: 1.5rem; margin: 0 0.375rem 0 0.125rem;
+    background: none; border: none; color: var(--muted-foreground);
+    cursor: pointer; border-radius: 4px; flex-shrink: 0;
+    transition: color 0.12s, transform 0.18s ease;
+  }
+  .expand-btn:hover { color: var(--foreground); background: var(--secondary); }
+  .expand-btn.open { transform: rotate(90deg); }
+
+  .sub-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.125rem;
+  }
+  .nav-item--sub {
+    padding-left: 3.5rem;
+    font-size: 0.75rem;
   }
 
   .no-results {

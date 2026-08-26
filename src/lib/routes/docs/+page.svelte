@@ -1,6 +1,6 @@
 <!-- src/lib/routes/docs/+page.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { browser } from '$app/environment';
 
   import DocLayout    from '$lib/components/docs/DocLayout.svelte';
@@ -41,21 +41,45 @@
   import DocBuiltinUniversal from '$lib/components/docs/sections/DocBuiltinUniversal.svelte';
   import DocBuiltinDix      from '$lib/components/docs/sections/DocBuiltinDix.svelte';
 
+  // activeSection may be compound — "rust-api--builder" — identifying both
+  // which language doc page to show AND which sub-doc anchor inside it to
+  // scroll to. DocSidebar gets the full compound value (it needs it to
+  // highlight the exact sub-item); the {#if} chain below that picks which
+  // section component to render only ever cares about the part before
+  // "--", hence the derived activePage.
   let activeSection = 'intro';
+  $: activePage = activeSection.split('--')[0];
+
   let sidebarOpen = false;
+
+  async function scrollToTarget(id: string): Promise<void> {
+    const [, subId] = id.split('--');
+    await tick(); // wait for the {#if activePage === ...} block to mount
+    if (subId) {
+      const el = document.getElementById(subId);
+      if (el) {
+        el.scrollIntoView({ block: 'start' });
+        return;
+      }
+    }
+    window.scrollTo({ top: 0 });
+  }
 
   function navigate(id: string): void {
     activeSection = id;
     sidebarOpen = false;
     if (browser) {
-      window.scrollTo({ top: 0 });
       window.history.replaceState(null, '', `#${id}`);
+      scrollToTarget(id);
     }
   }
 
   onMount(() => {
     const hash = window.location.hash.slice(1);
-    if (hash) activeSection = hash;
+    if (hash) {
+      activeSection = hash;
+      scrollToTarget(hash);
+    }
   });
 </script>
 
@@ -73,73 +97,73 @@
     />
   </svelte:fragment>
 
-  {#if activeSection === 'intro'}
+  {#if activePage === 'intro'}
     <DocIntro />
-  {:else if activeSection === 'quickstart'}
+  {:else if activePage === 'quickstart'}
     <DocQuickStart />
-  {:else if activeSection === 'types'}
+  {:else if activePage === 'types'}
     <DocTypes />
-  {:else if activeSection === 'variables'}
+  {:else if activePage === 'variables'}
     <DocVariables />
-  {:else if activeSection === 'config'}
+  {:else if activePage === 'config'}
     <DocConfig />
-  {:else if activeSection === 'enums'}
+  {:else if activePage === 'enums'}
     <DocEnums />
-  {:else if activeSection === 'data'}
+  {:else if activePage === 'data'}
     <DocData />
-  {:else if activeSection === 'quickfuncs'}
+  {:else if activePage === 'quickfuncs'}
     <DocQuickFuncs />
-  {:else if activeSection === 'security'}
+  {:else if activePage === 'security'}
     <DocSecurity />
-  {:else if activeSection === 'dlm'}
+  {:else if activePage === 'dlm'}
     <DocDLM />
-  {:else if activeSection === 'imports'}
+  {:else if activePage === 'imports'}
     <DocImports />
-  {:else if activeSection === 'builtin-math'}
+  {:else if activePage === 'builtin-math'}
     <DocBuiltinMath />
-  {:else if activeSection === 'builtin-array'}
+  {:else if activePage === 'builtin-array'}
     <DocBuiltinArray />
-  {:else if activeSection === 'builtin-datetime'}
+  {:else if activePage === 'builtin-datetime'}
     <DocBuiltinDateTime />
-  {:else if activeSection === 'builtin-random'}
+  {:else if activePage === 'builtin-random'}
     <DocBuiltinRandom />
-  {:else if activeSection === 'builtin-string'}
+  {:else if activePage === 'builtin-string'}
     <DocBuiltinString />
-  {:else if activeSection === 'builtin-number'}
+  {:else if activePage === 'builtin-number'}
     <DocBuiltinNumber />
-  {:else if activeSection === 'builtin-regex'}
+  {:else if activePage === 'builtin-regex'}
     <DocBuiltinRegex />
-  {:else if activeSection === 'builtin-tuple'}
+  {:else if activePage === 'builtin-tuple'}
     <DocBuiltinTuple />
-  {:else if activeSection === 'builtin-blob'}
+  {:else if activePage === 'builtin-blob'}
     <DocBuiltinBlob />
-  {:else if activeSection === 'builtin-guid'}
+  {:else if activePage === 'builtin-guid'}
     <DocBuiltinGuid />
-  {:else if activeSection === 'builtin-ipaddress'}
+  {:else if activePage === 'builtin-ipaddress'}
     <DocBuiltinIpAddress />
-  {:else if activeSection === 'builtin-universal'}
+  {:else if activePage === 'builtin-universal'}
     <DocBuiltinUniversal />
-  {:else if activeSection === 'builtin-dix'}
+  {:else if activePage === 'builtin-dix'}
     <DocBuiltinDix />
-  {:else if activeSection === 'cli'}
+  {:else if activePage === 'cli'}
     <DocCLI />
-  {:else if activeSection === 'ffi'}
+  {:else if activePage === 'ffi'}
     <DocFFI />
-  {:else if activeSection === 'rust-api'}
+  {:else if activePage === 'rust-api'}
     <DocRustApi />
-  {:else if activeSection === 'csharp-api'}
+  {:else if activePage === 'csharp-api'}
     <DocCSharpApi />
-  {:else if activeSection === 'go-api'}
+  {:else if activePage === 'go-api'}
     <DocGoApi />
-  {:else if activeSection === 'java-api'}
+  {:else if activePage === 'java-api'}
     <DocJavaApi />
-  {:else if activeSection === 'php-api'}
+  {:else if activePage === 'php-api'}
     <DocPhpApi />
-  {:else if activeSection === 'python-api'}
+  {:else if activePage === 'python-api'}
     <DocPythonApi />
-  {:else if activeSection === 'wasm-api'}
+  {:else if activePage === 'wasm-api'}
     <DocWasmApi />
-  {:else if activeSection === 'odin-api'}
+  {:else if activePage === 'odin-api'}
     <DocOdinApi />
   {/if}
 </DocLayout>

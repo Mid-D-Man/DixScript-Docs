@@ -286,13 +286,13 @@ Dix.ClearSerializerCache();`;
     reference the project directly until then.
   </p>
 
-  <h2>Install</h2>
+  <h2 id="install">Install</h2>
   <CodeBlock code={install} lang="markup" />
 
-  <h2>Quick Start</h2>
+  <h2 id="quickstart">Quick Start</h2>
   <CodeBlock code={quickStart} lang="csharp" />
 
-  <h2>MdixResult&lt;T&gt; — Error Handling</h2>
+  <h2 id="error-handling">MdixResult&lt;T&gt; — Error Handling</h2>
   <p>
     Nothing in this API throws by default. Every fallible call returns
     <code>MdixResult&lt;T&gt;</code>, a discriminated success/failure wrapper
@@ -301,10 +301,10 @@ Dix.ClearSerializerCache();`;
   </p>
   <CodeBlock code={mdixResult} lang="csharp" />
 
-  <h2>Loading — Sync, Async &amp; Hot Reload</h2>
+  <h2 id="loading">Loading — Sync, Async &amp; Hot Reload</h2>
   <CodeBlock code={loadingApi} lang="csharp" />
 
-  <h2>Reading Values</h2>
+  <h2 id="reading">Reading Values</h2>
   <CodeBlock code={readApi} lang="csharp" />
 
   <div class="table-scroll">
@@ -329,7 +329,7 @@ Dix.ClearSerializerCache();`;
     </table>
   </div>
 
-  <h2>Query — LINQ Over Group Arrays</h2>
+  <h2 id="query">Query — LINQ Over Group Arrays</h2>
   <p>
     <code>MdixQuery</code> extension methods let you filter, project, and
     aggregate a group array at a path without hand-rolling
@@ -337,7 +337,7 @@ Dix.ClearSerializerCache();`;
   </p>
   <CodeBlock code={queryApi} lang="csharp" />
 
-  <h2>Dynamic Access</h2>
+  <h2 id="dynamic-access">Dynamic Access</h2>
   <p>
     <code>MdixDynamic</code> implements <code>DynamicObject</code> for quick
     exploratory reads — property and index access resolve against the
@@ -347,10 +347,10 @@ Dix.ClearSerializerCache();`;
   </p>
   <CodeBlock code={dynamicApi} lang="csharp" />
 
-  <h2>POCO Deserialization</h2>
+  <h2 id="poco">POCO Deserialization</h2>
   <CodeBlock code={deserializeApi} lang="csharp" />
 
-  <h2>MdixBuilder — Building Programmatically</h2>
+  <h2 id="builder">MdixBuilder — Building Programmatically</h2>
   <p>
     The fluent builder enforces the same two-tier <code>@DATA</code> rule
     as every other binding: flat properties before table properties or
@@ -358,16 +358,16 @@ Dix.ClearSerializerCache();`;
   </p>
   <CodeBlock code={builderApi} lang="csharp" />
 
-  <h2>Merging Databases</h2>
+  <h2 id="merging">Merging Databases</h2>
   <CodeBlock code={mergeApi} lang="csharp" />
 
-  <h2>Schema Validation</h2>
+  <h2 id="schema-validation">Schema Validation</h2>
   <CodeBlock code={schemaApi} lang="csharp" />
 
-  <h2>Format Conversion</h2>
+  <h2 id="format-conversion">Format Conversion</h2>
   <CodeBlock code={converterApi} lang="csharp" />
 
-  <h2>Dix Facade — Full Method Reference</h2>
+  <h2 id="method-reference">Dix Facade — Full Method Reference</h2>
   <div class="table-scroll">
     <table>
       <thead><tr><th>Category</th><th>Methods</th></tr></thead>
