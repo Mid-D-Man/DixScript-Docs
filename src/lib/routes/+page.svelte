@@ -1,5 +1,6 @@
 <script lang="ts">
   import HeroSection      from '$lib/components/HeroSection.svelte';
+  import InstallStrip     from '$lib/components/InstallStrip.svelte';
   import SyntaxComparison from '$lib/components/SyntaxComparison.svelte';
   import GameComparison   from '$lib/components/GameComparison.svelte';
   import FeaturesSection  from '$lib/components/FeaturesSection.svelte';
@@ -14,6 +15,7 @@
 </svelte:head>
 
 <HeroSection />
+<InstallStrip />
 <SyntaxComparison />
 <GameComparison />
 <FeaturesSection />

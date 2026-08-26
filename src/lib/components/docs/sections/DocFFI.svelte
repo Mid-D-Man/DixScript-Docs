@@ -28,7 +28,7 @@
     {
       lang: 'PHP', pkg: 'midmanstudio/mdix', cls: 'php',
       status: 'complete', statusLabel: 'Feature-complete',
-      note: 'Both throw-style methods and try*() railway-style methods returning MdixResult (map / andThen / ensure / fold / tap chains, same pattern as the Python wrapper). Full MdixBuilder and MdixConverter.'
+      note: 'Both throw-style methods and try*() railway-style methods returning MdixResult (map / andThen / ensure / fold / tap chains, same pattern as the Python wrapper). Full MdixBuilder and MdixConverter. Composer installs the wrapper class only — FFI needs the compiled native library built separately, see the Install section.'
     },
     {
       lang: 'Python', pkg: 'midmanstudio-mdix', cls: 'python',
@@ -41,9 +41,9 @@
       note: 'wasm-bindgen exports for MdixDatabase and MdixBuilder, plus features not yet surfaced in the npm package below: merge (mergeSources / mergeSourcesWeighted / mergeWith), MdixSchema (fluent require_*/optional_* validation), and MdixWatcher (source hot-reload / change detection).'
     },
     {
-      lang: 'JS / npm', pkg: '@dixscript/core', cls: 'wasm',
-      status: 'partial', statusLabel: 'Published subset of mdix-wasm',
-      note: 'The published TypeScript layer currently re-exports only MdixDatabase and MdixBuilder from the compiled wasm-pkg, plus a tryGet/unwrap Result helper. Merge, Schema, and Watch already exist in the underlying mdix-wasm crate (see above) but are not re-exported from src/index.ts yet — that\u2019s an open gap, not a missing feature upstream.'
+      lang: 'JS / npm', pkg: '@midmanstudio/mdix', cls: 'wasm',
+      status: 'complete', statusLabel: 'Published — full mdix-wasm surface',
+      note: 'MdixDatabase and MdixBuilder, plus merge (mergeSources / mergeSourcesWeighted / mergeWith), MdixSchema (fluent require_*/optional_* validation), DLM compile/decompile, and MdixWatcher (source hot-reload) are all re-exported from src/index.ts now — this used to lag the underlying mdix-wasm crate, that gap is closed.'
     },
     {
       lang: 'Odin', pkg: 'mdix-odin', cls: 'odin',

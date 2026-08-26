@@ -1,5 +1,8 @@
 <!-- src/lib/components/playground/PlaygroundOutput.svelte -->
 <script lang="ts">
+  import Prism from '$lib/prism/prism-instance';
+  import 'prismjs/components/prism-json';
+
   export let output: string = '';
   export let status: 'idle' | 'running' | 'done' | 'error' = 'idle';
 
@@ -9,6 +12,12 @@
     done:    'done',
     error:   'error',
   };
+
+  // Only the 'done' state is guaranteed-valid JSON (db.toJson() output) —
+  // 'error' holds a plain error message and 'idle' the placeholder text,
+  // neither of which should be tokenized as JSON.
+  $: highlighted =
+    status === 'done' && output ? Prism.highlight(output, Prism.languages.json, 'json') : null;
 </script>
 
 <div class="output-pane">
@@ -37,7 +46,11 @@
     </span>
   </div>
 
-  <pre class="output-body">{output || '// Click Run to execute your DixScript source'}</pre>
+  {#if highlighted}
+    <pre class="output-body"><code class="language-json">{@html highlighted}</code></pre>
+  {:else}
+    <pre class="output-body">{output || '// Click Run to execute your DixScript source'}</pre>
+  {/if}
 </div>
 
 <style>
@@ -90,6 +103,12 @@
     color: var(--muted-foreground);
     overflow: auto;
     white-space: pre;
+  }
+  .output-body code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+    color: var(--foreground);
   }
 
   .spin { animation: spin 0.7s linear infinite; }

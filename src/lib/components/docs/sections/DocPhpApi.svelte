@@ -6,6 +6,25 @@
 # Requires the PHP FFI extension enabled (ffi.enable=true in php.ini —
 # or ffi.enable=preload if you're preloading). PHP 8.1+.`;
 
+  const nativeLib = `# Composer installs the PHP wrapper — it does NOT ship a compiled binary.
+# FFI needs the actual native shared library, resolved in this order:
+#
+#   1. MDIX_LIB_PATH env var — absolute path to the .so/.dylib/.dll
+#   2. vendor/midmanstudio/mdix/lib/<platform file>  (or mdix-php/lib/ in
+#      a source checkout) — this is what CI populates
+#   3. The OS library loader (LD_LIBRARY_PATH, PATH, etc.) as a last resort
+
+# Build it yourself from a DixScript-Rust checkout:
+cargo build -p mdix-ffi --release
+
+# Then copy the platform output into lib/:
+#   Linux:   target/release/libmdix_ffi.so   -> lib/libmdix_ffi.so
+#   macOS:   target/release/libmdix_ffi.dylib -> lib/libmdix_ffi.dylib
+#   Windows: target/release/mdix_ffi.dll      -> lib/mdix_ffi.dll
+
+# Or point at a prebuilt copy without moving it:
+export MDIX_LIB_PATH=/path/to/libmdix_ffi.so`;
+
   const quickStart = `<?php
 use MidManStudio\\Mdix\\MdixDatabase;
 
@@ -130,6 +149,69 @@ MdixConverter::tryToJson($db): MdixResult;
 MdixConverter::tryFromJson($jsonStr): MdixResult;
 MdixConverter::tryFromToml($tomlStr): MdixResult;
 MdixConverter::tryFormatSource($source): MdixResult;`;
+
+  const lifecycleApi = `// Both MdixDatabase and MdixBuilder wrap a native FFI handle — close it
+// explicitly when you're done, especially in long-running processes
+// (workers, queue consumers) where __destruct() timing isn't predictable.
+$db->entryCount();   // int — total entries in the flat store
+$db->isValid();      // bool — false after close()
+$db->close();        // releases the native handle; safe to call once
+
+// __destruct() calls close() automatically as a safety net, but don't
+// rely on it for anything time-sensitive (file handles, locks, etc.)
+// held on the native side.
+
+$builder->entryCount();
+$builder->close();`;
+
+  const valueTypeApi = `use MidManStudio\\Mdix\\ValueType;
+
+// Returned by $db->valueTypeAt($path)
+enum ValueType: int {
+    case Unknown; case Null; case Bool; case Int; case Float; case Double;
+    case String; case Date; case Timestamp; case HexColor; case Blob;
+    case Regex; case Array; case Object; case Tuple; case Enum;
+}
+
+$type = $db->valueTypeAt('server.port');
+$type->label();     // "int" — human-readable
+$type->isScalar();  // true for Bool/Int/Float/Double/String only
+
+use MidManStudio\\Mdix\\FormatMode;
+
+// Passed to toMdix() / formatSource()
+enum FormatMode: int {
+    case Default;   // 2-space indentation
+    case Pretty;    // 4-space indentation, sorted keys
+    case Compact;   // trailing whitespace removed, blank lines collapsed
+    case Minified;  // all unnecessary whitespace stripped
+}`;
+
+  const errorApi = `use MidManStudio\\Mdix\\MdixError;
+use MidManStudio\\Mdix\\ErrorKind;
+
+try {
+    $port = $db->getInt('server.port');
+} catch (MdixError $e) {
+    match ($e->kind) {
+        ErrorKind::NotFound     => /* path doesn't exist */ null,
+        ErrorKind::TypeMismatch => /* wrong accessor for the stored type */ null,
+        ErrorKind::NullHandle,
+        ErrorKind::Closed       => /* database or builder already closed */ null,
+        ErrorKind::InvalidPath  => /* malformed dotted path */ null,
+        ErrorKind::Parse        => /* source failed to compile */ null,
+        ErrorKind::Io           => /* file read/write failure */ null,
+        ErrorKind::Native       => /* error surfaced from the Rust core */ null,
+    };
+    echo $e->getMessage();
+}
+
+// MdixError::fromMessage($str) infers an ErrorKind from a raw Rust error
+// string when one isn't already known — used internally by the wrapper,
+// but available if you're constructing errors of your own.
+
+// The try*() / MdixResult family (see above) avoids exceptions entirely —
+// prefer it at call sites where you don't want a try/catch per call.`;
 </script>
 
 <div class="doc-page">
@@ -141,19 +223,35 @@ MdixConverter::tryFormatSource($source): MdixResult;`;
     railway-style chaining — pick whichever fits the call site.
   </p>
 
-  <h2>Install</h2>
+  <h2 id="install">Install</h2>
   <CodeBlock code={install} lang="bash" />
 
-  <h2>Quick Start</h2>
+  <h3>Native library setup</h3>
+  <p>
+    Composer installs the PHP wrapper class only — FFI still needs the
+    compiled Rust shared library, which isn't published to Packagist. Build
+    it once and point the loader at it.
+  </p>
+  <CodeBlock code={nativeLib} lang="bash" />
+
+  <h2 id="quickstart">Quick Start</h2>
   <CodeBlock code={quickStart} lang="php" />
 
-  <h2>Loading</h2>
+  <h2 id="loading">Loading</h2>
   <CodeBlock code={loadApi} lang="php" />
 
-  <h2>Reading Values</h2>
+  <h2 id="reading">Reading Values</h2>
   <CodeBlock code={readApi} lang="php" />
 
-  <h2>MdixResult — Railway Programming</h2>
+  <h2 id="error-handling">Error Handling — MdixError &amp; ErrorKind</h2>
+  <p>
+    Every throw-style call that fails raises <code>MdixError</code> (extends
+    <code>\\RuntimeException</code>) carrying a typed <code>ErrorKind</code> so
+    you can branch on failure category without string-matching the message.
+  </p>
+  <CodeBlock code={errorApi} lang="php" />
+
+  <h2 id="result">MdixResult — Railway Programming</h2>
   <CodeBlock code={resultApi} lang="php" />
 
   <div class="table-scroll">
@@ -183,9 +281,27 @@ MdixConverter::tryFormatSource($source): MdixResult;`;
     </table>
   </div>
 
-  <h2>Building Programmatically</h2>
+  <h2 id="builder">Building Programmatically</h2>
   <CodeBlock code={builderApi} lang="php" />
 
-  <h2>Format Conversion</h2>
+  <h2 id="format-conversion">Format Conversion</h2>
   <CodeBlock code={converterApi} lang="php" />
+
+  <h2 id="types">Types — ValueType &amp; FormatMode</h2>
+  <p>
+    <code>ValueType</code> is what <code>$db-&gt;valueTypeAt($path)</code> returns —
+    every discriminant DixScript's runtime value enum can hold.
+    <code>FormatMode</code> controls output shape for
+    <code>toMdix()</code> / <code>formatSource()</code>.
+  </p>
+  <CodeBlock code={valueTypeApi} lang="php" />
+
+  <h2 id="lifecycle">Lifecycle &amp; Cleanup</h2>
+  <p>
+    Both <code>MdixDatabase</code> and <code>MdixBuilder</code> hold a native
+    FFI handle under the hood. <code>__destruct()</code> frees it
+    automatically, but call <code>close()</code> explicitly in long-running
+    processes rather than waiting on PHP's garbage collector.
+  </p>
+  <CodeBlock code={lifecycleApi} lang="php" />
 </div>

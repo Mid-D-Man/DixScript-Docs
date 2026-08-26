@@ -2,11 +2,10 @@
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
   const install = `<!-- .csproj -->
-<PackageReference Include="MidManStudio.Mdix.Core" Version="*" />
+<PackageReference Include="MidManStudio.Mdix" Version="*" />
 
-<!-- NuGet packaging is still pending — until then, reference the project
-     directly from a clone of DixScript-Rust: -->
-<ProjectReference Include="../DixScript-Rust/mdix-csharp/src/MidManStudio.Mdix.Core/MidManStudio.Mdix.Core.csproj" />`;
+<!-- or: -->
+dotnet add package MidManStudio.Mdix`;
 
   const quickStart = `using MidManStudio.Mdix;
 
@@ -277,13 +276,12 @@ Dix.ClearSerializerCache();`;
 <div class="doc-page">
   <h1>C# / Unity Runtime API</h1>
   <p class="page-lead">
-    <code>MidManStudio.Mdix.Core</code> is the most complete language
+    <code>MidManStudio.Mdix</code> is the most complete language
     binding — it was the original reference implementation before the Rust
     port, and the C# wrapper around the Rust core has grown well past a
     thin FFI shim: LINQ-style queries, dynamic access, POCO
     (de)serialization, schema validation, database merging, hot reload, and
-    a full async surface are all here. NuGet packaging is still pending —
-    reference the project directly until then.
+    a full async surface are all here. Published on NuGet.
   </p>
 
   <h2 id="install">Install</h2>

@@ -1,6 +1,40 @@
 <!-- src/lib/components/playground/PlaygroundEditor.svelte -->
 <script lang="ts">
+  import Prism from '$lib/prism/prism-instance';
+  // Registers the 'dixscript' grammar onto the shared Prism singleton.
+  // Prism ships no built-in grammar for .mdix — see this module for the
+  // token rules (comments, @SECTION headers, ~quickfuncs, typed generics).
+  import '$lib/prism/custom-languages';
+
   export let source: string = '';
+
+  let textareaEl: HTMLTextAreaElement;
+  let preEl: HTMLPreElement;
+
+  // Re-tokenize whenever the source changes. Prism.highlight() is cheap
+  // enough to run on every keystroke for playground-sized sources (a few
+  // hundred lines at most) — no debouncing needed.
+  $: highlighted = highlight(source);
+
+  function highlight(code: string): string {
+    const grammar = Prism.languages.dixscript;
+    const html = grammar ? Prism.highlight(code, grammar, 'dixscript') : escapeHtml(code);
+    // A trailing newline keeps the highlighted layer's line count (and
+    // therefore its rendered height) identical to the textarea's own —
+    // without it, a source ending in "\n" renders one visual line shorter
+    // in the <pre> than in the <textarea>, and the two scroll out of sync.
+    return html + '\n';
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] as string));
+  }
+
+  function syncScroll(): void {
+    if (!preEl || !textareaEl) return;
+    preEl.scrollTop = textareaEl.scrollTop;
+    preEl.scrollLeft = textareaEl.scrollLeft;
+  }
 
   function handleTab(e: KeyboardEvent) {
     if (e.key !== 'Tab') return;
@@ -35,16 +69,22 @@
         <span class="line-num">{i + 1}</span>
       {/each}
     </div>
-    <textarea
-      class="editor-textarea"
-      bind:value={source}
-      on:keydown={handleTab}
-      spellcheck={false}
-      autocomplete="off"
-      autocorrect="off"
-      autocapitalize="off"
-      aria-label="DixScript source editor"
-    ></textarea>
+
+    <div class="highlight-wrap">
+      <pre bind:this={preEl} class="highlight-layer" aria-hidden="true"><code class="language-dixscript">{@html highlighted}</code></pre>
+      <textarea
+        bind:this={textareaEl}
+        class="editor-textarea"
+        bind:value={source}
+        on:keydown={handleTab}
+        on:scroll={syncScroll}
+        spellcheck={false}
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        aria-label="DixScript source editor"
+      ></textarea>
+    </div>
   </div>
 </div>
 
@@ -111,17 +151,54 @@
     display: block;
   }
 
+  /* Textarea and highlighted <pre> are stacked exactly on top of each
+     other — same font, size, line-height, padding, and wrapping — so the
+     transparent textarea's caret and selection sit precisely over the
+     colored tokens underneath. Only the textarea receives input events;
+     the highlight layer is aria-hidden and pointer-events:none. */
+  .highlight-wrap {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .highlight-layer,
   .editor-textarea {
-    flex: 1; resize: none; border: none; outline: none;
-    background: var(--card);
-    color: var(--foreground);
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 1rem;
+    border: none;
+    border-radius: 0;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     line-height: 1.7;
-    padding: 1rem;
     tab-size: 2;
-    overflow-y: auto;
-    overflow-x: auto;
     white-space: pre;
+    overflow: auto;
+  }
+
+  .highlight-layer {
+    background: var(--card);
+    pointer-events: none;
+    color: var(--foreground);
+  }
+  .highlight-layer code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .editor-textarea {
+    background: transparent;
+    color: transparent;
+    caret-color: var(--foreground);
+  }
+  .editor-textarea::selection {
+    background: rgba(166, 124, 82, 0.35);
+  }
+
+  .editor-textarea:focus {
+    outline: none;
   }
 </style>

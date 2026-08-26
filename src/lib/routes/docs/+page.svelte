@@ -1,6 +1,6 @@
 <!-- src/lib/routes/docs/+page.svelte -->
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
+  import { onMount } from 'svelte';
   import { browser } from '$app/environment';
 
   import DocLayout    from '$lib/components/docs/DocLayout.svelte';
@@ -19,8 +19,16 @@
   import DocImports         from '$lib/components/docs/sections/DocImports.svelte';
   import DocCLI             from '$lib/components/docs/sections/DocCLI.svelte';
   import DocFFI             from '$lib/components/docs/sections/DocFFI.svelte';
-  import DocRustApi         from '$lib/components/docs/sections/DocRustApi.svelte';
   import DocCSharpApi       from '$lib/components/docs/sections/DocCSharpApi.svelte';
+  import DocRustOverview          from '$lib/components/docs/sections/rust/DocRustOverview.svelte';
+  import DocRustLoader            from '$lib/components/docs/sections/rust/DocRustLoader.svelte';
+  import DocRustLoaderOptions     from '$lib/components/docs/sections/rust/DocRustLoaderOptions.svelte';
+  import DocRustQuery             from '$lib/components/docs/sections/rust/DocRustQuery.svelte';
+  import DocRustBuilder           from '$lib/components/docs/sections/rust/DocRustBuilder.svelte';
+  import DocRustFormatConversion  from '$lib/components/docs/sections/rust/DocRustFormatConversion.svelte';
+  import DocRustSchemaValidation  from '$lib/components/docs/sections/rust/DocRustSchemaValidation.svelte';
+  import DocRustMerging           from '$lib/components/docs/sections/rust/DocRustMerging.svelte';
+  import DocRustSerde             from '$lib/components/docs/sections/rust/DocRustSerde.svelte';
   import DocGoApi           from '$lib/components/docs/sections/DocGoApi.svelte';
   import DocJavaApi         from '$lib/components/docs/sections/DocJavaApi.svelte';
   import DocPhpApi          from '$lib/components/docs/sections/DocPhpApi.svelte';
@@ -41,45 +49,39 @@
   import DocBuiltinUniversal from '$lib/components/docs/sections/DocBuiltinUniversal.svelte';
   import DocBuiltinDix      from '$lib/components/docs/sections/DocBuiltinDix.svelte';
 
-  // activeSection may be compound — "rust-api--builder" — identifying both
-  // which language doc page to show AND which sub-doc anchor inside it to
-  // scroll to. DocSidebar gets the full compound value (it needs it to
-  // highlight the exact sub-item); the {#if} chain below that picks which
-  // section component to render only ever cares about the part before
-  // "--", hence the derived activePage.
+  // Every sidebar id — top-level or sub-doc ("rust-api--builder") — maps
+  // to exactly one standalone component in the {#if} chain below. There's
+  // no scroll-to-anchor step: each click swaps in a dedicated page, same
+  // mechanism as any other top-level doc section, just one level deeper.
   let activeSection = 'intro';
-  $: activePage = activeSection.split('--')[0];
-
   let sidebarOpen = false;
-
-  async function scrollToTarget(id: string): Promise<void> {
-    const [, subId] = id.split('--');
-    await tick(); // wait for the {#if activePage === ...} block to mount
-    if (subId) {
-      const el = document.getElementById(subId);
-      if (el) {
-        el.scrollIntoView({ block: 'start' });
-        return;
-      }
-    }
-    window.scrollTo({ top: 0 });
-  }
 
   function navigate(id: string): void {
     activeSection = id;
     sidebarOpen = false;
     if (browser) {
       window.history.replaceState(null, '', `#${id}`);
-      scrollToTarget(id);
+      window.scrollTo({ top: 0 });
+    }
+  }
+
+  // Covers browser back/forward AND plain in-page `<a href="#some-id">`
+  // links (e.g. the "Part of the Rust Runtime API" breadcrumbs on each
+  // sub-doc page) — anything that changes the hash without going through
+  // the sidebar's own navigate() call above.
+  function onHashChange(): void {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      activeSection = hash;
+      window.scrollTo({ top: 0 });
     }
   }
 
   onMount(() => {
     const hash = window.location.hash.slice(1);
-    if (hash) {
-      activeSection = hash;
-      scrollToTarget(hash);
-    }
+    if (hash) activeSection = hash;
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   });
 </script>
 
@@ -97,73 +99,89 @@
     />
   </svelte:fragment>
 
-  {#if activePage === 'intro'}
+  {#if activeSection === 'intro'}
     <DocIntro />
-  {:else if activePage === 'quickstart'}
+  {:else if activeSection === 'quickstart'}
     <DocQuickStart />
-  {:else if activePage === 'types'}
+  {:else if activeSection === 'types'}
     <DocTypes />
-  {:else if activePage === 'variables'}
+  {:else if activeSection === 'variables'}
     <DocVariables />
-  {:else if activePage === 'config'}
+  {:else if activeSection === 'config'}
     <DocConfig />
-  {:else if activePage === 'enums'}
+  {:else if activeSection === 'enums'}
     <DocEnums />
-  {:else if activePage === 'data'}
+  {:else if activeSection === 'data'}
     <DocData />
-  {:else if activePage === 'quickfuncs'}
+  {:else if activeSection === 'quickfuncs'}
     <DocQuickFuncs />
-  {:else if activePage === 'security'}
+  {:else if activeSection === 'security'}
     <DocSecurity />
-  {:else if activePage === 'dlm'}
+  {:else if activeSection === 'dlm'}
     <DocDLM />
-  {:else if activePage === 'imports'}
+  {:else if activeSection === 'imports'}
     <DocImports />
-  {:else if activePage === 'builtin-math'}
+  {:else if activeSection === 'builtin-math'}
     <DocBuiltinMath />
-  {:else if activePage === 'builtin-array'}
+  {:else if activeSection === 'builtin-array'}
     <DocBuiltinArray />
-  {:else if activePage === 'builtin-datetime'}
+  {:else if activeSection === 'builtin-datetime'}
     <DocBuiltinDateTime />
-  {:else if activePage === 'builtin-random'}
+  {:else if activeSection === 'builtin-random'}
     <DocBuiltinRandom />
-  {:else if activePage === 'builtin-string'}
+  {:else if activeSection === 'builtin-string'}
     <DocBuiltinString />
-  {:else if activePage === 'builtin-number'}
+  {:else if activeSection === 'builtin-number'}
     <DocBuiltinNumber />
-  {:else if activePage === 'builtin-regex'}
+  {:else if activeSection === 'builtin-regex'}
     <DocBuiltinRegex />
-  {:else if activePage === 'builtin-tuple'}
+  {:else if activeSection === 'builtin-tuple'}
     <DocBuiltinTuple />
-  {:else if activePage === 'builtin-blob'}
+  {:else if activeSection === 'builtin-blob'}
     <DocBuiltinBlob />
-  {:else if activePage === 'builtin-guid'}
+  {:else if activeSection === 'builtin-guid'}
     <DocBuiltinGuid />
-  {:else if activePage === 'builtin-ipaddress'}
+  {:else if activeSection === 'builtin-ipaddress'}
     <DocBuiltinIpAddress />
-  {:else if activePage === 'builtin-universal'}
+  {:else if activeSection === 'builtin-universal'}
     <DocBuiltinUniversal />
-  {:else if activePage === 'builtin-dix'}
+  {:else if activeSection === 'builtin-dix'}
     <DocBuiltinDix />
-  {:else if activePage === 'cli'}
+  {:else if activeSection === 'cli'}
     <DocCLI />
-  {:else if activePage === 'ffi'}
+  {:else if activeSection === 'ffi'}
     <DocFFI />
-  {:else if activePage === 'rust-api'}
-    <DocRustApi />
-  {:else if activePage === 'csharp-api'}
+  {:else if activeSection === 'rust-api'}
+    <DocRustOverview />
+  {:else if activeSection === 'rust-api--loader'}
+    <DocRustLoader />
+  {:else if activeSection === 'rust-api--loader-options'}
+    <DocRustLoaderOptions />
+  {:else if activeSection === 'rust-api--query'}
+    <DocRustQuery />
+  {:else if activeSection === 'rust-api--builder'}
+    <DocRustBuilder />
+  {:else if activeSection === 'rust-api--format-conversion'}
+    <DocRustFormatConversion />
+  {:else if activeSection === 'rust-api--schema-validation'}
+    <DocRustSchemaValidation />
+  {:else if activeSection === 'rust-api--merging'}
+    <DocRustMerging />
+  {:else if activeSection === 'rust-api--serde'}
+    <DocRustSerde />
+  {:else if activeSection === 'csharp-api'}
     <DocCSharpApi />
-  {:else if activePage === 'go-api'}
+  {:else if activeSection === 'go-api'}
     <DocGoApi />
-  {:else if activePage === 'java-api'}
+  {:else if activeSection === 'java-api'}
     <DocJavaApi />
-  {:else if activePage === 'php-api'}
+  {:else if activeSection === 'php-api'}
     <DocPhpApi />
-  {:else if activePage === 'python-api'}
+  {:else if activeSection === 'python-api'}
     <DocPythonApi />
-  {:else if activePage === 'wasm-api'}
+  {:else if activeSection === 'wasm-api'}
     <DocWasmApi />
-  {:else if activePage === 'odin-api'}
+  {:else if activeSection === 'odin-api'}
     <DocOdinApi />
   {/if}
 </DocLayout>

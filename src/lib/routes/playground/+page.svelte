@@ -42,26 +42,33 @@
   let status: 'idle' | 'running' | 'done' | 'error' = 'idle';
   let showPicker = false;
 
-  // @dixscript/core isn't published to npm yet (see package.json — it's
-  // intentionally left out of "dependencies" for now so `npm ci` doesn't
-  // 404 in CI). The specifier below is built at runtime (not a literal
-  // string) specifically so Rollup can't try to statically resolve/bundle
-  // it during `vite build` — a literal `import('@dixscript/core')`, even
-  // with /* @vite-ignore */, still gets traced by Rollup's SSR build pass
-  // and fails the whole build. Once the package is actually installed —
-  // either `npm install @dixscript/core` after publishing it, or a local
-  // `"file:../DixScript-Rust/mdix-npm"` dependency in package.json —
-  // replace DIXSCRIPT_CORE_SPECIFIER usage below with a plain literal
-  // `import('@dixscript/core')` so Vite can bundle it properly instead of
-  // leaving it as an opaque runtime import.
-  const DIXSCRIPT_CORE_SPECIFIER = ['@dixscript', 'core'].join('/');
-  let corePromise: Promise<any> | null = null;
+  // @midmanstudio/mdix is the real published package (npm, WASM — compiled
+  // from mdix-wasm). This is a literal specifier on purpose: Vite needs to
+  // see it statically to run it through vite-plugin-wasm / vite-plugin-
+  // top-level-await (see vite.config.ts) and produce a proper client
+  // chunk. A previous version of this file deliberately built the
+  // specifier at runtime (`['@dixscript', 'core'].join('/')`) to hide it
+  // from Rollup's static analysis, back when the package didn't exist yet
+  // and a literal import would have failed the whole build — now that
+  // it's a real dependency, that workaround is gone.
+  //
+  // KNOWN ISSUE as of @midmanstudio/mdix@1.0.0: the published npm tarball
+  // is missing its wasm-pkg/ output (dist/index.js re-exports from
+  // "../wasm-pkg/mdix_wasm.js", which the tarball doesn't contain — this
+  // is a bug in v1.0.0's publish, not in this file). `npm run build` will
+  // fail until a fixed version is published. Fix: bump the version in
+  // mdix-npm/package.json and re-run .github/workflows/wasm-npm-publish.yml
+  // (the automated workflow builds wasm-pkg/ correctly before publishing —
+  // v1.0.0 was published manually and evidently skipped that step). Once a
+  // working version is live, bump the dependency range in this repo's
+  // package.json to match.
+  let corePromise: Promise<typeof import('@midmanstudio/mdix')> | null = null;
 
   async function run() {
     status = 'running';
     try {
       if (!corePromise) {
-        corePromise = import(DIXSCRIPT_CORE_SPECIFIER);
+        corePromise = import('@midmanstudio/mdix');
       }
       const { MdixDatabase } = await corePromise;
 
@@ -73,16 +80,9 @@
         db.free(); // WASM memory isn't garbage collected
       }
     } catch (err) {
-      output = isModuleNotFound(err)
-        ? '// @dixscript/core isn\'t installed in this build yet.\n// See the comment above run() in +page.svelte for how to wire it in.'
-        : err instanceof Error ? err.message : String(err);
+      output = err instanceof Error ? err.message : String(err);
       status = 'error';
     }
-  }
-
-  function isModuleNotFound(err: unknown): boolean {
-    const msg = err instanceof Error ? err.message : String(err);
-    return /Failed to resolve module|Failed to fetch dynamically imported module|Cannot find module|404/i.test(msg);
   }
 
   function reset() {
@@ -108,18 +108,6 @@
 
 <div class="pg-page">
   <PlaygroundHeader {status} on:run={run} on:openRegistry={() => (showPicker = true)} />
-
-  <div class="pg-notice">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px;color:var(--primary)">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.75h-.152c-3.196 0-6.1-1.248-8.25-3.286z"/>
-    </svg>
-    <span>
-      Execution is fully wired to <code>@dixscript/core</code> (compiled from the Rust core to
-      WebAssembly, runs entirely in your browser) — it just needs the package installed to go
-      live on this deployment. See
-      <a href="https://github.com/Mid-D-Man/DixScript-Rust/tree/master/mdix-wasm" target="_blank" rel="noopener">mdix-wasm on GitHub</a>.
-    </span>
-  </div>
 
   <div class="pg-workspace">
     <PlaygroundEditor bind:source />
@@ -163,15 +151,6 @@
     display: flex; flex-direction: column; gap: 1.25rem;
     min-height: calc(100vh - 4rem);
   }
-
-  .pg-notice {
-    display: flex; align-items: flex-start; gap: 0.625rem;
-    background: var(--secondary); border: 1px solid var(--border);
-    border-left: 3px solid var(--primary); border-radius: var(--radius);
-    padding: 0.75rem 1rem; font-size: 0.875rem;
-    color: var(--foreground); line-height: 1.6;
-  }
-  .pg-notice a { color: var(--primary); text-decoration: underline; }
 
   .pg-workspace {
     display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;

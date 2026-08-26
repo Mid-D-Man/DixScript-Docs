@@ -9,10 +9,15 @@
   interface NavItem  { id: string; label: string; children?: NavItem[]; }
   interface NavGroup { id: string; label: string; iconPath: string; items: NavItem[]; open: boolean; }
 
-  // Sub-doc ids are compound: "<parent-id>--<feature-slug>", matching the
-  // anchor ids added to each language's h2 headings (e.g. DocRustApi.svelte's
-  // <h2 id="builder">). docs/+page.svelte's navigate() splits on "--" to
-  // pick the section component AND scroll to the anchor inside it.
+  // Sub-doc ids: languages with a `children` array render an "Overview"
+  // entry (id === the parent's own id, no suffix) plus one entry per
+  // feature page, id compound as "<parent-id>--<feature-slug>". Each of
+  // these — Overview included — is its OWN standalone component in
+  // docs/+page.svelte's render switch, not an anchor inside one big page.
+  // Clicking the PARENT ROW itself only ever toggles expand/collapse —
+  // see the markup below, where items with children get a non-navigating
+  // row and a separate expand button, while children (and Overview) are
+  // ordinary navigating buttons.
   let expanded = new Set<string>();
 
   function toggleExpanded(id: string, e: MouseEvent): void {
@@ -86,6 +91,7 @@
         { id: 'cli',        label: 'CLI Reference'       },
         { id: 'ffi',        label: 'Language Bindings'   },
         { id: 'rust-api',   label: 'Rust Runtime API', children: [
+            { id: 'rust-api',                   label: 'Overview'          },
             { id: 'rust-api--loader',           label: 'Loading Files'     },
             { id: 'rust-api--loader-options',   label: 'Loader Options'    },
             { id: 'rust-api--query',            label: 'Querying Data'     },
@@ -95,21 +101,7 @@
             { id: 'rust-api--merging',          label: 'Merging Databases' },
             { id: 'rust-api--serde',            label: 'Serde Support'     },
           ] },
-        { id: 'csharp-api', label: 'C# Runtime API', children: [
-            { id: 'csharp-api--install',         label: 'Install'          },
-            { id: 'csharp-api--quickstart',       label: 'Quick Start'      },
-            { id: 'csharp-api--error-handling',   label: 'Error Handling'   },
-            { id: 'csharp-api--loading',           label: 'Loading Data'     },
-            { id: 'csharp-api--reading',            label: 'Reading Values'  },
-            { id: 'csharp-api--query',              label: 'Query API'      },
-            { id: 'csharp-api--dynamic-access',     label: 'Dynamic Access' },
-            { id: 'csharp-api--poco',               label: 'POCO Deserialization' },
-            { id: 'csharp-api--builder',            label: 'Builder API'    },
-            { id: 'csharp-api--merging',            label: 'Merging Databases' },
-            { id: 'csharp-api--schema-validation',  label: 'Schema Validation' },
-            { id: 'csharp-api--format-conversion',  label: 'Format Conversion' },
-            { id: 'csharp-api--method-reference',   label: 'Full Method Reference' },
-          ] },
+        { id: 'csharp-api', label: 'C# Runtime API' },
         { id: 'go-api',     label: 'Go Runtime API'      },
         { id: 'java-api',   label: 'Java Runtime API'    },
         { id: 'php-api',    label: 'PHP Runtime API'     },
@@ -157,7 +149,8 @@
       ...g,
       open: g.items.some(i => i.id === parentId) ? true : g.open,
     }));
-    if (activeSection.includes('--')) {
+    const parentItem = groups.flatMap(g => g.items).find(i => i.id === parentId && i.children);
+    if (parentItem) {
       expanded = new Set([...expanded, parentId]);
     }
   }
@@ -229,46 +222,52 @@
           <ul class="group-items">
             {#each group.items as item}
               <li>
-                <div class="nav-item-row">
+                {#if item.children}
+                  <!-- Parent row never navigates — it only opens/closes the
+                       dropdown. "Overview" (first child, id === item.id)
+                       is the only way to reach a top-level view for this
+                       language, same as any other child. -->
+                  <button
+                    class="nav-item nav-item--parent"
+                    class:parent-active={activeSection.split('--')[0] === item.id}
+                    on:click={(e) => toggleExpanded(item.id, e)}
+                    aria-expanded={expanded.has(item.id)}
+                  >
+                    <svg
+                      class="expand-chevron"
+                      class:open={expanded.has(item.id)}
+                      width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
+                    </svg>
+                    {item.label}
+                  </button>
+
+                  {#if expanded.has(item.id)}
+                    <ul class="sub-items">
+                      {#each item.children as child}
+                        <li>
+                          <button
+                            class="nav-item nav-item--sub"
+                            class:active={activeSection === child.id}
+                            on:click={() => navigate(child.id)}
+                            aria-current={activeSection === child.id ? 'location' : undefined}
+                          >
+                            {child.label}
+                          </button>
+                        </li>
+                      {/each}
+                    </ul>
+                  {/if}
+                {:else}
                   <button
                     class="nav-item"
                     class:active={activeSection === item.id}
-                    class:parent-active={item.children && activeSection.startsWith(item.id + '--')}
                     on:click={() => navigate(item.id)}
                     aria-current={activeSection === item.id ? 'location' : undefined}
                   >
                     {item.label}
                   </button>
-                  {#if item.children}
-                    <button
-                      class="expand-btn"
-                      class:open={expanded.has(item.id)}
-                      on:click={(e) => toggleExpanded(item.id, e)}
-                      aria-expanded={expanded.has(item.id)}
-                      aria-label="{expanded.has(item.id) ? 'Collapse' : 'Expand'} {item.label} sub-sections"
-                    >
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/>
-                      </svg>
-                    </button>
-                  {/if}
-                </div>
-
-                {#if item.children && expanded.has(item.id)}
-                  <ul class="sub-items">
-                    {#each item.children as child}
-                      <li>
-                        <button
-                          class="nav-item nav-item--sub"
-                          class:active={activeSection === child.id}
-                          on:click={() => navigate(child.id)}
-                          aria-current={activeSection === child.id ? 'location' : undefined}
-                        >
-                          {child.label}
-                        </button>
-                      </li>
-                    {/each}
-                  </ul>
                 {/if}
               </li>
             {/each}
@@ -452,20 +451,18 @@
     background: rgba(166, 124, 82, 0.1);
     font-weight: 600;
   }
-  .nav-item.parent-active { color: var(--foreground); }
+  .nav-item.parent-active { color: var(--foreground); font-weight: 600; }
 
-  .nav-item-row { display: flex; align-items: center; }
-  .nav-item-row .nav-item { flex: 1; }
-
-  .expand-btn {
-    display: flex; align-items: center; justify-content: center;
-    width: 1.5rem; height: 1.5rem; margin: 0 0.375rem 0 0.125rem;
-    background: none; border: none; color: var(--muted-foreground);
-    cursor: pointer; border-radius: 4px; flex-shrink: 0;
-    transition: color 0.12s, transform 0.18s ease;
+  .nav-item--parent {
+    display: flex; align-items: center; gap: 0.375rem;
+    padding-left: 1.5rem;
   }
-  .expand-btn:hover { color: var(--foreground); background: var(--secondary); }
-  .expand-btn.open { transform: rotate(90deg); }
+
+  .expand-chevron {
+    color: var(--muted-foreground); flex-shrink: 0;
+    transition: transform 0.18s ease;
+  }
+  .expand-chevron.open { transform: rotate(90deg); }
 
   .sub-items {
     list-style: none;

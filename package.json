@@ -21,6 +21,8 @@
     "vite-plugin-top-level-await": "^1.4.0",
     "vite-plugin-wasm": "^3.3.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@midmanstudio/mdix": "^1.0.1"
+  },
   "type": "module"
 }
