@@ -185,6 +185,17 @@
 
   @media (max-width: 900px) {
     .pg-page { padding: 1.25rem 1rem; }
-    .pg-workspace { grid-template-columns: 1fr; max-height: none; min-height: 0; }
+    .pg-workspace {
+      grid-template-columns: 1fr;
+      /* Each pane gets its own bounded height and scrolls internally
+         (both PlaygroundEditor and PlaygroundOutput already set
+         overflow: auto on their content). Without this, a large JSON
+         output — a big registry example, for instance — had no bound
+         to scroll within and just stretched the entire page instead,
+         burying the editor and footer under one giant block. */
+      grid-template-rows: 44dvh 44dvh;
+      min-height: 0;
+      max-height: none;
+    }
   }
 </style>

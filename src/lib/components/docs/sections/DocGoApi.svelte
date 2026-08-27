@@ -104,11 +104,101 @@ db, err := dixscript.Convert.FromToml(tomlStr)
 formatted, err := dixscript.Convert.FormatSource(src, dixscript.FormatCompact)
 minified,  err := dixscript.Convert.MinifySource(src)`;
 
+  const queryApi = `type Enemy struct {
+    Name string \`json:"name"\`
+    HP   int    \`json:"hp"\`
+}
+
+// LoadQuery reads a group array at path straight into a *Query[T]
+enemies, err := dixscript.LoadQuery[Enemy](db, "enemies")
+
+// Or wrap a slice you already have
+q := dixscript.NewQuery(myEnemies)
+
+// Chainable, lazy until a terminal call
+boss, ok := enemies.
+    Where(func(e Enemy) bool { return e.HP > 100 }).
+    OrderByDesc(func(e Enemy) int { return e.HP })).
+    First()
+
+names := dixscript.Select(enemies, func(e Enemy) string { return e.Name })
+total := dixscript.SumInt(enemies, func(e Enemy) int64 { return int64(e.HP) })
+avg, ok := dixscript.AvgFloat(enemies, func(e Enemy) float64 { return float64(e.HP) })
+groups := dixscript.GroupBy(enemies, func(e Enemy) string { return e.Name[:1] })
+
+// Or skip Query[T] entirely for a one-shot decode
+var raw []Enemy
+jsonStr, err := db.QueryManyJSON("enemies.*")
+json.Unmarshal([]byte(jsonStr), &raw)`;
+
+  const schemaApi = `schema := dixscript.NewSchema().
+    RequireString("app_name").
+    RequireInt("server.port").
+    RequireBool("ssl").
+    OptionalString("description").
+    OptionalInt("timeout")
+
+report := schema.Validate(db)
+
+if !report.IsValid() {
+    for _, e := range report.Errors {
+        fmt.Println(e.Error()) // path, expected type, actual type
+    }
+    fmt.Println(report.FailedPaths())
+}
+
+// Require(path, type) / Optional(path, type) accept a dixscript.ValueType
+// directly for anything beyond the typed RequireString/RequireInt/...
+// shorthands above.`;
+
+  const mergeApi = `// Two or more .mdix source strings — sources[0] has the highest
+// implicit weight, sources[len-1] the lowest.
+merged, conflicts, err := dixscript.MergeSources(
+    []string{baseSrc, overlaySrc},
+    dixscript.PrimaryWins,   // or WeightedPriority / SecondaryWins / ThrowOnConflict
+    dixscript.ArrayConcatDedup, // or ArrayConcat / ArrayReplace
+)
+defer merged.Close()
+
+for _, c := range conflicts {
+    fmt.Printf("%s: source %d (%s) won\\n", c.Path, c.WinningSource, c.WinningLabel)
+}
+
+// Explicit weights instead of positional priority
+merged, conflicts, err := dixscript.MergeSourcesWeighted(
+    []string{baseSrc, overlaySrc},
+    []float64{1.0, 0.5},
+    dixscript.WeightedPriority,
+    dixscript.ArrayConcatDedup,
+)`;
+
+  const watchApi = `db, err := dixscript.Load("config.mdix")
+defer db.Close()
+
+db.OnReloaded(func(reloaded *dixscript.Database) {
+    log.Println("config reloaded")
+})
+db.OnReloadFailed(func(err error) {
+    log.Printf("reload failed: %v", err)
+})
+
+err = db.EnableHotReload(2 * time.Second) // poll interval
+defer db.DisableHotReload()
+
+db.IsHotReloadEnabled() // -> bool
+
+// Note: EnableHotReload polls the source path Load() originally used —
+// it has nothing to reload from for LoadStr()-created databases.`;
+
   const layout = `mdix-go/
 ├── dixscript.go           # Load*, NewBuilder, Version — top-level facade
 ├── database.go            # Database type — all typed getters
 ├── builder.go             # Builder type — Set*, Save, ToString
 ├── converter.go           # Convert.ToJSON / FromJSON / ToToml / Format / Minify
+├── query.go               # Query[T] — generic LINQ-style helpers
+├── schema.go              # SchemaBuilder — Require*/Optional* validation
+├── merge.go               # MergeSources / MergeSourcesWeighted
+├── watch.go               # EnableHotReload / OnReloaded / OnReloadFailed
 ├── types.go               # HexColor, Blob, MdixRegex, MdixDate, MdixTimestamp, ValueType
 ├── errors.go              # MdixError, ErrorKind constants
 ├── internal/
@@ -172,6 +262,33 @@ minified,  err := dixscript.Convert.MinifySource(src)`;
 
   <h2>Format Conversion</h2>
   <CodeBlock code={converterApi} lang="go" />
+
+  <h2>Query — LINQ-style Helpers</h2>
+  <p>
+    <code>Query[T]</code> and its generic free functions (<code>Select</code>,
+    <code>OrderBy</code>, <code>GroupBy</code>, <code>SumInt</code>,
+    <code>AvgFloat</code>, ...) give you filtering/projection/aggregation
+    over a group array without hand-decoding JSON.
+  </p>
+  <CodeBlock code={queryApi} lang="go" />
+
+  <h2>Schema Validation</h2>
+  <p>
+    <code>SchemaBuilder</code> — fluent, declarative required/optional
+    field validation against a loaded <code>*Database</code>.
+  </p>
+  <CodeBlock code={schemaApi} lang="go" />
+
+  <h2>Merging Databases</h2>
+  <p>
+    AST-level merge — no JSON round-trip, so every DixScript type survives
+    exactly. Conflicts are reported per key, never silently resolved
+    without you knowing.
+  </p>
+  <CodeBlock code={mergeApi} lang="go" />
+
+  <h2>Hot Reload</h2>
+  <CodeBlock code={watchApi} lang="go" />
 
   <h2>Package Layout</h2>
   <CodeBlock code={layout} lang="text" />

@@ -19,7 +19,20 @@
   import DocImports         from '$lib/components/docs/sections/DocImports.svelte';
   import DocCLI             from '$lib/components/docs/sections/DocCLI.svelte';
   import DocFFI             from '$lib/components/docs/sections/DocFFI.svelte';
-  import DocCSharpApi       from '$lib/components/docs/sections/DocCSharpApi.svelte';
+  import DocCSharpOverview         from '$lib/components/docs/sections/csharp/DocCSharpOverview.svelte';
+  import DocCSharpInstall          from '$lib/components/docs/sections/csharp/DocCSharpInstall.svelte';
+  import DocCSharpQuickStart       from '$lib/components/docs/sections/csharp/DocCSharpQuickStart.svelte';
+  import DocCSharpErrorHandling    from '$lib/components/docs/sections/csharp/DocCSharpErrorHandling.svelte';
+  import DocCSharpLoading          from '$lib/components/docs/sections/csharp/DocCSharpLoading.svelte';
+  import DocCSharpReading          from '$lib/components/docs/sections/csharp/DocCSharpReading.svelte';
+  import DocCSharpQuery            from '$lib/components/docs/sections/csharp/DocCSharpQuery.svelte';
+  import DocCSharpDynamicAccess    from '$lib/components/docs/sections/csharp/DocCSharpDynamicAccess.svelte';
+  import DocCSharpPoco             from '$lib/components/docs/sections/csharp/DocCSharpPoco.svelte';
+  import DocCSharpBuilder          from '$lib/components/docs/sections/csharp/DocCSharpBuilder.svelte';
+  import DocCSharpMerging          from '$lib/components/docs/sections/csharp/DocCSharpMerging.svelte';
+  import DocCSharpSchemaValidation from '$lib/components/docs/sections/csharp/DocCSharpSchemaValidation.svelte';
+  import DocCSharpFormatConversion from '$lib/components/docs/sections/csharp/DocCSharpFormatConversion.svelte';
+  import DocCSharpMethodReference  from '$lib/components/docs/sections/csharp/DocCSharpMethodReference.svelte';
   import DocRustOverview          from '$lib/components/docs/sections/rust/DocRustOverview.svelte';
   import DocRustLoader            from '$lib/components/docs/sections/rust/DocRustLoader.svelte';
   import DocRustLoaderOptions     from '$lib/components/docs/sections/rust/DocRustLoaderOptions.svelte';
@@ -170,7 +183,33 @@
   {:else if activeSection === 'rust-api--serde'}
     <DocRustSerde />
   {:else if activeSection === 'csharp-api'}
-    <DocCSharpApi />
+    <DocCSharpOverview />
+  {:else if activeSection === 'csharp-api--install'}
+    <DocCSharpInstall />
+  {:else if activeSection === 'csharp-api--quickstart'}
+    <DocCSharpQuickStart />
+  {:else if activeSection === 'csharp-api--error-handling'}
+    <DocCSharpErrorHandling />
+  {:else if activeSection === 'csharp-api--loading'}
+    <DocCSharpLoading />
+  {:else if activeSection === 'csharp-api--reading'}
+    <DocCSharpReading />
+  {:else if activeSection === 'csharp-api--query'}
+    <DocCSharpQuery />
+  {:else if activeSection === 'csharp-api--dynamic-access'}
+    <DocCSharpDynamicAccess />
+  {:else if activeSection === 'csharp-api--poco'}
+    <DocCSharpPoco />
+  {:else if activeSection === 'csharp-api--builder'}
+    <DocCSharpBuilder />
+  {:else if activeSection === 'csharp-api--merging'}
+    <DocCSharpMerging />
+  {:else if activeSection === 'csharp-api--schema-validation'}
+    <DocCSharpSchemaValidation />
+  {:else if activeSection === 'csharp-api--format-conversion'}
+    <DocCSharpFormatConversion />
+  {:else if activeSection === 'csharp-api--method-reference'}
+    <DocCSharpMethodReference />
   {:else if activeSection === 'go-api'}
     <DocGoApi />
   {:else if activeSection === 'java-api'}

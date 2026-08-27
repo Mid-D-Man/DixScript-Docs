@@ -18,12 +18,12 @@
     {
       lang: 'Go', pkg: 'github.com/Mid-D-Man/dixscript-go', cls: 'go',
       status: 'complete', statusLabel: 'Feature-complete',
-      note: 'Idiomatic (value, error) API over cgo. Load / LoadStr / LoadEncrypted(Password) / LoadJSON / LoadToml, typed getters including HexColor/Blob/MdixRegex/MdixDate, Builder, and a Convert namespace for JSON/TOML/format/minify.'
+      note: 'Idiomatic (value, error) API over cgo. Load / LoadStr / LoadEncrypted(Password) / LoadJSON / LoadToml, typed getters including HexColor/Blob/MdixRegex/MdixDate, Builder, a Convert namespace for JSON/TOML/format/minify, generic Query[T] (Where/Select/OrderBy/GroupBy/Sum/Avg), SchemaBuilder, MergeSources(Weighted), and poll-based hot reload.'
     },
     {
       lang: 'Java / Kotlin', pkg: 'com.midmanstudio.dixscript', cls: 'java',
-      status: 'mostly', statusLabel: 'Functional — exception-based',
-      note: 'DixScript facade, Database (typed getters with defaults, enum accessors, arrayLength, getJson, keys), Builder, and Converter (JSON/TOML/format/minify/round-trip). Uses MdixException rather than a Result type. No merge/schema/async layer yet — mirror the C# MdixMerge/MdixSchema surface if you need those.'
+      status: 'complete', statusLabel: 'Feature-complete — exception-based',
+      note: 'DixScript facade, Database (typed getters with defaults, enum accessors, arrayLength, getJson, keys), Builder, Converter (JSON/TOML/format/minify/round-trip), MdixQuery (chainable query/queryMany), SchemaBuilder, and Merge (source- or Database-based, weighted strategies). Uses MdixException rather than a Result type. No async layer, unlike C#.'
     },
     {
       lang: 'PHP', pkg: 'midmanstudio/mdix', cls: 'php',
