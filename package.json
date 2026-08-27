@@ -24,5 +24,8 @@
   "dependencies": {
     "@midmanstudio/mdix": "^1.0.1"
   },
+  "overrides": {
+    "@swc/core": "1.15.43"
+  },
   "type": "module"
 }
