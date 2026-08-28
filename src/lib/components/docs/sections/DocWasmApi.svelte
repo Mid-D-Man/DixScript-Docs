@@ -1,13 +1,13 @@
 <!-- src/lib/components/docs/sections/DocWasmApi.svelte -->
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
-  const install = `npm install @dixscript/core
-# or: pnpm add @dixscript/core / yarn add @dixscript/core
+  const install = `npm install @midmanstudio/mdix
+# or: pnpm add @midmanstudio/mdix / yarn add @midmanstudio/mdix
 
 # Works in: Node.js, browsers (via a bundler), Vite, webpack, Rollup —
 # anywhere that can load a WASM module.`;
 
-  const quickStart = `import { MdixDatabase, MdixBuilder, tryGet } from "@dixscript/core";
+  const quickStart = `import { MdixDatabase, MdixBuilder, tryGet } from "@midmanstudio/mdix";
 
 // Load from a .mdix source string
 const db = MdixDatabase.loadStr(\`
@@ -55,7 +55,7 @@ db.toJson(true);   // pretty-printed JSON string
 db.toToml();        // TOML string
 db.toMdix();        // .mdix source string`;
 
-  const resultPattern = `import { tryGet, tryGetAsync, unwrap, unwrapOr } from "@dixscript/core";
+  const resultPattern = `import { tryGet, tryGetAsync, unwrap, unwrapOr } from "@midmanstudio/mdix";
 
 // tryGet wraps a throwing call into { ok: true, value } | { ok: false, error }
 const port = tryGet(() => db.getInt("port"));
@@ -70,7 +70,7 @@ const host = unwrap(tryGet(() => db.getString("server.host")));
 // tryGetAsync — same pattern for anything that returns a Promise
 const remote = await tryGetAsync(async () => fetchAndLoad("config.mdix"));`;
 
-  const builderApi = `import { MdixBuilder } from "@dixscript/core";
+  const builderApi = `import { MdixBuilder } from "@midmanstudio/mdix";
 
 const db = new MdixBuilder()
   .setConfigVersion("1.0.0")
@@ -102,7 +102,7 @@ new MdixBuilder()
   .withTableProperties("server", JSON.stringify({ port: 8080 }))
   .withString("name", "MyApp"); // throws here — flat property after grouped data`;
 
-  const converterApi = `import { MdixDatabase } from "@dixscript/core";
+  const converterApi = `import { MdixDatabase } from "@midmanstudio/mdix";
 
 // Import from foreign formats
 const fromJson = MdixDatabase.fromJson(JSON.stringify({ port: 8080 }));
@@ -113,23 +113,47 @@ const json = fromJson.toJson(true);
 const toml = fromJson.toToml();
 const mdix = fromJson.toMdix();`;
 
-  const cratePreview = `// ⚠️ NOT yet re-exported from @dixscript/core's src/index.ts.
-// These exist and work in the mdix-wasm crate today — if you need them
-// before the npm package catches up, re-export them yourself from the
-// compiled wasm-pkg, or build mdix-wasm locally with wasm-pack.
+  const queryApi = `import { query, queryMany } from "@midmanstudio/mdix";
 
-// --- Merge — combine multiple .mdix sources ---
-import { mergeSources, mergeSourcesWeighted, mergeWith } from "../wasm-pkg/mdix_wasm.js";
+// Unlike the other bindings, this is NOT a chainable Query object — it's
+// a plain typed array. Use native Array methods on the result directly.
+interface Enemy { name: string; hp: number; }
 
-const merged = mergeSources([sourceA, sourceB], "primary_wins");
-const db = merged.database();          // MdixDatabase
-const conflicts = merged.conflicts();  // JsValue — array of conflict records
+const boss = query<Enemy>(db, "enemies")
+  .filter(e => e.hp > 100)              // where_
+  .sort((a, b) => b.hp - a.hp)[0];      // order_by_desc + first
 
-// weighted variant — [(source, weight), ...], higher weight wins ties
+const names = query<Enemy>(db, "enemies").map(e => e.name);   // select
+const total = query<Enemy>(db, "enemies")
+  .reduce((sum, e) => sum + e.hp, 0);    // sum_int
+
+// queryMany — whole-segment glob across sibling paths ("*" only), same
+// pattern syntax as the core's select_many
+const statuses = queryMany<string>(db, "servers.*.status");
+
+// Returns [] for a path that doesn't exist or isn't array-shaped —
+// that's a normal "no match", not an error.`;
+
+  const mergeApi = `import { mergeSources, mergeSourcesWeighted } from "@midmanstudio/mdix";
+
+// Sources are weighted in descending order by position — sources[0]
+// gets weight 1.0, the last gets the lowest weight (only matters under
+// the "weighted" strategy, the default).
+const outcome = mergeSources(
+  [sourceA, sourceB],
+  "primary_wins",    // "weighted" | "primary_wins" | "secondary_wins" | "throw_on_conflict"
+  "concat_dedup",     // "replace" | "concat" | "concat_dedup" — array-shaped values
+);
+const merged = outcome.database();      // MdixDatabase — free() it when done
+const conflicts = outcome.conflicts();  // array of { path, winningSource, winningLabel }
+
+// Explicit [source, weight] pairs instead of positional weighting
 const weighted = mergeSourcesWeighted([[sourceA, 1.0], [sourceB, 0.5]]);
 
-// --- Schema — fluent validation against a loaded database ---
-import { MdixSchema } from "../wasm-pkg/mdix_wasm.js";
+// Merge into an already-loaded database instead of raw source strings
+const combined = db.mergeWith(otherDb, "primary_wins", "concat_dedup");`;
+
+  const schemaApi = `import { MdixSchema } from "@midmanstudio/mdix";
 
 const schema = new MdixSchema()
   .requireString("app_name")
@@ -137,49 +161,57 @@ const schema = new MdixSchema()
   .optionalBool("debug")
   .withDescription("basic app config");
 
-console.log(schema.fieldCount());   // number of declared fields
-console.log(schema.paths());        // string[]
+schema.fieldCount;   // getter -> number of declared fields
+schema.paths();       // string[]
 
-const report = schema.validate(db); // hypothetical validate() call shape —
-                                     // check mdix-wasm/src/schema.rs for the
-                                     // exact current method name before relying on it
-console.log(report.isValid());
-console.log(report.errorCount());
-console.log(report.failedPaths());
+const report = db.validateSchema(schema);
+report.isValid;        // getter -> boolean
+report.errorCount;     // getter -> number
+report.failedPaths();  // string[]
+report.errors();        // array of { path, expected, actual, kind }`;
 
-// --- Watch — detect source changes for hot-reload workflows ---
-import { MdixWatcher } from "../wasm-pkg/mdix_wasm.js";
+  const watchApi = `import { MdixWatcher } from "@midmanstudio/mdix";
 
+// No filesystem in wasm32-unknown-unknown at all — not a restricted
+// one, none — so this can't be a path-watcher like the Python/Go/Java
+// bindings. Instead it's a content-hash change detector: YOU already
+// know when your source changed (Node's fs.watch, or a browser polling
+// its own fetch()) — this just decides cheaply whether newly-read text
+// actually differs before paying for a re-parse.
 const watcher = new MdixWatcher();
-if (watcher.hasChanged(newSourceText)) {
-  const outcome = watcher.check(newSourceText);
-  if (outcome.changed()) {
-    const freshDb = outcome.database();
-  }
-}`;
+
+// Node — fs.watch tells you WHEN; this decides WHETHER to re-parse:
+fs.watch("config.mdix", async () => {
+  const text = await fs.promises.readFile("config.mdix", "utf8");
+  const outcome = watcher.check(text);
+  if (outcome.changed) applyNewConfig(outcome.database());
+});
+
+// Browser — poll your own source:
+setInterval(async () => {
+  const text = await (await fetch("/config.mdix")).text();
+  const outcome = watcher.check(text);
+  if (outcome.changed) applyNewConfig(outcome.database());
+}, 5000);
+
+// hasChanged() — cheap pre-check by hash only, doesn't parse or update state
+watcher.hasChanged(someText);
+
+// reset() — forget previously seen content; the next check() always
+// reports changed = true regardless of whether the content matches
+watcher.reset();`;
 </script>
 
 <div class="doc-page">
   <h1>WebAssembly / JavaScript Runtime API</h1>
   <p class="page-lead">
-    <code>@dixscript/core</code> is the published npm package — a thin,
+    <code>@midmanstudio/mdix</code> is the published npm package — a thin,
     typed wrapper around <code>mdix-wasm</code>, the Rust crate compiled to
     WebAssembly via <code>wasm-bindgen</code>. Works in Node.js, the browser,
-    and any bundler that handles WASM (Vite, webpack, Rollup).
+    and any bundler that handles WASM (Vite, webpack, Rollup). Merge,
+    schema validation, and hot-reload support are all published too, not
+    just the database/builder core.
   </p>
-
-  <div class="callout">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
-    </svg>
-    <span>
-      The npm package currently exposes a subset of what the underlying
-      <code>mdix-wasm</code> crate can do — see
-      <a href="#crate-gap">Merge, Schema &amp; Watch</a> below for the parts
-      that exist in the crate but aren't re-exported from
-      <code>src/index.ts</code> yet.
-    </span>
-  </div>
 
   <h2>Install</h2>
   <CodeBlock code={install} lang="bash" />
@@ -192,20 +224,19 @@ if (watcher.hasChanged(newSourceText)) {
 
   <div class="table-scroll">
     <table>
-      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <thead><tr><th>Getter / Method</th><th>Returns</th></tr></thead>
       <tbody>
         {#each [
-          { m: 'MdixDatabase.loadStr(source)',     d: 'Compile and load DixScript source from a string. No file I/O.' },
-          { m: 'MdixDatabase.fromJson(json)',      d: 'Load from a raw JSON string.' },
-          { m: 'MdixDatabase.fromToml(toml)',      d: 'Load from a raw TOML string.' },
-          { m: 'db.free()',                        d: 'Release the WASM-side memory. WASM objects are not garbage collected — call this when you\'re done with a database or builder.' },
-          { m: 'db.isValid',                       d: 'Getter — whether the handle is still valid (false after free()).' },
-          { m: 'db.entryCount',                    d: 'Getter — total entries in the flattened store.' },
-          { m: 'db.getValueType(path)',            d: 'Returns the type name at a path as a string, e.g. "int", "object".' },
+          { m: 'db.isValid',              r: 'boolean' },
+          { m: 'db.entryCount',            r: 'number' },
+          { m: 'db.exists(path)',          r: 'boolean' },
+          { m: 'db.getValueType(path)',    r: 'string — "int" | "string" | "bool" | ...' },
+          { m: 'db.getKeys(prefix)',       r: 'string[]' },
+          { m: 'db.getArrayLength(path)',  r: 'number' },
         ] as row}
           <tr>
             <td><code style="font-size:0.75rem">{row.m}</code></td>
-            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.r}</td>
           </tr>
         {/each}
       </tbody>
@@ -214,87 +245,60 @@ if (watcher.hasChanged(newSourceText)) {
 
   <h2>The Result Pattern</h2>
   <p>
-    Every WASM method throws a <code>JsValue</code> on failure by default —
-    idiomatic for JS/TS call sites that already use try/catch. Import
-    <code>tryGet</code> if you'd rather branch on a result object than catch
-    exceptions.
+    Every getter throws on failure by default. Wrap calls in
+    <code>tryGet</code> for a <code>{'{ ok, value }'} | {'{ ok, error }'}</code>
+    result instead — no try/catch needed at the call site.
   </p>
   <CodeBlock code={resultPattern} lang="javascript" />
 
   <h2>Building Programmatically</h2>
   <p>
-    <code>MdixBuilder</code> enforces DixScript's two-tier <code>@DATA</code>
-    rule: flat properties must be added before any table properties or group
-    arrays. A violation throws immediately, at the call that broke the order
-    — not at <code>.toDatabase()</code>.
+    <code>MdixBuilder</code> enforces DixScript's two-tier
+    <code>@DATA</code> rule: flat properties must be added before any
+    table properties or group arrays. A violation throws immediately, at
+    the call that breaks the order — not deferred to <code>toDatabase()</code>.
   </p>
   <CodeBlock code={builderApi} lang="javascript" />
-
-  <div class="table-scroll">
-    <table>
-      <thead><tr><th>Method</th><th>Description</th></tr></thead>
-      <tbody>
-        {#each [
-          { m: 'new MdixBuilder()',                         d: 'Create a builder.' },
-          { m: '.setConfigVersion / Author / Encoding(v)',  d: '@CONFIG entries.' },
-          { m: '.addEnum(name, fieldsJson)',                d: '@ENUMS declaration — fields as a JSON array string.' },
-          { m: '.withString/Int/Long/Float/Double/Bool(path, v)', d: 'Tier-1 flat properties.' },
-          { m: '.withHexColor/Date/Timestamp/Blob/Regex(path, v)', d: 'Tier-1 flat properties, special types.' },
-          { m: '.withEnumValue(path, enumName, field)',     d: 'Tier-1 flat enum reference.' },
-          { m: '.withArray/Object/Tuple(path, itemsJson)',  d: 'Tier-1 flat structured values as JSON strings.' },
-          { m: '.withTableProperties(path, propsJson)',     d: 'Tier-2 table block. Must come after all tier-1 calls.' },
-          { m: '.withGroupArray(path, itemsJson)',          d: 'Tier-2 group array. Must come after all tier-1 calls.' },
-          { m: '.serialize()',                              d: 'Returns the .mdix source string without loading it.' },
-          { m: '.toDatabase()',                             d: 'Consumes the builder, returns a loaded MdixDatabase.' },
-        ] as row}
-          <tr>
-            <td><code style="font-size:0.75rem">{row.m}</code></td>
-            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-  </div>
 
   <h2>Format Conversion</h2>
   <CodeBlock code={converterApi} lang="javascript" />
 
-  <h2 id="crate-gap">Beyond the npm package: Merge, Schema &amp; Watch</h2>
+  <h2>Query</h2>
   <p>
-    <code>mdix-wasm</code> — the Rust crate the npm package is compiled
-    from — already implements three features that
-    <code>@dixscript/core</code> doesn't publish yet: multi-source merging,
-    fluent schema validation, and a source-change watcher for hot-reload
-    tooling. The Rust source below is real (<code>merge.rs</code>,
-    <code>schema.rs</code>, <code>watch.rs</code>); the JS call shapes are
-    the exported <code>#[wasm_bindgen]</code> signatures, but treat the
-    exact method names as provisional until they're wired into
-    <code>src/index.ts</code> and published.
+    Deliberately not a chainable query object — <code>query()</code> and
+    <code>queryMany()</code> just parse the native side's JSON output into
+    a plain typed array, and hand it back to you. Use ordinary
+    <code>Array</code> methods (<code>.filter</code>, <code>.sort</code>,
+    <code>.map</code>, <code>.reduce</code>) instead of a bespoke chain API.
   </p>
-  <CodeBlock code={cratePreview} lang="javascript" />
+  <CodeBlock code={queryApi} lang="javascript" />
 
+  <h2>Merging Databases</h2>
   <p>
-    If your project needs these today, the fastest path is building
-    <code>mdix-wasm</code> yourself with <code>wasm-pack build</code> and
-    importing straight from the generated <code>wasm-pkg</code> — the same
-    module the npm package re-exports from — rather than waiting on a
-    published re-export.
+    AST-level merge — no JSON round-trip, so every DixScript type
+    survives the merge exactly. Works from raw source strings
+    (<code>mergeSources</code>) or from an already-loaded database
+    (<code>db.mergeWith(other, ...)</code>).
   </p>
+  <CodeBlock code={mergeApi} lang="javascript" />
+
+  <h2>Schema Validation</h2>
+  <p>
+    <code>MdixSchema</code> — fluent required/optional field declarations,
+    checked via <code>db.validateSchema(schema)</code>.
+  </p>
+  <CodeBlock code={schemaApi} lang="javascript" />
+
+  <h2>Hot Reload — Content-Hash Watching</h2>
+  <p>
+    A fundamentally different design from the other bindings' file
+    watchers, and deliberately so: <code>wasm32-unknown-unknown</code>
+    has no filesystem access at all, in the browser or in Node, so an
+    mtime-polling watcher like Python's or Go's simply cannot exist here.
+    <code>MdixWatcher</code> instead hashes whatever text you feed it and
+    tells you cheaply whether it actually changed since last time — the
+    host (Node's <code>fs.watch</code>, or your own <code>fetch()</code>
+    poll) still owns knowing *when* to check.
+  </p>
+  <CodeBlock code={watchApi} lang="javascript" />
 </div>
-
-<style>
-  .callout {
-    display: flex;
-    gap: 0.625rem;
-    align-items: flex-start;
-    padding: 0.75rem 0.875rem;
-    border: 1px solid rgba(234, 179, 8, 0.35);
-    background: rgba(234, 179, 8, 0.08);
-    border-radius: var(--radius);
-    font-size: 0.8125rem;
-    color: var(--foreground);
-    margin: 1rem 0 1.5rem;
-  }
-  .callout svg { flex-shrink: 0; margin-top: 0.1rem; color: #eab308; }
-  .callout a { color: var(--primary); }
-</style>

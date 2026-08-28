@@ -33,7 +33,7 @@
     {
       lang: 'Python', pkg: 'midmanstudio-mdix', cls: 'python',
       status: 'complete', statusLabel: 'Feature-complete',
-      note: 'PyO3 bindings, pre-built wheels — no Rust toolchain required. MdixDatabase / MdixBuilder with a full railway-style MdixResult (and_then, ensure, map, fold, tap, unwrap_or). Two-tier @DATA ordering enforced by the builder.'
+      note: 'PyO3 bindings, pre-built wheels — no Rust toolchain required. MdixDatabase / MdixBuilder with a full railway-style MdixResult (and_then, ensure, map, fold, tap, unwrap_or). Two-tier @DATA ordering enforced by the builder. Also: MdixMerger, MdixSchemaBuilder, MdixQuery (with __len__/__getitem__/__bool__ container protocol support), poll-based MdixWatcher for hot reload, and an optional midmanstudio.mdix.ml module (MdixNumpy, MdixTensor, MdixDataFrame, MdixMLConfig) unique to this binding.'
     },
     {
       lang: 'WebAssembly (crate)', pkg: 'mdix-wasm', cls: 'wasm',
@@ -48,7 +48,7 @@
     {
       lang: 'Odin', pkg: 'mdix-odin', cls: 'odin',
       status: 'complete', statusLabel: 'Feature-complete',
-      note: 'The broadest raw surface of any wrapper: (value, ok) getters for every type, select_many_as_json for wildcard queries, format_source/minify_source/compact_source/strip_comments, and a full builder_* procedure set. Idiomatic Odin — no exceptions, no hidden allocation (caller-owned strings via an explicit allocator param).'
+      note: 'The broadest raw surface of any wrapper: (value, ok) getters for every type, select_many_as_json for wildcard queries, format_source/minify_source/compact_source/strip_comments, a full builder_* procedure set, typed generic Query(T) (query_where/order_by/group_by/sum_int/...), schema_* validation, merge_sources(_weighted), and a per-frame-loop-friendly Hot_Reload (no background thread). Idiomatic Odin — no exceptions, no hidden allocation (caller-owned strings via an explicit allocator param).'
     },
     {
       lang: 'C / C++', pkg: 'mdix-c', cls: 'c',

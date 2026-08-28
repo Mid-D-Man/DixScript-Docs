@@ -128,6 +128,98 @@ defer mdix.destroy(&db)
 
 // Round-trip an existing database into a builder to modify it
 b2 := mdix.builder_from_database(db)`;
+
+  const queryApi = `import "mdix"
+
+Enemy :: struct { name: string, hp: int }
+
+// query_load reads an array at path straight into a typed Query(T)
+q, ok := mdix.query_load(Enemy, db, "enemies")
+defer mdix.query_delete(q)
+
+boss, found := mdix.query_first(
+    mdix.query_order_by_desc(
+        mdix.query_where(q, proc(e: Enemy) -> bool { return e.hp > 100 }),
+        proc(e: Enemy) -> int { return e.hp },
+    ),
+)
+
+names := mdix.query_select(q, proc(e: Enemy) -> string { return e.name })
+total := mdix.query_sum_int(q, proc(e: Enemy) -> i64 { return i64(e.hp) })
+avg, has_avg := mdix.query_avg_float(q, proc(e: Enemy) -> f64 { return f64(e.hp) })
+groups := mdix.query_group_by(q, proc(e: Enemy) -> rune { return rune(e.name[0]) })
+
+// query_many gathers every sibling path matched by a whole-segment glob
+// ("*" only) directly — no Query(T) wrapper, just the resulting slice
+all_statuses, ok2 := mdix.query_many(string, db, "servers.*.status")`;
+
+  const schemaApi = `import "mdix"
+
+s := mdix.schema_new()
+defer mdix.schema_destroy(&s)
+
+mdix.schema_require_string(&s, "app_name")
+mdix.schema_require_int(&s, "server.port")
+mdix.schema_require_bool(&s, "ssl")
+mdix.schema_optional_string(&s, "description")
+
+// Generic form for anything beyond the typed require_*/optional_* shorthands:
+mdix.schema_require(&s, "custom.path", .Float)
+
+report := mdix.schema_validate(s, db)
+defer mdix.validation_report_destroy(&report)
+
+if !mdix.validation_report_is_valid(report) {
+    for err in report.errors {
+        msg := mdix.validation_error_to_string(err)
+        defer delete(msg)
+        fmt.println(msg)
+    }
+}`;
+
+  const mergeApi = `import "mdix"
+
+// Sources weighted by position — sources[0] highest, only matters under
+// .Weighted_Priority (merge_sources defaults to .Primary_Wins instead).
+db, conflicts, ok := mdix.merge_sources(
+    { base_src, overlay_src },
+    mdix.Primary_Wins,
+    mdix.Array_Concat_Dedup,
+)
+defer mdix.destroy(&db)
+defer delete(conflicts)
+
+for c in conflicts {
+    fmt.printfln("%s: source %d (%s) won", c.path, c.winning_source, c.winning_label)
+}
+
+// Explicit per-source weights
+weighted_db, _, ok2 := mdix.merge_sources_weighted(
+    { base_src, overlay_src },
+    { 1.0, 0.5 },
+    mdix.Weighted_Priority,
+    mdix.Array_Concat_Dedup,
+)`;
+
+  const watchApi = `import "mdix"
+
+// Deliberately NOT a background thread — Odin's usual consumer already
+// has its own per-frame loop (a game, an editor), so this is a one-line
+// call inside it rather than a second thread + mutex around db.handle.
+hr: mdix.Hot_Reload
+mdix.hot_reload_init(&hr, "config.mdix")
+defer mdix.hot_reload_destroy(&hr)
+
+for /* your main loop */ {
+    if mdix.hot_reload_check(&hr, &db) {
+        fmt.println("config reloaded")
+    }
+    // ...rest of frame
+}
+
+// hot_reload_check re-stats the file every call (a stat(), not a
+// reparse, unless it actually changed) — call it as often as you'd
+// poll anything else in the loop.`;
 </script>
 
 <div class="doc-page">
@@ -135,12 +227,11 @@ b2 := mdix.builder_from_database(db)`;
   <p class="page-lead">
     <code>mdix-odin</code> wraps the same <code>mdix_ffi</code> native
     library used by the C/C++ and Go bindings. It has the broadest raw
-    surface of any wrapper — every read, every builder call, and even
-    wildcard queries (<code>select_many_as_json</code>) and source
-    transforms (<code>format_source</code> / <code>compact_source</code> /
-    <code>strip_comments</code>) are exposed directly, following Odin's
-    idiomatic <code>(value, ok)</code> convention instead of exceptions or
-    a Result type.
+    surface of any wrapper — every read, every builder call, wildcard
+    queries, source transforms, merge, schema validation, and hot reload
+    are all exposed directly, following Odin's idiomatic
+    <code>(value, ok)</code> convention instead of exceptions or a Result
+    type.
   </p>
 
   <h2>Build &amp; Link</h2>
@@ -169,6 +260,29 @@ b2 := mdix.builder_from_database(db)`;
 
   <h2>Building Programmatically</h2>
   <CodeBlock code={builderApi} lang="odin" />
+
+  <h2>Query — Typed, Chainable</h2>
+  <p>
+    <code>query_load(T, db, path)</code> reads an array straight into a
+    typed <code>Query(T)</code>; <code>query_many(T, db, pattern)</code>
+    gathers every sibling path matched by a whole-segment glob directly
+    into a slice, no <code>Query(T)</code> wrapper needed.
+  </p>
+  <CodeBlock code={queryApi} lang="odin" />
+
+  <h2>Schema Validation</h2>
+  <CodeBlock code={schemaApi} lang="odin" />
+
+  <h2>Merging Databases</h2>
+  <p>
+    AST-level merge, not a JSON round-trip — every DixScript type
+    (Long/Float/Double/Hex_Color/Blob/Regex/Date/Timestamp/Enum) survives
+    exactly, and conflicts are reported per key.
+  </p>
+  <CodeBlock code={mergeApi} lang="odin" />
+
+  <h2>Hot Reload</h2>
+  <CodeBlock code={watchApi} lang="odin" />
 
   <h2>vs the raw C API</h2>
   <div class="table-scroll">
