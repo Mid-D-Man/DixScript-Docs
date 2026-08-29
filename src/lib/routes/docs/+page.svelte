@@ -42,12 +42,80 @@
   import DocRustSchemaValidation  from '$lib/components/docs/sections/rust/DocRustSchemaValidation.svelte';
   import DocRustMerging           from '$lib/components/docs/sections/rust/DocRustMerging.svelte';
   import DocRustSerde             from '$lib/components/docs/sections/rust/DocRustSerde.svelte';
-  import DocGoApi           from '$lib/components/docs/sections/DocGoApi.svelte';
-  import DocJavaApi         from '$lib/components/docs/sections/DocJavaApi.svelte';
-  import DocPhpApi          from '$lib/components/docs/sections/DocPhpApi.svelte';
-  import DocPythonApi       from '$lib/components/docs/sections/DocPythonApi.svelte';
-  import DocWasmApi         from '$lib/components/docs/sections/DocWasmApi.svelte';
-  import DocOdinApi         from '$lib/components/docs/sections/DocOdinApi.svelte';
+  import DocGoOverview          from '$lib/components/docs/sections/go/DocGoOverview.svelte';
+  import DocGoInstall           from '$lib/components/docs/sections/go/DocGoInstall.svelte';
+  import DocGoQuickStart        from '$lib/components/docs/sections/go/DocGoQuickStart.svelte';
+  import DocGoLoading           from '$lib/components/docs/sections/go/DocGoLoading.svelte';
+  import DocGoReading           from '$lib/components/docs/sections/go/DocGoReading.svelte';
+  import DocGoErrorHandling     from '$lib/components/docs/sections/go/DocGoErrorHandling.svelte';
+  import DocGoBuilder           from '$lib/components/docs/sections/go/DocGoBuilder.svelte';
+  import DocGoFormatConversion  from '$lib/components/docs/sections/go/DocGoFormatConversion.svelte';
+  import DocGoQuery             from '$lib/components/docs/sections/go/DocGoQuery.svelte';
+  import DocGoSchemaValidation  from '$lib/components/docs/sections/go/DocGoSchemaValidation.svelte';
+  import DocGoMerging           from '$lib/components/docs/sections/go/DocGoMerging.svelte';
+  import DocGoHotReload         from '$lib/components/docs/sections/go/DocGoHotReload.svelte';
+  import DocGoPackageLayout     from '$lib/components/docs/sections/go/DocGoPackageLayout.svelte';
+  import DocGoVsCSharp          from '$lib/components/docs/sections/go/DocGoVsCSharp.svelte';
+  import DocJavaOverview         from '$lib/components/docs/sections/java/DocJavaOverview.svelte';
+  import DocJavaInstall          from '$lib/components/docs/sections/java/DocJavaInstall.svelte';
+  import DocJavaQuickStart       from '$lib/components/docs/sections/java/DocJavaQuickStart.svelte';
+  import DocJavaFacade           from '$lib/components/docs/sections/java/DocJavaFacade.svelte';
+  import DocJavaReading          from '$lib/components/docs/sections/java/DocJavaReading.svelte';
+  import DocJavaErrorHandling    from '$lib/components/docs/sections/java/DocJavaErrorHandling.svelte';
+  import DocJavaBuilder          from '$lib/components/docs/sections/java/DocJavaBuilder.svelte';
+  import DocJavaFormatConversion from '$lib/components/docs/sections/java/DocJavaFormatConversion.svelte';
+  import DocJavaQuery            from '$lib/components/docs/sections/java/DocJavaQuery.svelte';
+  import DocJavaSchemaValidation from '$lib/components/docs/sections/java/DocJavaSchemaValidation.svelte';
+  import DocJavaMerging          from '$lib/components/docs/sections/java/DocJavaMerging.svelte';
+  import DocJavaHotReload        from '$lib/components/docs/sections/java/DocJavaHotReload.svelte';
+  import DocJavaKotlin           from '$lib/components/docs/sections/java/DocJavaKotlin.svelte';
+  import DocPhpOverview         from '$lib/components/docs/sections/php/DocPhpOverview.svelte';
+  import DocPhpInstall          from '$lib/components/docs/sections/php/DocPhpInstall.svelte';
+  import DocPhpQuickStart       from '$lib/components/docs/sections/php/DocPhpQuickStart.svelte';
+  import DocPhpLoading          from '$lib/components/docs/sections/php/DocPhpLoading.svelte';
+  import DocPhpReading          from '$lib/components/docs/sections/php/DocPhpReading.svelte';
+  import DocPhpErrorHandling    from '$lib/components/docs/sections/php/DocPhpErrorHandling.svelte';
+  import DocPhpResult           from '$lib/components/docs/sections/php/DocPhpResult.svelte';
+  import DocPhpBuilder          from '$lib/components/docs/sections/php/DocPhpBuilder.svelte';
+  import DocPhpFormatConversion from '$lib/components/docs/sections/php/DocPhpFormatConversion.svelte';
+  import DocPhpTypes            from '$lib/components/docs/sections/php/DocPhpTypes.svelte';
+  import DocPhpLifecycle        from '$lib/components/docs/sections/php/DocPhpLifecycle.svelte';
+  import DocPythonOverview  from '$lib/components/docs/sections/python/DocPythonOverview.svelte';
+  import DocPythonInstall   from '$lib/components/docs/sections/python/DocPythonInstall.svelte';
+  import DocPythonQuickStart from '$lib/components/docs/sections/python/DocPythonQuickStart.svelte';
+  import DocPythonResult    from '$lib/components/docs/sections/python/DocPythonResult.svelte';
+  import DocPythonLoading   from '$lib/components/docs/sections/python/DocPythonLoading.svelte';
+  import DocPythonReading   from '$lib/components/docs/sections/python/DocPythonReading.svelte';
+  import DocPythonBuilder   from '$lib/components/docs/sections/python/DocPythonBuilder.svelte';
+  import DocPythonMerger    from '$lib/components/docs/sections/python/DocPythonMerger.svelte';
+  import DocPythonSchema    from '$lib/components/docs/sections/python/DocPythonSchema.svelte';
+  import DocPythonQuery     from '$lib/components/docs/sections/python/DocPythonQuery.svelte';
+  import DocPythonHotReload from '$lib/components/docs/sections/python/DocPythonHotReload.svelte';
+  import DocPythonMlExtras  from '$lib/components/docs/sections/python/DocPythonMlExtras.svelte';
+  import DocWasmOverview         from '$lib/components/docs/sections/wasm/DocWasmOverview.svelte';
+  import DocWasmInstall          from '$lib/components/docs/sections/wasm/DocWasmInstall.svelte';
+  import DocWasmQuickStart       from '$lib/components/docs/sections/wasm/DocWasmQuickStart.svelte';
+  import DocWasmReading          from '$lib/components/docs/sections/wasm/DocWasmReading.svelte';
+  import DocWasmResultPattern    from '$lib/components/docs/sections/wasm/DocWasmResultPattern.svelte';
+  import DocWasmBuilder          from '$lib/components/docs/sections/wasm/DocWasmBuilder.svelte';
+  import DocWasmFormatConversion from '$lib/components/docs/sections/wasm/DocWasmFormatConversion.svelte';
+  import DocWasmQuery            from '$lib/components/docs/sections/wasm/DocWasmQuery.svelte';
+  import DocWasmMerging          from '$lib/components/docs/sections/wasm/DocWasmMerging.svelte';
+  import DocWasmSchemaValidation from '$lib/components/docs/sections/wasm/DocWasmSchemaValidation.svelte';
+  import DocWasmHotReload        from '$lib/components/docs/sections/wasm/DocWasmHotReload.svelte';
+  import DocOdinOverview    from '$lib/components/docs/sections/odin/DocOdinOverview.svelte';
+  import DocOdinBuildLink   from '$lib/components/docs/sections/odin/DocOdinBuildLink.svelte';
+  import DocOdinQuickStart  from '$lib/components/docs/sections/odin/DocOdinQuickStart.svelte';
+  import DocOdinValueOk     from '$lib/components/docs/sections/odin/DocOdinValueOk.svelte';
+  import DocOdinLoading     from '$lib/components/docs/sections/odin/DocOdinLoading.svelte';
+  import DocOdinReading     from '$lib/components/docs/sections/odin/DocOdinReading.svelte';
+  import DocOdinExport      from '$lib/components/docs/sections/odin/DocOdinExport.svelte';
+  import DocOdinBuilder     from '$lib/components/docs/sections/odin/DocOdinBuilder.svelte';
+  import DocOdinQuery       from '$lib/components/docs/sections/odin/DocOdinQuery.svelte';
+  import DocOdinSchema      from '$lib/components/docs/sections/odin/DocOdinSchema.svelte';
+  import DocOdinMerging     from '$lib/components/docs/sections/odin/DocOdinMerging.svelte';
+  import DocOdinHotReload   from '$lib/components/docs/sections/odin/DocOdinHotReload.svelte';
+  import DocOdinVsC         from '$lib/components/docs/sections/odin/DocOdinVsC.svelte';
   import DocBuiltinMath     from '$lib/components/docs/sections/DocBuiltinMath.svelte';
   import DocBuiltinArray    from '$lib/components/docs/sections/DocBuiltinArray.svelte';
   import DocBuiltinDateTime from '$lib/components/docs/sections/DocBuiltinDateTime.svelte';
@@ -211,16 +279,152 @@
   {:else if activeSection === 'csharp-api--method-reference'}
     <DocCSharpMethodReference />
   {:else if activeSection === 'go-api'}
-    <DocGoApi />
+    <DocGoOverview />
+  {:else if activeSection === 'go-api--install'}
+    <DocGoInstall />
+  {:else if activeSection === 'go-api--quickstart'}
+    <DocGoQuickStart />
+  {:else if activeSection === 'go-api--loading'}
+    <DocGoLoading />
+  {:else if activeSection === 'go-api--reading'}
+    <DocGoReading />
+  {:else if activeSection === 'go-api--error-handling'}
+    <DocGoErrorHandling />
+  {:else if activeSection === 'go-api--builder'}
+    <DocGoBuilder />
+  {:else if activeSection === 'go-api--format-conversion'}
+    <DocGoFormatConversion />
+  {:else if activeSection === 'go-api--query'}
+    <DocGoQuery />
+  {:else if activeSection === 'go-api--schema-validation'}
+    <DocGoSchemaValidation />
+  {:else if activeSection === 'go-api--merging'}
+    <DocGoMerging />
+  {:else if activeSection === 'go-api--hot-reload'}
+    <DocGoHotReload />
+  {:else if activeSection === 'go-api--package-layout'}
+    <DocGoPackageLayout />
+  {:else if activeSection === 'go-api--vs-csharp'}
+    <DocGoVsCSharp />
   {:else if activeSection === 'java-api'}
-    <DocJavaApi />
+    <DocJavaOverview />
+  {:else if activeSection === 'java-api--install'}
+    <DocJavaInstall />
+  {:else if activeSection === 'java-api--quickstart'}
+    <DocJavaQuickStart />
+  {:else if activeSection === 'java-api--facade'}
+    <DocJavaFacade />
+  {:else if activeSection === 'java-api--reading'}
+    <DocJavaReading />
+  {:else if activeSection === 'java-api--error-handling'}
+    <DocJavaErrorHandling />
+  {:else if activeSection === 'java-api--builder'}
+    <DocJavaBuilder />
+  {:else if activeSection === 'java-api--format-conversion'}
+    <DocJavaFormatConversion />
+  {:else if activeSection === 'java-api--query'}
+    <DocJavaQuery />
+  {:else if activeSection === 'java-api--schema-validation'}
+    <DocJavaSchemaValidation />
+  {:else if activeSection === 'java-api--merging'}
+    <DocJavaMerging />
+  {:else if activeSection === 'java-api--hot-reload'}
+    <DocJavaHotReload />
+  {:else if activeSection === 'java-api--kotlin'}
+    <DocJavaKotlin />
   {:else if activeSection === 'php-api'}
-    <DocPhpApi />
+    <DocPhpOverview />
+  {:else if activeSection === 'php-api--install'}
+    <DocPhpInstall />
+  {:else if activeSection === 'php-api--quickstart'}
+    <DocPhpQuickStart />
+  {:else if activeSection === 'php-api--loading'}
+    <DocPhpLoading />
+  {:else if activeSection === 'php-api--reading'}
+    <DocPhpReading />
+  {:else if activeSection === 'php-api--error-handling'}
+    <DocPhpErrorHandling />
+  {:else if activeSection === 'php-api--result'}
+    <DocPhpResult />
+  {:else if activeSection === 'php-api--builder'}
+    <DocPhpBuilder />
+  {:else if activeSection === 'php-api--format-conversion'}
+    <DocPhpFormatConversion />
+  {:else if activeSection === 'php-api--types'}
+    <DocPhpTypes />
+  {:else if activeSection === 'php-api--lifecycle'}
+    <DocPhpLifecycle />
   {:else if activeSection === 'python-api'}
-    <DocPythonApi />
+    <DocPythonOverview />
+  {:else if activeSection === 'python-api--install'}
+    <DocPythonInstall />
+  {:else if activeSection === 'python-api--quickstart'}
+    <DocPythonQuickStart />
+  {:else if activeSection === 'python-api--result'}
+    <DocPythonResult />
+  {:else if activeSection === 'python-api--loading'}
+    <DocPythonLoading />
+  {:else if activeSection === 'python-api--reading'}
+    <DocPythonReading />
+  {:else if activeSection === 'python-api--builder'}
+    <DocPythonBuilder />
+  {:else if activeSection === 'python-api--merger'}
+    <DocPythonMerger />
+  {:else if activeSection === 'python-api--schema'}
+    <DocPythonSchema />
+  {:else if activeSection === 'python-api--query'}
+    <DocPythonQuery />
+  {:else if activeSection === 'python-api--hot-reload'}
+    <DocPythonHotReload />
+  {:else if activeSection === 'python-api--ml-extras'}
+    <DocPythonMlExtras />
   {:else if activeSection === 'wasm-api'}
-    <DocWasmApi />
+    <DocWasmOverview />
+  {:else if activeSection === 'wasm-api--install'}
+    <DocWasmInstall />
+  {:else if activeSection === 'wasm-api--quickstart'}
+    <DocWasmQuickStart />
+  {:else if activeSection === 'wasm-api--reading'}
+    <DocWasmReading />
+  {:else if activeSection === 'wasm-api--result-pattern'}
+    <DocWasmResultPattern />
+  {:else if activeSection === 'wasm-api--builder'}
+    <DocWasmBuilder />
+  {:else if activeSection === 'wasm-api--format-conversion'}
+    <DocWasmFormatConversion />
+  {:else if activeSection === 'wasm-api--query'}
+    <DocWasmQuery />
+  {:else if activeSection === 'wasm-api--merging'}
+    <DocWasmMerging />
+  {:else if activeSection === 'wasm-api--schema-validation'}
+    <DocWasmSchemaValidation />
+  {:else if activeSection === 'wasm-api--hot-reload'}
+    <DocWasmHotReload />
   {:else if activeSection === 'odin-api'}
-    <DocOdinApi />
+    <DocOdinOverview />
+  {:else if activeSection === 'odin-api--build-link'}
+    <DocOdinBuildLink />
+  {:else if activeSection === 'odin-api--quickstart'}
+    <DocOdinQuickStart />
+  {:else if activeSection === 'odin-api--value-ok'}
+    <DocOdinValueOk />
+  {:else if activeSection === 'odin-api--loading'}
+    <DocOdinLoading />
+  {:else if activeSection === 'odin-api--reading'}
+    <DocOdinReading />
+  {:else if activeSection === 'odin-api--export'}
+    <DocOdinExport />
+  {:else if activeSection === 'odin-api--builder'}
+    <DocOdinBuilder />
+  {:else if activeSection === 'odin-api--query'}
+    <DocOdinQuery />
+  {:else if activeSection === 'odin-api--schema'}
+    <DocOdinSchema />
+  {:else if activeSection === 'odin-api--merging'}
+    <DocOdinMerging />
+  {:else if activeSection === 'odin-api--hot-reload'}
+    <DocOdinHotReload />
+  {:else if activeSection === 'odin-api--vs-c'}
+    <DocOdinVsC />
   {/if}
 </DocLayout>
