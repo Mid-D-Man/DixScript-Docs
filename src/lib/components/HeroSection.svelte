@@ -1,5 +1,6 @@
 <!-- src/lib/components/HeroSection.svelte -->
 <script lang="ts">
+  import Logo from '$lib/components/Logo.svelte';
   const MMS_ACCOUNTS = 'https://mms-accounts.pages.dev';
 </script>
 
@@ -8,6 +9,10 @@
   <div class="blob blob-2" aria-hidden="true"></div>
 
   <div class="hero-inner">
+
+    <div class="hero-mark" aria-hidden="true">
+      <Logo size={56} />
+    </div>
 
     <div class="badge">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -116,6 +121,13 @@
     position: relative; z-index: 1;
     max-width: 820px; margin: 0 auto;
     display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+  }
+
+  .hero-mark {
+    display: flex; align-items: center; justify-content: center;
+    width: 88px; height: 88px; border-radius: 50%;
+    background: var(--card); border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
   }
 
   .badge {

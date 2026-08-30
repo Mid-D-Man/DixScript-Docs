@@ -2,6 +2,34 @@
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
 
+  const equivalentMdix = `@CONFIG(
+  version  -> "2.0.0"
+  author   -> "MyApp"
+  features -> "advanced"
+)
+
+@ENUMS(
+  Environment { DEV, STAGING, PROD }
+  LogLevel { DEBUG = 0, INFO = 1, WARN = 2, ERROR = 3 }
+)
+
+@DATA(
+  app_name = "MyApp"
+  port<int> = 8080
+  debug     = false
+
+  database:
+    host = "db.internal"
+    port<int> = 5432
+    ssl  = true
+
+  logging:
+    level       = "INFO"
+    json_output = true
+
+  allowed_ips:: "10.0.0.1", "10.0.0.2", "10.0.0.3"
+)`;
+
   const builderApi = `use dixscript::Runtime::{DixDataBuilder, DixData};
 
 fn using_builder() -> Result<DixData, String> {
@@ -83,10 +111,27 @@ fn two_tier_violation() {
     panicking so all errors are reported at once.
   </p>
 
+  <h2>Equivalent .mdix source</h2>
+  <p>
+    The builder call below produces exactly the same <code>DixData</code>
+    as compiling this file would — same two-tier ordering rule, same
+    result, whichever direction you write it in.
+  </p>
+  <CodeBlock code={equivalentMdix} lang="dixscript" />
+
   <CodeBlock code={builderApi} lang="rust" />
 
   <h3>Two-tier violations return Err — they never panic</h3>
   <CodeBlock code={builderViolation} lang="rust" />
+
+  <div class="tip-callout">
+    <strong>Builder vs writing .mdix by hand</strong>
+    <ul>
+      <li><strong>Use the builder</strong> when the shape of the data depends on runtime state you don't have at edit time — generating a per-user config, assembling data pulled from a database or another API into DixScript's format, or writing test fixtures inline in Rust without a separate file to keep in sync.</li>
+      <li><strong>Write a <code>.mdix</code> file by hand</strong> for anything a human will read or edit directly — you get comments, <code>@QUICKFUNCS</code>, LSP autocomplete and hover docs, and syntax highlighting, none of which exist for a wall of <code>.with_*()</code> calls.</li>
+      <li><strong>Avoid</strong> building the same static structure over and over at startup just to get a <code>DixData</code> — if the shape never actually changes between runs, it's a <code>.mdix</code> file you haven't written yet, not a builder call site.</li>
+    </ul>
+  </div>
 
   <h2>Method Reference</h2>
   <div class="table-scroll">
@@ -122,3 +167,20 @@ fn two_tier_violation() {
     </table>
   </div>
 </div>
+
+<style>
+  .tip-callout {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.875rem 1.125rem;
+    margin: 1.25rem 0;
+    font-size: 0.875rem;
+  }
+  .tip-callout strong { color: var(--foreground); }
+  .tip-callout ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .tip-callout li { margin-bottom: 0.5rem; color: var(--muted-foreground); line-height: 1.6; }
+  .tip-callout li:last-child { margin-bottom: 0; }
+  .tip-callout code { font-size: 0.8125rem; }
+</style>

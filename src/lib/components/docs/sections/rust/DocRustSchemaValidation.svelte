@@ -2,6 +2,21 @@
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
 
+  const exampleMdix = `@DATA(
+  app_name = "MyApp"
+  session_id<long> = 9000000000
+  ssl = true
+
+  server:
+    port<int> = 8080   // schema below requires > 1024
+
+  enemies:: "Goblin", "Orc", "Dragon"
+)
+
+// A file missing 'ssl' or with server.port = 80 would fail the schema
+// on the facing page — the compiler itself doesn't know or care about
+// that constraint, only SchemaBuilder does, at runtime.`;
+
   const schemaApi = `use dixscript::Runtime::{SchemaBuilder, ExpectedValueType, ValidationErrorKind};
 
 let schema = SchemaBuilder::new()
@@ -42,7 +57,20 @@ if !report.is_valid() {
     closure) for anything else.
   </p>
 
+  <h2>Example .mdix file</h2>
+  <p>Passes the schema on this page. Note that <code>require_enum("log_level")</code> would fail against it — there's no <code>log_level</code> field here at all, which is the point: the compiler accepts this file just fine, and only the schema knows it's incomplete.</p>
+  <CodeBlock code={exampleMdix} lang="dixscript" />
+
   <CodeBlock code={schemaApi} lang="rust" />
+
+  <div class="tip-callout">
+    <strong>Schema validation vs the compiler</strong>
+    <ul>
+      <li><strong>Use <code>SchemaBuilder</code></strong> for constraints the DixScript compiler has no way to express — "this field must exist," "this int must be greater than 1024," "this app absolutely requires a <code>ssl</code> flag." Type annotations in the <code>.mdix</code> file itself (<code>port&lt;int&gt;</code>) already enforce <em>type</em> at compile time; schemas add everything past that.</li>
+      <li><strong>Validate once, right after loading</strong> — call it immediately after <code>DixLoader::load_text</code>/<code>load_from_str</code> and bail out on failure, rather than scattering <code>data.exists(...)</code> checks through the rest of your code. One validation pass at the boundary means everything downstream can assume the shape is correct.</li>
+      <li><strong>Avoid</strong> using <code>require_with</code>'s validator closure for anything expensive or fallible on its own (a network call, a regex compile per validation) — it runs synchronously during <code>.validate()</code> and a panic inside the closure isn't caught, it unwinds straight through.</li>
+    </ul>
+  </div>
 
   <h2>Method Reference</h2>
   <div class="table-scroll">
@@ -72,3 +100,20 @@ if !report.is_valid() {
     </table>
   </div>
 </div>
+
+<style>
+  .tip-callout {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.875rem 1.125rem;
+    margin: 1.25rem 0;
+    font-size: 0.875rem;
+  }
+  .tip-callout strong { color: var(--foreground); }
+  .tip-callout ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .tip-callout li { margin-bottom: 0.5rem; color: var(--muted-foreground); line-height: 1.6; }
+  .tip-callout li:last-child { margin-bottom: 0; }
+  .tip-callout code { font-size: 0.8125rem; }
+</style>

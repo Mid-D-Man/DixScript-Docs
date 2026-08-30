@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { theme } from '$lib/stores/theme';
+  import Logo from '$lib/components/Logo.svelte';
 
   let menuOpen = false;
 
@@ -32,7 +33,7 @@
         aria-label="Toggle dark mode"
         title="Toggle dark mode"
       >
-        D
+        <Logo size={18} title="" />
       </button>
       <a href="/" class="brand-name" on:click={closeMenu}>DixScript</a>
     </div>

@@ -2,6 +2,16 @@
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
 
+  const exampleMdix = `@DLM(
+  DEncryptor.aes256
+)
+
+@DATA(
+  api:
+    key    = "sk_live_51H8x..."
+    secret = "whsec_9f3e2a..."
+)`;
+
   const loadOptionsApi = `use dixscript::Runtime::DixLoadOptions;
 use std::time::Duration;
 
@@ -51,7 +61,26 @@ fn vault_client_fetch_key() -> String { String::new() } // placeholder`;
     decryption mode, key resolution, and validation behavior.
   </p>
 
+  <h2>Example .mdix file</h2>
+  <p>
+    A source file with a <code>@DLM</code> block requesting encryption
+    compiles to <code>secrets.mdix.enc</code> plus a separate key file —
+    the options below control how the loader finds that key again on the
+    way back in.
+  </p>
+  <CodeBlock code={exampleMdix} lang="dixscript" />
+
   <CodeBlock code={loadOptionsApi} lang="rust" />
+
+  <div class="tip-callout">
+    <strong>Which key-resolution mode?</strong>
+    <ul>
+      <li><strong>Use <code>with_key_file</code></strong> (or the default auto-locate, which checks alongside the <code>.enc</code> file first) for the common case — a key file shipped separately from the encrypted config, e.g. mounted into a container at deploy time.</li>
+      <li><strong>Use <code>with_password</code></strong> when there's a human typing it in, or it comes from an env var / secrets manager as a single string rather than a file.</li>
+      <li><strong>Use <code>with_key_content</code> / <code>with_key_url</code> only from a trusted vault client</strong> — both require <code>acknowledge_security_risk = true</code> for a reason: the key material passes through your process's memory as a plain <code>String</code> either way, sourced from wherever you fetched it. The flag doesn't add safety, it forces you to consciously opt in rather than pass a key around by accident.</li>
+      <li><strong>Avoid</strong> setting <code>output_directory</code> to somewhere world-readable when encrypting — the whole point of <code>@DLM</code> encryption is that <code>.enc</code> is safe to commit/ship while the key isn't; putting both in the same exposed location defeats it.</li>
+    </ul>
+  </div>
 
   <h2>Constructors &amp; Fields</h2>
   <div class="table-scroll">
@@ -78,3 +107,20 @@ fn vault_client_fetch_key() -> String { String::new() } // placeholder`;
     </table>
   </div>
 </div>
+
+<style>
+  .tip-callout {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.875rem 1.125rem;
+    margin: 1.25rem 0;
+    font-size: 0.875rem;
+  }
+  .tip-callout strong { color: var(--foreground); }
+  .tip-callout ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .tip-callout li { margin-bottom: 0.5rem; color: var(--muted-foreground); line-height: 1.6; }
+  .tip-callout li:last-child { margin-bottom: 0; }
+  .tip-callout code { font-size: 0.8125rem; }
+</style>

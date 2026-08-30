@@ -2,6 +2,13 @@
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
 
+  const exampleMdix = `@DATA(
+  server:
+    host = "api.example.com"
+    port<int> = 443
+    ssl  = true
+)`;
+
   const serializeApi = `use dixscript::Runtime::{DixDataBuilder, DixSerialize, DataBuilder, dix_set_str, dix_set_int};
 
 struct ServerConfig { host: String, port: i32 }
@@ -54,11 +61,7 @@ impl DixDeserialize for ServerConfig {
     }
 }
 
-// .mdix source:
-// @DATA(
-//   server: host = "api.example.com", port = 443, ssl = true
-// )
-
+// Reads the "server" table from the config.mdix example above
 let loader = DixLoader::new();
 let data   = loader.load_text("config.mdix", &DixLoadOptions::new())?;
 let server: ServerConfig = data.deserialize_at("server")?;
@@ -78,6 +81,10 @@ println!("{}", server.host); // api.example.com
     hand-rolling field-by-field conversions.
   </p>
 
+  <h2>Example .mdix file</h2>
+  <p>Deserializes straight into the <code>ServerConfig</code> struct below via <code>deserialize_at("server")</code>.</p>
+  <CodeBlock code={exampleMdix} lang="dixscript" />
+
   <h2>DixSerialize — Writing Structs</h2>
   <p>
     Implement <code>to_dix</code> for a struct and hand it to
@@ -95,6 +102,15 @@ println!("{}", server.host); // api.example.com
     <code>from_dix</code> resolve relative to the given <code>prefix</code>.
   </p>
   <CodeBlock code={deserializeApi} lang="rust" />
+
+  <div class="tip-callout">
+    <strong>Serde traits vs plain get&lt;T&gt; calls</strong>
+    <ul>
+      <li><strong>Use <code>DixSerialize</code>/<code>DixDeserialize</code></strong> once a struct's fields stop fitting on one line, or you read/write the same shape from more than one call site — it turns a pile of repeated <code>data.get(...)</code> calls into one implementation you write once.</li>
+      <li><strong>Use plain <code>data.get::&lt;T&gt;(path)</code></strong> for a one-off read of two or three fields — implementing a trait for something you touch once is pure ceremony.</li>
+      <li><strong>Avoid</strong> mixing the two styles for the <em>same</em> struct across your codebase — pick one so a future reader isn't left wondering why <code>ServerConfig</code> is read three different ways in three different files.</li>
+    </ul>
+  </div>
 
   <h2>Helper Reference</h2>
   <div class="table-scroll">
@@ -121,3 +137,20 @@ println!("{}", server.host); // api.example.com
     </table>
   </div>
 </div>
+
+<style>
+  .tip-callout {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.875rem 1.125rem;
+    margin: 1.25rem 0;
+    font-size: 0.875rem;
+  }
+  .tip-callout strong { color: var(--foreground); }
+  .tip-callout ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
+  .tip-callout li { margin-bottom: 0.5rem; color: var(--muted-foreground); line-height: 1.6; }
+  .tip-callout li:last-child { margin-bottom: 0; }
+  .tip-callout code { font-size: 0.8125rem; }
+</style>
