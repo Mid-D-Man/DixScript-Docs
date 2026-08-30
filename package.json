@@ -22,7 +22,7 @@
     "vite-plugin-wasm": "^3.3.0"
   },
   "dependencies": {
-    "@midmanstudio/mdix": "^1.0.1"
+    "@midmanstudio/mdix": "^1.0.2"
   },
   "overrides": {
     "@swc/core": "1.15.43"
