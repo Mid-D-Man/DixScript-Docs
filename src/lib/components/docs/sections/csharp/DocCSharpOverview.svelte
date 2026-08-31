@@ -9,6 +9,7 @@
     { id: 'csharp-api--query',             label: 'Query API',              desc: 'LINQ-style filtering/projection over group arrays.' },
     { id: 'csharp-api--dynamic-access',    label: 'Dynamic Access',         desc: 'MdixDynamic — exploratory reads without a POCO.' },
     { id: 'csharp-api--poco',              label: 'POCO Deserialization',   desc: 'Deserialize a prefix straight into your own class.' },
+    { id: 'csharp-api--enum-codegen',       label: 'Enum Code Generation',   desc: 'Generate real, type-safe C# enums from @ENUMS.' },
     { id: 'csharp-api--builder',           label: 'Builder API',            desc: 'MdixBuilder — build data programmatically, fluently.' },
     { id: 'csharp-api--merging',           label: 'Merging Databases',      desc: 'Combine two or more databases with a merge strategy.' },
     { id: 'csharp-api--schema-validation', label: 'Schema Validation',      desc: 'MdixSchemaBuilder — declarative required/optional fields.' },

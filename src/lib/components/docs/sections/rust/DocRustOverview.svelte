@@ -9,6 +9,7 @@
     { id: 'rust-api--schema-validation',label: 'Schema Validation', desc: 'SchemaBuilder — fluent require_*/optional_* validation.' },
     { id: 'rust-api--merging',          label: 'Merging Databases', desc: 'MdixMerger — AST-level merge, weighted/priority strategies.' },
     { id: 'rust-api--serde',            label: 'Serde Support',     desc: 'DixSerialize / DixDeserialize for your own structs.' },
+    { id: 'rust-api--hot-reload',       label: 'Hot Reload',        desc: 'HotReloadWatcher — poll-based, no OS event dependency.' },
   ];
 </script>
 
@@ -22,18 +23,6 @@
     <code>DixConverter</code> (format conversion). All types live in the
     <code>dixscript::Runtime</code> module.
   </p>
-
-  <div class="warn-callout">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008z"/>
-    </svg>
-    <span>
-      The Rust port is under active development. The API compiles and the
-      types are stable, but runtime execution depends on the parser/compiler
-      reaching parity with the C# reference implementation.
-      Track progress on the <a href="/results">CI Results</a> page.
-    </span>
-  </div>
 
   <h2>On this page</h2>
   <div class="subpage-grid">

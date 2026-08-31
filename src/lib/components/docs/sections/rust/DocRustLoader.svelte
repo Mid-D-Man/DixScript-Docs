@@ -144,7 +144,7 @@ fn fetch_from_vault_key()   -> String  { String::new() }`;
     <ul>
       <li><strong>Use <code>load_text</code></strong> for real config files that live on disk and might use <code>@DLM</code> directives (encryption, compression, audit output) — it's the only one that runs the full file-output pipeline.</li>
       <li><strong>Use <code>load_from_str</code></strong> for unit tests, embedded default configs compiled into your binary, or anything generated at runtime — it's faster to set up but silently skips any <code>@DLM</code> file-output step, since there's no source file path to write relative to.</li>
-      <li><strong>Avoid</strong> calling <code>load_text</code> in a hot loop — each call re-runs the full tokenize → parse → semantic-analysis pipeline from scratch. Load once and keep the <code>DixData</code> around; the core crate itself has no file-watcher built in, so if you need to react to the source changing on disk, poll the file's mtime yourself and re-call <code>load_text</code> only when it moves (this is exactly what the Go/Java/Python bindings' watcher types do under the hood).</li>
+      <li><strong>Avoid</strong> calling <code>load_text</code> in a hot loop — each call re-runs the full tokenize → parse → semantic-analysis pipeline from scratch. Load once and keep the <code>DixData</code>; if the source can change underneath you, use <a href="#rust-api--hot-reload"><code>HotReloadWatcher</code></a> instead of re-loading unconditionally — it only re-parses when the file's mtime actually moves.</li>
     </ul>
   </div>
 

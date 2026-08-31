@@ -100,6 +100,7 @@
             { id: 'rust-api--schema-validation',label: 'Schema Validation' },
             { id: 'rust-api--merging',          label: 'Merging Databases' },
             { id: 'rust-api--serde',            label: 'Serde Support'     },
+            { id: 'rust-api--hot-reload',       label: 'Hot Reload'        },
           ] },
         { id: 'csharp-api', label: 'C# Runtime API', children: [
             { id: 'csharp-api',                     label: 'Overview'      },
@@ -111,6 +112,7 @@
             { id: 'csharp-api--query',              label: 'Query API'      },
             { id: 'csharp-api--dynamic-access',     label: 'Dynamic Access' },
             { id: 'csharp-api--poco',               label: 'POCO Deserialization' },
+            { id: 'csharp-api--enum-codegen',        label: 'Enum Code Generation' },
             { id: 'csharp-api--builder',            label: 'Builder API'    },
             { id: 'csharp-api--merging',            label: 'Merging Databases' },
             { id: 'csharp-api--schema-validation',  label: 'Schema Validation' },

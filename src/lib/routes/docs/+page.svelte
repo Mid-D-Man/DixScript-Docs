@@ -28,6 +28,7 @@
   import DocCSharpQuery            from '$lib/components/docs/sections/csharp/DocCSharpQuery.svelte';
   import DocCSharpDynamicAccess    from '$lib/components/docs/sections/csharp/DocCSharpDynamicAccess.svelte';
   import DocCSharpPoco             from '$lib/components/docs/sections/csharp/DocCSharpPoco.svelte';
+  import DocCSharpEnumCodeGen      from '$lib/components/docs/sections/csharp/DocCSharpEnumCodeGen.svelte';
   import DocCSharpBuilder          from '$lib/components/docs/sections/csharp/DocCSharpBuilder.svelte';
   import DocCSharpMerging          from '$lib/components/docs/sections/csharp/DocCSharpMerging.svelte';
   import DocCSharpSchemaValidation from '$lib/components/docs/sections/csharp/DocCSharpSchemaValidation.svelte';
@@ -42,6 +43,7 @@
   import DocRustSchemaValidation  from '$lib/components/docs/sections/rust/DocRustSchemaValidation.svelte';
   import DocRustMerging           from '$lib/components/docs/sections/rust/DocRustMerging.svelte';
   import DocRustSerde             from '$lib/components/docs/sections/rust/DocRustSerde.svelte';
+  import DocRustHotReload         from '$lib/components/docs/sections/rust/DocRustHotReload.svelte';
   import DocGoOverview          from '$lib/components/docs/sections/go/DocGoOverview.svelte';
   import DocGoInstall           from '$lib/components/docs/sections/go/DocGoInstall.svelte';
   import DocGoQuickStart        from '$lib/components/docs/sections/go/DocGoQuickStart.svelte';
@@ -250,6 +252,8 @@
     <DocRustMerging />
   {:else if activeSection === 'rust-api--serde'}
     <DocRustSerde />
+  {:else if activeSection === 'rust-api--hot-reload'}
+    <DocRustHotReload />
   {:else if activeSection === 'csharp-api'}
     <DocCSharpOverview />
   {:else if activeSection === 'csharp-api--install'}
@@ -268,6 +272,8 @@
     <DocCSharpDynamicAccess />
   {:else if activeSection === 'csharp-api--poco'}
     <DocCSharpPoco />
+  {:else if activeSection === 'csharp-api--enum-codegen'}
+    <DocCSharpEnumCodeGen />
   {:else if activeSection === 'csharp-api--builder'}
     <DocCSharpBuilder />
   {:else if activeSection === 'csharp-api--merging'}
