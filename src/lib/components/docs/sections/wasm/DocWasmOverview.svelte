@@ -11,6 +11,8 @@
     { id: 'wasm-api--merging',           label: 'Merging Databases',      desc: 'AST-level merge, weighted strategies.' },
     { id: 'wasm-api--schema-validation', label: 'Schema Validation',      desc: 'Fluent required/optional fields.' },
     { id: 'wasm-api--hot-reload',        label: 'Hot Reload',             desc: 'Content-hash watching — no filesystem in wasm32.' },
+    { id: 'wasm-api--dlm',               label: 'DLM (Compress/Encrypt/Audit)', desc: 'In-memory compile/decompile, audit trail via localStorage.' },
+    { id: 'wasm-api--cloud-imports',     label: 'Cloud Imports',          desc: 'prefetchImport — bridging @IMPORTS from_cloud into wasm32.' },
   ];
 </script>
 

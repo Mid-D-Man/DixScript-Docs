@@ -105,6 +105,8 @@
   import DocWasmMerging          from '$lib/components/docs/sections/wasm/DocWasmMerging.svelte';
   import DocWasmSchemaValidation from '$lib/components/docs/sections/wasm/DocWasmSchemaValidation.svelte';
   import DocWasmHotReload        from '$lib/components/docs/sections/wasm/DocWasmHotReload.svelte';
+  import DocWasmDlm              from '$lib/components/docs/sections/wasm/DocWasmDlm.svelte';
+  import DocWasmCloudImports     from '$lib/components/docs/sections/wasm/DocWasmCloudImports.svelte';
   import DocOdinOverview    from '$lib/components/docs/sections/odin/DocOdinOverview.svelte';
   import DocOdinBuildLink   from '$lib/components/docs/sections/odin/DocOdinBuildLink.svelte';
   import DocOdinQuickStart  from '$lib/components/docs/sections/odin/DocOdinQuickStart.svelte';
@@ -406,6 +408,10 @@
     <DocWasmSchemaValidation />
   {:else if activeSection === 'wasm-api--hot-reload'}
     <DocWasmHotReload />
+  {:else if activeSection === 'wasm-api--dlm'}
+    <DocWasmDlm />
+  {:else if activeSection === 'wasm-api--cloud-imports'}
+    <DocWasmCloudImports />
   {:else if activeSection === 'odin-api'}
     <DocOdinOverview />
   {:else if activeSection === 'odin-api--build-link'}

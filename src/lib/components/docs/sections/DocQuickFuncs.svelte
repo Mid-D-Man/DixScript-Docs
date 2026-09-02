@@ -295,13 +295,19 @@
     { op: '-',   kind: 'Arithmetic', desc: 'Subtraction', example: 'x - y' },
     { op: '*',   kind: 'Arithmetic', desc: 'Multiplication', example: 'x * y' },
     { op: '/',   kind: 'Arithmetic', desc: 'Division (float result if operands are float/double)', example: 'x / y' },
-    { op: '%',   kind: 'Arithmetic', desc: 'Remainder / modulo', example: 'x % y' },
-    { op: '^',   kind: 'Arithmetic', desc: 'Exponentiation (base ^ exponent)', example: 'x ^ 2.0' },
+    { op: '%',   kind: 'Arithmetic', desc: 'Remainder — sign follows the left operand, same as Rust/C', example: 'x % y' },
+    { op: '**',  kind: 'Arithmetic', desc: 'Exponentiation (base ** exponent) — always returns a double', example: 'x ** 2.0' },
+    { op: '%%',  kind: 'Arithmetic', desc: 'Circular (Euclidean) modulo — result is always non-negative, unlike %', example: '(-1) %% 5   // 4, not -1' },
+    { op: '%&',  kind: 'Arithmetic', desc: 'Percentage — amount %& percent is (amount * percent) / 100', example: '200 %& 15   // 30' },
+    { op: '&%',  kind: 'Arithmetic', desc: 'Bitwise modulo — fast remainder for a power-of-2 right operand only (right must be > 0)', example: '13 &% 8   // 5' },
+    { op: '++',  kind: 'Arithmetic', desc: 'Increment — unary, returns operand + 1', example: '++count' },
+    { op: '--',  kind: 'Arithmetic', desc: 'Decrement — unary, returns operand - 1', example: '--count' },
     { op: '+=',  kind: 'Compound',   desc: 'Add and assign (requires let mut)', example: 'total += price' },
     { op: '-=',  kind: 'Compound',   desc: 'Subtract and assign', example: 'hp -= damage' },
     { op: '*=',  kind: 'Compound',   desc: 'Multiply and assign', example: 'val *= 2' },
     { op: '/=',  kind: 'Compound',   desc: 'Divide and assign', example: 'val /= 100.0' },
     { op: '%=',  kind: 'Compound',   desc: 'Modulo and assign', example: 'val %= 10' },
+    { op: '**=', kind: 'Compound',   desc: 'Exponentiate and assign', example: 'val **= 2.0' },
     { op: '==',  kind: 'Comparison', desc: 'Equal to', example: 'a == b' },
     { op: '!=',  kind: 'Comparison', desc: 'Not equal to', example: 'a != b' },
     { op: '>',   kind: 'Comparison', desc: 'Greater than', example: 'a > b' },
@@ -311,6 +317,17 @@
     { op: '&&',  kind: 'Logical',    desc: 'Logical AND (also: "and")', example: 'a && b' },
     { op: '||',  kind: 'Logical',    desc: 'Logical OR (also: "or")', example: 'a || b' },
     { op: '!',   kind: 'Logical',    desc: 'Logical NOT (also: "not")', example: '!active' },
+    { op: '&',   kind: 'Bitwise',    desc: 'Bitwise AND', example: 'flags & MASK' },
+    { op: '|',   kind: 'Bitwise',    desc: 'Bitwise OR', example: 'flags | FLAG_A' },
+    { op: '^',   kind: 'Bitwise',    desc: 'Bitwise XOR — not exponentiation, that\'s **', example: 'flags ^ FLAG_A' },
+    { op: '<<',  kind: 'Bitwise',    desc: 'Left shift', example: 'x << 2' },
+    { op: '>>',  kind: 'Bitwise',    desc: 'Right shift', example: 'x >> 2' },
+    { op: '~?',  kind: 'Bitwise',    desc: 'Bitwise NOT — unary', example: '~?flags' },
+    { op: '&=',  kind: 'Compound',   desc: 'Bitwise AND and assign', example: 'flags &= MASK' },
+    { op: '|=',  kind: 'Compound',   desc: 'Bitwise OR and assign', example: 'flags |= FLAG_A' },
+    { op: '^=',  kind: 'Compound',   desc: 'Bitwise XOR and assign', example: 'flags ^= FLAG_A' },
+    { op: '<<=', kind: 'Compound',   desc: 'Left shift and assign', example: 'x <<= 2' },
+    { op: '>>=', kind: 'Compound',   desc: 'Right shift and assign', example: 'x >>= 2' },
     { op: '? :', kind: 'Ternary',    desc: 'Conditional expression — condition ? if_true : if_false', example: 'x > 0 ? "pos" : "neg"' },
   ];
 </script>
@@ -367,6 +384,10 @@
   <CodeBlock code={variablesExample} lang="dixscript" />
 
   <h2>Operators</h2>
+  <p>
+    Grouped by category below. Compound-assign forms require the target
+    to have been declared with <code>let mut</code>.
+  </p>
   <div class="table-scroll">
     <table>
       <thead><tr><th>Operator</th><th>Kind</th><th>Description</th><th>Example</th></tr></thead>
@@ -381,6 +402,17 @@
         {/each}
       </tbody>
     </table>
+  </div>
+
+  <div class="tip-callout">
+    <strong>One operator to avoid: <code>&gt;_&lt;</code></strong>
+    <span>
+      The tokenizer recognizes <code>&gt;_&lt;</code> as a bitwise operator, but no evaluator
+      anywhere in the compiler actually implements it — writing it in a QuickFunc compiles
+      past parsing and then fails at evaluation with an "unknown bitwise operator" error.
+      Left out of the table above since it doesn't currently do anything reliable; treat it
+      as reserved, not usable.
+    </span>
   </div>
 
   <h2>Arithmetic and Operators in Practice</h2>
@@ -431,3 +463,18 @@
     <li>Cannot call functions defined later in the same block (forward references are not supported — define helpers before callers).</li>
   </ul>
 </div>
+
+<style>
+  .tip-callout {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 0.875rem 1.125rem;
+    margin: 1.25rem 0;
+    font-size: 0.875rem;
+  }
+  .tip-callout strong { color: var(--foreground); display: block; margin-bottom: 0.375rem; }
+  .tip-callout span { color: var(--muted-foreground); line-height: 1.6; }
+  .tip-callout code { font-size: 0.8125rem; }
+</style>

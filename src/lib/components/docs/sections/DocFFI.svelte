@@ -43,7 +43,7 @@
     {
       lang: 'JS / npm', pkg: '@midmanstudio/mdix', cls: 'wasm',
       status: 'complete', statusLabel: 'Published — full mdix-wasm surface',
-      note: 'MdixDatabase and MdixBuilder, plus merge (mergeSources / mergeSourcesWeighted / mergeWith), MdixSchema (fluent require_*/optional_* validation), DLM compile/decompile, and MdixWatcher (source hot-reload) are all re-exported from src/index.ts now — this used to lag the underlying mdix-wasm crate, that gap is closed.'
+      note: 'MdixDatabase and MdixBuilder, plus merge (mergeSources / mergeSourcesWeighted / mergeWith), MdixSchema (fluent require_*/optional_* validation), DLM compile/decompile with a localStorage-backed audit trail, prefetchImport (bridges @IMPORTS from_cloud into wasm32\'s lack of synchronous fetch), and MdixWatcher (content-hash hot reload, since wasm32 also has no filesystem to poll). Ships two wasm-pack builds (bundler + Node) selected automatically via package.json export conditions.'
     },
     {
       lang: 'Odin', pkg: 'mdix-odin', cls: 'odin',

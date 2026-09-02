@@ -118,27 +118,6 @@
       </div>
     </div>
 
-    <div class="status-note">
-      <div class="status-note-inner">
-        <div class="status-heading">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
-          </svg>
-          <strong>Under Active Development</strong>
-        </div>
-        <p>
-          DixScript is not yet production-ready. The Rust port targets performance and portability,
-          while the original C# implementation serves as the current reference.
-        </p>
-        <div class="status-links">
-          <a href="https://github.com/Mid-D-Man/DixScript" target="_blank" rel="noopener noreferrer" class="status-link">C# Prototype ↗</a>
-          <a href="https://github.com/Mid-D-Man/DixScript-Rust" target="_blank" rel="noopener noreferrer" class="status-link">Rust Source ↗</a>
-          <a href="/results" class="status-link">CI Results</a>
-          <a href="/docs" class="status-link">Docs</a>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
 
@@ -245,31 +224,6 @@
   }
 
   .use-case-chip:hover { background: var(--secondary); border-color: var(--primary); color: var(--primary); }
-
-  .status-note {
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--primary);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .status-note-inner { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 0.625rem; }
-
-  .status-heading {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9375rem;
-    color: var(--foreground);
-  }
-
-  .status-note p { font-size: 0.875rem; color: var(--muted-foreground); line-height: 1.7; max-width: 640px; }
-
-  .status-links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-
-  .status-link { font-size: 0.875rem; font-weight: 600; color: var(--primary); text-decoration: none; transition: opacity 0.15s ease; }
-  .status-link:hover { opacity: 0.75; text-decoration: underline; }
 
   @media (max-width: 1024px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 640px) { .features { padding: 3rem 1rem; } .feature-grid { grid-template-columns: 1fr; } .why-block { padding: 1.25rem; } }

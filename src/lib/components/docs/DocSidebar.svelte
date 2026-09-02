@@ -189,6 +189,8 @@
             { id: 'wasm-api--merging',            label: 'Merging Databases' },
             { id: 'wasm-api--schema-validation',  label: 'Schema Validation' },
             { id: 'wasm-api--hot-reload',         label: 'Hot Reload'        },
+            { id: 'wasm-api--dlm',                label: 'DLM (Compress/Encrypt/Audit)' },
+            { id: 'wasm-api--cloud-imports',      label: 'Cloud Imports'     },
           ] },
         { id: 'odin-api',   label: 'Odin Runtime API', children: [
             { id: 'odin-api',                    label: 'Overview'                    },

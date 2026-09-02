@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Logo from '$lib/components/Logo.svelte';
   const year = new Date().getFullYear();
 
   const columns = [
@@ -16,7 +17,7 @@
       links: [
         { label: 'Documentation', href: '/docs'                                               },
         { label: 'Quick Start',   href: '/docs#quickstart'                                    },
-        { label: 'C# Prototype',  href: 'https://github.com/Mid-D-Man/DixScript',  external: true },
+        { label: 'C# Runtime API', href: '/docs#csharp-api'                                    },
         { label: 'Rust Source',   href: 'https://github.com/Mid-D-Man/DixScript-Rust', external: true },
       ],
     },
@@ -36,11 +37,10 @@
     <!-- Brand column -->
     <div class="brand-col">
       <div class="brand">
-        <div class="brand-icon">D</div>
+        <div class="brand-icon"><Logo size={20} title="" /></div>
         <span class="brand-name">DixScript</span>
       </div>
       <p class="tagline">The Swiss Army Knife of Data Formats.</p>
-      <p class="status-note">⚠️ Under active development — not production ready.</p>
     </div>
 
     <!-- Link columns -->
@@ -116,14 +116,10 @@
     width: 2rem;
     height: 2rem;
     background: var(--accent);
-    color: var(--accent-foreground);
     border-radius: var(--radius);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-serif);
-    font-weight: 700;
-    font-size: 1rem;
     flex-shrink: 0;
   }
 
@@ -138,12 +134,6 @@
     font-size: 0.875rem;
     color: var(--muted-foreground);
     margin-bottom: 0.5rem;
-  }
-
-  .status-note {
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
-    opacity: 0.8;
   }
 
   /* ── Link columns ── */
