@@ -8,6 +8,8 @@
   // call throws, not just php ones, since the hook runs unconditionally.
   import 'prismjs/components/prism-markup-templating';
   import 'prismjs/components/prism-clike';
+  import 'prismjs/components/prism-c';
+  import 'prismjs/components/prism-cpp';
   import 'prismjs/components/prism-rust';
   import 'prismjs/components/prism-csharp';
   import 'prismjs/components/prism-go';

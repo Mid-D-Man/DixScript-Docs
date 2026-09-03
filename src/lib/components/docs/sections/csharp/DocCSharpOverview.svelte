@@ -4,7 +4,7 @@
     { id: 'csharp-api--install',           label: 'Install',                desc: 'NuGet package reference.' },
     { id: 'csharp-api--quickstart',        label: 'Quick Start',            desc: 'The Dix static facade — load, read, done.' },
     { id: 'csharp-api--error-handling',    label: 'Error Handling',         desc: 'MdixResult<T> — success/failure without exceptions.' },
-    { id: 'csharp-api--loading',           label: 'Loading Data',           desc: 'Sync, async, encrypted, foreign formats, hot reload.' },
+    { id: 'csharp-api--loading',           label: 'Loading Data',           desc: 'Sync, async, encrypted, foreign formats.' },
     { id: 'csharp-api--reading',           label: 'Reading Values',         desc: 'Typed getters, special types, enums, collections.' },
     { id: 'csharp-api--query',             label: 'Query API',              desc: 'LINQ-style filtering/projection over group arrays.' },
     { id: 'csharp-api--dynamic-access',    label: 'Dynamic Access',         desc: 'MdixDynamic — exploratory reads without a POCO.' },
@@ -13,6 +13,7 @@
     { id: 'csharp-api--builder',           label: 'Builder API',            desc: 'MdixBuilder — build data programmatically, fluently.' },
     { id: 'csharp-api--merging',           label: 'Merging Databases',      desc: 'Combine two or more databases with a merge strategy.' },
     { id: 'csharp-api--schema-validation', label: 'Schema Validation',      desc: 'MdixSchemaBuilder — declarative required/optional fields.' },
+    { id: 'csharp-api--hot-reload',        label: 'Hot Reload',             desc: 'Real FileSystemWatcher, not polling — unique among the bindings.' },
     { id: 'csharp-api--format-conversion', label: 'Format Conversion',      desc: '.mdix, JSON, and TOML, in both directions.' },
     { id: 'csharp-api--method-reference',  label: 'Full Method Reference',  desc: 'Every Dix facade method, grouped by category.' },
   ];

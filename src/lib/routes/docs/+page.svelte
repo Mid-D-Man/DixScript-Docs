@@ -32,6 +32,7 @@
   import DocCSharpBuilder          from '$lib/components/docs/sections/csharp/DocCSharpBuilder.svelte';
   import DocCSharpMerging          from '$lib/components/docs/sections/csharp/DocCSharpMerging.svelte';
   import DocCSharpSchemaValidation from '$lib/components/docs/sections/csharp/DocCSharpSchemaValidation.svelte';
+  import DocCSharpHotReload        from '$lib/components/docs/sections/csharp/DocCSharpHotReload.svelte';
   import DocCSharpFormatConversion from '$lib/components/docs/sections/csharp/DocCSharpFormatConversion.svelte';
   import DocCSharpMethodReference  from '$lib/components/docs/sections/csharp/DocCSharpMethodReference.svelte';
   import DocRustOverview          from '$lib/components/docs/sections/rust/DocRustOverview.svelte';
@@ -120,6 +121,18 @@
   import DocOdinMerging     from '$lib/components/docs/sections/odin/DocOdinMerging.svelte';
   import DocOdinHotReload   from '$lib/components/docs/sections/odin/DocOdinHotReload.svelte';
   import DocOdinVsC         from '$lib/components/docs/sections/odin/DocOdinVsC.svelte';
+  import DocCOverview          from '$lib/components/docs/sections/c/DocCOverview.svelte';
+  import DocCBuildLink         from '$lib/components/docs/sections/c/DocCBuildLink.svelte';
+  import DocCQuickStartC       from '$lib/components/docs/sections/c/DocCQuickStartC.svelte';
+  import DocCQuickStartCpp     from '$lib/components/docs/sections/c/DocCQuickStartCpp.svelte';
+  import DocCErrorHandling     from '$lib/components/docs/sections/c/DocCErrorHandling.svelte';
+  import DocCReading           from '$lib/components/docs/sections/c/DocCReading.svelte';
+  import DocCEncrypted         from '$lib/components/docs/sections/c/DocCEncrypted.svelte';
+  import DocCBuilder           from '$lib/components/docs/sections/c/DocCBuilder.svelte';
+  import DocCQuery             from '$lib/components/docs/sections/c/DocCQuery.svelte';
+  import DocCMerging           from '$lib/components/docs/sections/c/DocCMerging.svelte';
+  import DocCHotReload         from '$lib/components/docs/sections/c/DocCHotReload.svelte';
+  import DocCFormatConversion  from '$lib/components/docs/sections/c/DocCFormatConversion.svelte';
   import DocBuiltinMath     from '$lib/components/docs/sections/DocBuiltinMath.svelte';
   import DocBuiltinArray    from '$lib/components/docs/sections/DocBuiltinArray.svelte';
   import DocBuiltinDateTime from '$lib/components/docs/sections/DocBuiltinDateTime.svelte';
@@ -282,6 +295,8 @@
     <DocCSharpMerging />
   {:else if activeSection === 'csharp-api--schema-validation'}
     <DocCSharpSchemaValidation />
+  {:else if activeSection === 'csharp-api--hot-reload'}
+    <DocCSharpHotReload />
   {:else if activeSection === 'csharp-api--format-conversion'}
     <DocCSharpFormatConversion />
   {:else if activeSection === 'csharp-api--method-reference'}
@@ -438,5 +453,29 @@
     <DocOdinHotReload />
   {:else if activeSection === 'odin-api--vs-c'}
     <DocOdinVsC />
+  {:else if activeSection === 'c-api'}
+    <DocCOverview />
+  {:else if activeSection === 'c-api--build-link'}
+    <DocCBuildLink />
+  {:else if activeSection === 'c-api--quickstart-c'}
+    <DocCQuickStartC />
+  {:else if activeSection === 'c-api--quickstart-cpp'}
+    <DocCQuickStartCpp />
+  {:else if activeSection === 'c-api--error-handling'}
+    <DocCErrorHandling />
+  {:else if activeSection === 'c-api--reading'}
+    <DocCReading />
+  {:else if activeSection === 'c-api--encrypted'}
+    <DocCEncrypted />
+  {:else if activeSection === 'c-api--builder'}
+    <DocCBuilder />
+  {:else if activeSection === 'c-api--query'}
+    <DocCQuery />
+  {:else if activeSection === 'c-api--merging'}
+    <DocCMerging />
+  {:else if activeSection === 'c-api--hot-reload'}
+    <DocCHotReload />
+  {:else if activeSection === 'c-api--format-conversion'}
+    <DocCFormatConversion />
   {/if}
 </DocLayout>
