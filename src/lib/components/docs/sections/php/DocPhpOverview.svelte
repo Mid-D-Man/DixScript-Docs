@@ -8,9 +8,14 @@
     { id: 'php-api--error-handling',    label: 'Error Handling',         desc: 'MdixError and ErrorKind.' },
     { id: 'php-api--result',            label: 'MdixResult',             desc: 'Railway-style chaining combinators.' },
     { id: 'php-api--builder',           label: 'Builder API',            desc: 'Fluent, chainable data construction.' },
+    { id: 'php-api--query',             label: 'Query',                  desc: 'Wildcard select plus chainable filter/aggregate.' },
+    { id: 'php-api--schema-validation', label: 'Schema Validation',      desc: 'Declarative required/optional fields.' },
+    { id: 'php-api--merging',           label: 'Merging Databases',      desc: 'Weighted AST-level merge, conflict reporting.' },
+    { id: 'php-api--hot-reload',        label: 'Hot Reload',             desc: 'Poll-based file watching via MdixHotReload.' },
     { id: 'php-api--format-conversion', label: 'Format Conversion',      desc: 'JSON, TOML, .mdix, round-trip.' },
     { id: 'php-api--types',             label: 'Types',                  desc: 'ValueType and FormatMode enums.' },
     { id: 'php-api--lifecycle',         label: 'Lifecycle & Cleanup',    desc: 'Native handle management.' },
+    { id: 'php-api--method-reference',  label: 'Full Method Reference',  desc: 'Every public method, grouped by category.' },
   ];
 </script>
 

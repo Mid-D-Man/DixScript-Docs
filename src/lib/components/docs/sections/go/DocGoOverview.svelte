@@ -13,6 +13,7 @@
     { id: 'go-api--merging',           label: 'Merging Databases',      desc: 'AST-level merge with weighted strategies.' },
     { id: 'go-api--hot-reload',        label: 'Hot Reload',             desc: 'Poll-based file watching.' },
     { id: 'go-api--package-layout',    label: 'Package Layout',         desc: 'What lives in each file.' },
+    { id: 'go-api--method-reference',  label: 'Full Method Reference',  desc: 'Every exported symbol, grouped by category.' },
     { id: 'go-api--vs-csharp',         label: 'vs C#',                  desc: 'Concept mapping between the two most complete bindings.' },
   ];
 </script>

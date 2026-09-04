@@ -29,6 +29,12 @@ print(bool(report))   # same as report.is_valid`;
   <p class="page-lead">Part of the <a href="#python-api">Python Runtime API</a>.</p>
   <CodeBlock code={schemaApi} lang="python" />
 
+  <p>
+    <code>schema.validate(db)</code> and
+    <a href="#python-api--reading"><code>db.validate_schema(schema)</code></a>
+    do the same validation — pick whichever reads better at the call site.
+  </p>
+
   <div class="table-scroll">
     <table>
       <thead><tr><th>Method</th><th>Description</th></tr></thead>

@@ -9,6 +9,8 @@ boss = (enemies
         .order_by_desc(lambda e: e["hp"])
         .first())
 
+named = enemies.where_field_eq("name", "Goblin")   # shortcut for a common where_() case
+
 names   = enemies.select(lambda e: e["name"])
 total   = enemies.sum_int(lambda e: e["hp"])
 avg_hp  = enemies.avg_float(lambda e: e["hp"])

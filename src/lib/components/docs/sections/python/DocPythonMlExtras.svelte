@@ -16,7 +16,8 @@ db = builder.to_database()
 arr = MdixNumpy.load(db, "model.weights")          # -> np.ndarray, raises on failure
 result = MdixNumpy.try_load(db, "model.weights")    # -> MdixResult
 
-info = MdixNumpy.array_info(db, "model.weights")    # {"shape": [...], "dtype": "...", ...}`;
+info = MdixNumpy.array_info(db, "model.weights")    # {"shape": [...], "dtype": "...", ...}
+has_it = MdixNumpy.exists(db, "model.weights")       # bool — confirms it's a real numpy envelope, not just any string`;
 
   const mlTensor = `from midmanstudio.mdix.ml import MdixTensor
 

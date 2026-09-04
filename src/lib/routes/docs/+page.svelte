@@ -58,6 +58,7 @@
   import DocGoMerging           from '$lib/components/docs/sections/go/DocGoMerging.svelte';
   import DocGoHotReload         from '$lib/components/docs/sections/go/DocGoHotReload.svelte';
   import DocGoPackageLayout     from '$lib/components/docs/sections/go/DocGoPackageLayout.svelte';
+  import DocGoMethodReference   from '$lib/components/docs/sections/go/DocGoMethodReference.svelte';
   import DocGoVsCSharp          from '$lib/components/docs/sections/go/DocGoVsCSharp.svelte';
   import DocJavaOverview         from '$lib/components/docs/sections/java/DocJavaOverview.svelte';
   import DocJavaInstall          from '$lib/components/docs/sections/java/DocJavaInstall.svelte';
@@ -71,6 +72,7 @@
   import DocJavaSchemaValidation from '$lib/components/docs/sections/java/DocJavaSchemaValidation.svelte';
   import DocJavaMerging          from '$lib/components/docs/sections/java/DocJavaMerging.svelte';
   import DocJavaHotReload        from '$lib/components/docs/sections/java/DocJavaHotReload.svelte';
+  import DocJavaMethodReference  from '$lib/components/docs/sections/java/DocJavaMethodReference.svelte';
   import DocJavaKotlin           from '$lib/components/docs/sections/java/DocJavaKotlin.svelte';
   import DocPhpOverview         from '$lib/components/docs/sections/php/DocPhpOverview.svelte';
   import DocPhpInstall          from '$lib/components/docs/sections/php/DocPhpInstall.svelte';
@@ -80,9 +82,14 @@
   import DocPhpErrorHandling    from '$lib/components/docs/sections/php/DocPhpErrorHandling.svelte';
   import DocPhpResult           from '$lib/components/docs/sections/php/DocPhpResult.svelte';
   import DocPhpBuilder          from '$lib/components/docs/sections/php/DocPhpBuilder.svelte';
+  import DocPhpQuery            from '$lib/components/docs/sections/php/DocPhpQuery.svelte';
+  import DocPhpSchemaValidation from '$lib/components/docs/sections/php/DocPhpSchemaValidation.svelte';
+  import DocPhpMerging          from '$lib/components/docs/sections/php/DocPhpMerging.svelte';
+  import DocPhpHotReload        from '$lib/components/docs/sections/php/DocPhpHotReload.svelte';
   import DocPhpFormatConversion from '$lib/components/docs/sections/php/DocPhpFormatConversion.svelte';
   import DocPhpTypes            from '$lib/components/docs/sections/php/DocPhpTypes.svelte';
   import DocPhpLifecycle        from '$lib/components/docs/sections/php/DocPhpLifecycle.svelte';
+  import DocPhpMethodReference  from '$lib/components/docs/sections/php/DocPhpMethodReference.svelte';
   import DocPythonOverview  from '$lib/components/docs/sections/python/DocPythonOverview.svelte';
   import DocPythonInstall   from '$lib/components/docs/sections/python/DocPythonInstall.svelte';
   import DocPythonQuickStart from '$lib/components/docs/sections/python/DocPythonQuickStart.svelte';
@@ -120,6 +127,7 @@
   import DocOdinSchema      from '$lib/components/docs/sections/odin/DocOdinSchema.svelte';
   import DocOdinMerging     from '$lib/components/docs/sections/odin/DocOdinMerging.svelte';
   import DocOdinHotReload   from '$lib/components/docs/sections/odin/DocOdinHotReload.svelte';
+  import DocOdinMethodReference from '$lib/components/docs/sections/odin/DocOdinMethodReference.svelte';
   import DocOdinVsC         from '$lib/components/docs/sections/odin/DocOdinVsC.svelte';
   import DocCOverview          from '$lib/components/docs/sections/c/DocCOverview.svelte';
   import DocCBuildLink         from '$lib/components/docs/sections/c/DocCBuildLink.svelte';
@@ -327,6 +335,8 @@
     <DocGoHotReload />
   {:else if activeSection === 'go-api--package-layout'}
     <DocGoPackageLayout />
+  {:else if activeSection === 'go-api--method-reference'}
+    <DocGoMethodReference />
   {:else if activeSection === 'go-api--vs-csharp'}
     <DocGoVsCSharp />
   {:else if activeSection === 'java-api'}
@@ -353,6 +363,8 @@
     <DocJavaMerging />
   {:else if activeSection === 'java-api--hot-reload'}
     <DocJavaHotReload />
+  {:else if activeSection === 'java-api--method-reference'}
+    <DocJavaMethodReference />
   {:else if activeSection === 'java-api--kotlin'}
     <DocJavaKotlin />
   {:else if activeSection === 'php-api'}
@@ -371,12 +383,22 @@
     <DocPhpResult />
   {:else if activeSection === 'php-api--builder'}
     <DocPhpBuilder />
+  {:else if activeSection === 'php-api--query'}
+    <DocPhpQuery />
+  {:else if activeSection === 'php-api--schema-validation'}
+    <DocPhpSchemaValidation />
+  {:else if activeSection === 'php-api--merging'}
+    <DocPhpMerging />
+  {:else if activeSection === 'php-api--hot-reload'}
+    <DocPhpHotReload />
   {:else if activeSection === 'php-api--format-conversion'}
     <DocPhpFormatConversion />
   {:else if activeSection === 'php-api--types'}
     <DocPhpTypes />
   {:else if activeSection === 'php-api--lifecycle'}
     <DocPhpLifecycle />
+  {:else if activeSection === 'php-api--method-reference'}
+    <DocPhpMethodReference />
   {:else if activeSection === 'python-api'}
     <DocPythonOverview />
   {:else if activeSection === 'python-api--install'}
@@ -451,6 +473,8 @@
     <DocOdinMerging />
   {:else if activeSection === 'odin-api--hot-reload'}
     <DocOdinHotReload />
+  {:else if activeSection === 'odin-api--method-reference'}
+    <DocOdinMethodReference />
   {:else if activeSection === 'odin-api--vs-c'}
     <DocOdinVsC />
   {:else if activeSection === 'c-api'}

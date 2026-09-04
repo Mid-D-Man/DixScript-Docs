@@ -12,6 +12,7 @@
     { id: 'odin-api--schema',          label: 'Schema Validation',      desc: 'schema_* required/optional fields.' },
     { id: 'odin-api--merging',         label: 'Merging Databases',      desc: 'AST-level merge, weighted strategies.' },
     { id: 'odin-api--hot-reload',      label: 'Hot Reload',             desc: 'Per-frame-loop-friendly, no background thread.' },
+    { id: 'odin-api--method-reference', label: 'Full Method Reference', desc: 'Every exported procedure, grouped by category.' },
     { id: 'odin-api--vs-c',            label: 'vs the raw C API',       desc: 'What the wrapper buys you over mdix.h directly.' },
   ];
 </script>

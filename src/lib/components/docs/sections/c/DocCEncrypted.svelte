@@ -18,7 +18,13 @@ void* db4 = mdix_load_encrypted_bytes(
   const encCpp = `auto db1 = mdix::Database::load_encrypted("config.mdix.enc", "config.key");
 auto db2 = mdix::Database::load_encrypted("config.mdix.enc"); // key_path defaults to nullopt (auto-detect)
 
-auto db3 = mdix::Database::load_encrypted_password("config.mdix.enc", "hunter2");`;
+auto db3 = mdix::Database::load_encrypted_password("config.mdix.enc", "hunter2");
+
+// In-memory bytes — key_file_content and password are both optional
+// (std::nullopt by default), but at least one is required
+std::vector<uint8_t> bytes = /* ... */;
+auto db4 = mdix::Database::load_encrypted_bytes(bytes, "keyfilecontent");
+auto db5 = mdix::Database::load_encrypted_bytes(bytes, std::nullopt, "hunter2");`;
 </script>
 
 <div class="doc-page">
@@ -28,14 +34,6 @@ auto db3 = mdix::Database::load_encrypted_password("config.mdix.enc", "hunter2")
   <CodeBlock code={encC} lang="c" />
   <CodeBlock code={encCpp} lang="cpp" />
 
-  <div class="tip-callout">
-    <strong>The C++ wrapper doesn't cover in-memory encrypted bytes</strong>
-    <ul>
-      <li><code>mdix::Database</code> exposes <code>load_encrypted()</code> and <code>load_encrypted_password()</code>, but there's no C++ equivalent of <code>mdix_load_encrypted_bytes()</code> — checked directly against <code>mdix.hpp</code>'s factory functions, it isn't there.</li>
-      <li>If you need to load encrypted data already in memory (not a file on disk), call <code>::mdix_load_encrypted_bytes()</code> directly and wrap the returned handle with <code>mdix::Database::adopt(handle)</code> — that takes ownership the same way <code>Watcher::check_and_reload()</code>'s result does internally.</li>
-    </ul>
-  </div>
-
   <p>
     Hot reload does not support encrypted files — see
     <a href="#c-api--hot-reload">Hot Reload</a> — <code>Watcher</code>/<code>mdix_watcher_*</code>
@@ -43,20 +41,3 @@ auto db3 = mdix::Database::load_encrypted_password("config.mdix.enc", "hunter2")
     rather than something this binding could opt out of.
   </p>
 </div>
-
-<style>
-  .tip-callout {
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--primary);
-    border-radius: var(--radius);
-    padding: 0.875rem 1.125rem;
-    margin: 1.25rem 0;
-    font-size: 0.875rem;
-  }
-  .tip-callout strong { color: var(--foreground); }
-  .tip-callout ul { margin: 0.5rem 0 0; padding-left: 1.25rem; }
-  .tip-callout li { margin-bottom: 0.5rem; color: var(--muted-foreground); line-height: 1.6; }
-  .tip-callout li:last-child { margin-bottom: 0; }
-  .tip-callout code { font-size: 0.8125rem; }
-</style>

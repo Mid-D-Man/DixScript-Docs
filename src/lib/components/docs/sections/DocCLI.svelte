@@ -53,6 +53,26 @@ mdix merge base.mdix overrides.mdix --to json -o merged.json
 # Labels for conflict reports, and printing every resolved conflict
 mdix merge base.mdix overrides.mdix --labels base,overrides --show-conflicts`;
 
+  const diffCmds = `# Preview what a merge would need to resolve, without writing any output
+mdix diff base.mdix overrides.mdix
+mdix diff base.mdix env.mdix local.mdix              # 2+ files supported
+mdix diff base.mdix overrides.mdix --labels base,overrides
+mdix diff base.mdix overrides.mdix --fail-on-conflict  # non-zero exit if any conflict found (CI)`;
+
+  const auditCmds = `# Inspect a .mdix.au audit trail file — written automatically by
+# 'compile' alongside its output
+mdix audit info config.mdix.au           # header, entry count, latest compile status
+mdix audit view config.mdix.au           # every recorded compilation entry
+mdix audit view config.mdix.au -n 5      # only the last 5 entries
+mdix audit archives config.mdix.au       # list rotated/archived audit files next to it`;
+
+  const completionsCmds = `# Generate a shell completion script — redirect it to wherever your shell loads completions from
+mdix completions bash       > /etc/bash_completion.d/mdix
+mdix completions zsh        > ~/.zfunc/_mdix
+mdix completions fish       > ~/.config/fish/completions/mdix.fish
+mdix completions powershell > mdix.ps1
+mdix completions elvish     > mdix.elv`;
+
   const createCmds = `# Scaffold a new .mdix file from a built-in template
 mdix create config.mdix                         # basic template (default)
 mdix create game.mdix --template advanced
@@ -200,9 +220,10 @@ cargo build -p mdix-cli --release
     The <code>mdix</code> command-line tool. Feature-complete in the Rust core
     and published on crates.io — <code>validate</code>, <code>compile</code>,
     <code>decrypt</code>, <code>convert</code>, <code>merge</code>,
-    <code>create</code>, <code>format</code>, <code>compact</code>,
-    <code>inspect</code>, <code>key</code>, and <code>config</code>, plus
-    three development-only <code>debug-*</code> commands. Track build/test
+    <code>diff</code>, <code>create</code>, <code>format</code>,
+    <code>compact</code>, <code>inspect</code>, <code>key</code>,
+    <code>audit</code>, <code>config</code>, and <code>completions</code>,
+    plus three development-only <code>debug-*</code> commands. Track build/test
     status on the <a href="/results">CI Results</a> page.
   </p>
 
@@ -264,12 +285,19 @@ cargo build -p mdix-cli --release
   <h2>merge</h2>
   <p>
     Merge two or more <code>.mdix</code> (or JSON/TOML) sources into one
-    file. Not yet listed in mdix-cli's own command table, but implemented
-    and registered as a real subcommand — order of the input files matters
-    for every strategy except <code>weighted</code> with explicit
-    <code>--weights</code>.
+    file. Order of the input files matters for every strategy except
+    <code>weighted</code> with explicit <code>--weights</code>.
   </p>
   <CodeBlock code={mergeCmds} lang="bash" />
+
+  <h2>diff</h2>
+  <p>
+    Preview exactly what <code>merge</code> would need to resolve, without
+    writing any output — the same conflict-detection pass <code>merge</code>
+    runs internally, surfaced on its own for a dry look before committing to
+    a strategy.
+  </p>
+  <CodeBlock code={diffCmds} lang="bash" />
 
   <h2>create</h2>
   <p>Scaffold a new <code>.mdix</code> file from a built-in template.</p>
@@ -314,6 +342,17 @@ cargo build -p mdix-cli --release
   </p>
   <CodeBlock code={keyCmds} lang="bash" />
 
+  <h2>audit</h2>
+  <p>
+    Inspect a <code>.mdix.au</code> audit trail file — written automatically
+    by <code>compile</code> alongside its output, one entry per compilation.
+    Three subcommands: <code>info</code> (header, entry count, latest
+    status), <code>view</code> (every recorded entry, optionally tailed with
+    <code>-n</code>), and <code>archives</code> (rotated audit files sitting
+    next to the live one).
+  </p>
+  <CodeBlock code={auditCmds} lang="bash" />
+
   <h2>config</h2>
   <p>
     Manage CLI preferences. Settings are stored at
@@ -336,6 +375,14 @@ cargo build -p mdix-cli --release
       </tbody>
     </table>
   </div>
+
+  <h2>completions</h2>
+  <p>
+    Generate a shell completion script from the CLI's own argument
+    definitions — always in sync with the actual command set, since it's
+    generated at build time rather than hand-maintained.
+  </p>
+  <CodeBlock code={completionsCmds} lang="bash" />
 
   <h2>debug-tokens / debug-ast / debug-symbols <span class="dev-badge">development</span></h2>
   <p>

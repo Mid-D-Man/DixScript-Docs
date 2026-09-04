@@ -26,4 +26,11 @@ watcher.has_loaded      # property — True once at least one reload succeeded`;
     <code>.check()</code> on your own schedule.
   </p>
   <CodeBlock code={watchApi} lang="python" />
+
+  <p>
+    Encrypted <code>.mdix</code> files are not supported —
+    <code>force_reload()</code> always reloads through the plaintext loader
+    path internally. A core Runtime limitation shared by every binding,
+    not something specific to Python.
+  </p>
 </div>

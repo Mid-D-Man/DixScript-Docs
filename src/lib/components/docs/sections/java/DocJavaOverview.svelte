@@ -12,6 +12,7 @@
     { id: 'java-api--schema-validation', label: 'Schema Validation',      desc: 'Fluent required/optional fields.' },
     { id: 'java-api--merging',           label: 'Merging Databases',      desc: 'From sources or loaded Databases.' },
     { id: 'java-api--hot-reload',        label: 'Hot Reload',             desc: 'Manual, poll-based HotReload.' },
+    { id: 'java-api--method-reference',  label: 'Full Method Reference',  desc: 'Every public method, grouped by category.' },
     { id: 'java-api--kotlin',            label: 'Kotlin',                 desc: 'Using the Java API idiomatically from Kotlin.' },
   ];
 </script>

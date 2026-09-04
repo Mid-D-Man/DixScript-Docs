@@ -134,6 +134,7 @@
             { id: 'go-api--merging',            label: 'Merging Databases' },
             { id: 'go-api--hot-reload',         label: 'Hot Reload'        },
             { id: 'go-api--package-layout',     label: 'Package Layout'    },
+            { id: 'go-api--method-reference',   label: 'Full Method Reference' },
             { id: 'go-api--vs-csharp',          label: 'vs C#'             },
           ] },
         { id: 'java-api',   label: 'Java Runtime API', children: [
@@ -149,6 +150,7 @@
             { id: 'java-api--schema-validation',  label: 'Schema Validation' },
             { id: 'java-api--merging',            label: 'Merging Databases' },
             { id: 'java-api--hot-reload',         label: 'Hot Reload'        },
+            { id: 'java-api--method-reference',   label: 'Full Method Reference' },
             { id: 'java-api--kotlin',             label: 'Kotlin'            },
           ] },
         { id: 'php-api',    label: 'PHP Runtime API', children: [
@@ -160,9 +162,14 @@
             { id: 'php-api--error-handling',     label: 'Error Handling'    },
             { id: 'php-api--result',             label: 'MdixResult'        },
             { id: 'php-api--builder',            label: 'Builder API'       },
+            { id: 'php-api--query',              label: 'Query'             },
+            { id: 'php-api--schema-validation',  label: 'Schema Validation' },
+            { id: 'php-api--merging',            label: 'Merging Databases' },
+            { id: 'php-api--hot-reload',         label: 'Hot Reload'        },
             { id: 'php-api--format-conversion',  label: 'Format Conversion' },
             { id: 'php-api--types',              label: 'Types'             },
             { id: 'php-api--lifecycle',          label: 'Lifecycle & Cleanup' },
+            { id: 'php-api--method-reference',   label: 'Full Method Reference' },
           ] },
         { id: 'python-api', label: 'Python Runtime API', children: [
             { id: 'python-api',                  label: 'Overview'          },
@@ -206,6 +213,7 @@
             { id: 'odin-api--schema',            label: 'Schema Validation'           },
             { id: 'odin-api--merging',           label: 'Merging Databases'           },
             { id: 'odin-api--hot-reload',        label: 'Hot Reload'                  },
+            { id: 'odin-api--method-reference',  label: 'Full Method Reference'       },
             { id: 'odin-api--vs-c',              label: 'vs the raw C API'            },
           ] },
         { id: 'c-api',      label: 'C / C++ Runtime API', children: [
