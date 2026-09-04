@@ -1,6 +1,11 @@
 <!-- src/lib/components/docs/sections/python/DocPythonLoading.svelte -->
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
+  const exampleMdix = `@DATA(
+  app_name = "MyGame"
+  port<int> = 8080
+)`;
+
   const loadingApi = `from midmanstudio.mdix import MdixDatabase
 
 # Direct — raise on failure
@@ -32,6 +37,10 @@ db2 = MdixDatabase.from_table({"app_name": "MyGame", "port": 8080})`;
     <a href="#python-api--result"><code>MdixResult</code></a> instead of
     raising — see that page for the railway-style chaining pattern.
   </p>
+
+  <h2>Example .mdix file</h2>
+  <CodeBlock code={exampleMdix} lang="dixscript" />
+
   <CodeBlock code={loadingApi} lang="python" />
 
   <h2>Loading from a dict</h2>

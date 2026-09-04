@@ -12,6 +12,7 @@
     { id: 'c-api--merging',           label: 'Merging Databases',          desc: 'Weighted AST-level merge, conflict reporting.' },
     { id: 'c-api--hot-reload',        label: 'Hot Reload',                 desc: 'Poll-based file watching via mdix::Watcher.' },
     { id: 'c-api--format-conversion', label: 'Format & Conversion',        desc: 'JSON/TOML import-export, source-text transforms.' },
+    { id: 'c-api--method-reference',  label: 'Full Method Reference',      desc: 'Every function/method, grouped by category.' },
   ];
 </script>
 

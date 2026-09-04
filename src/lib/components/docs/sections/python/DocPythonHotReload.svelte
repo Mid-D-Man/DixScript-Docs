@@ -1,6 +1,14 @@
 <!-- src/lib/components/docs/sections/python/DocPythonHotReload.svelte -->
 <script lang="ts">
   import CodeBlock from '$lib/components/CodeBlock.svelte';
+  const exampleMdix = `@DATA(
+  app_name = "MyApp"
+  debug<bool> = false
+)
+
+// Edit and save this file while the watcher loop below is running —
+// watcher.check() picks it up on its next call.`;
+
   const watchApi = `from midmanstudio.mdix import MdixWatcher
 
 watcher = MdixWatcher("config.mdix")
@@ -15,7 +23,8 @@ if changed:
 db = watcher.force_reload()
 
 watcher.has_changed()   # bool, without reloading
-watcher.has_loaded      # property — True once at least one reload succeeded`;
+watcher.has_loaded      # property — True once at least one reload succeeded
+watcher.path            # property — the watched file's path`;
 </script>
 
 <div class="doc-page">
@@ -25,6 +34,10 @@ watcher.has_loaded      # property — True once at least one reload succeeded`;
     <code>MdixWatcher</code> is a manual, poll-based watcher — call
     <code>.check()</code> on your own schedule.
   </p>
+
+  <h2>Example .mdix file</h2>
+  <CodeBlock code={exampleMdix} lang="dixscript" />
+
   <CodeBlock code={watchApi} lang="python" />
 
   <p>

@@ -10,6 +10,7 @@
     { id: 'rust-api--merging',          label: 'Merging Databases', desc: 'MdixMerger — AST-level merge, weighted/priority strategies.' },
     { id: 'rust-api--serde',            label: 'Serde Support',     desc: 'DixSerialize / DixDeserialize for your own structs.' },
     { id: 'rust-api--hot-reload',       label: 'Hot Reload',        desc: 'HotReloadWatcher — poll-based, no OS event dependency.' },
+    { id: 'rust-api--method-reference', label: 'Full Method Reference', desc: 'Every public item, grouped by category.' },
   ];
 </script>
 

@@ -101,6 +101,7 @@
             { id: 'rust-api--merging',          label: 'Merging Databases' },
             { id: 'rust-api--serde',            label: 'Serde Support'     },
             { id: 'rust-api--hot-reload',       label: 'Hot Reload'        },
+            { id: 'rust-api--method-reference', label: 'Full Method Reference' },
           ] },
         { id: 'csharp-api', label: 'C# Runtime API', children: [
             { id: 'csharp-api',                     label: 'Overview'      },
@@ -184,6 +185,7 @@
             { id: 'python-api--query',           label: 'Query'             },
             { id: 'python-api--hot-reload',      label: 'Hot Reload'        },
             { id: 'python-api--ml-extras',       label: 'ML Extras'         },
+            { id: 'python-api--method-reference', label: 'Full Method Reference' },
           ] },
         { id: 'wasm-api',   label: 'WASM / JS Runtime API', children: [
             { id: 'wasm-api',                     label: 'Overview'          },
@@ -199,6 +201,7 @@
             { id: 'wasm-api--hot-reload',         label: 'Hot Reload'        },
             { id: 'wasm-api--dlm',                label: 'DLM (Compress/Encrypt/Audit)' },
             { id: 'wasm-api--cloud-imports',      label: 'Cloud Imports'     },
+            { id: 'wasm-api--method-reference',   label: 'Full Method Reference' },
           ] },
         { id: 'odin-api',   label: 'Odin Runtime API', children: [
             { id: 'odin-api',                    label: 'Overview'                    },
@@ -229,6 +232,7 @@
             { id: 'c-api--merging',              label: 'Merging Databases'           },
             { id: 'c-api--hot-reload',           label: 'Hot Reload'                  },
             { id: 'c-api--format-conversion',    label: 'Format & Conversion'         },
+            { id: 'c-api--method-reference',     label: 'Full Method Reference'       },
           ] },
       ],
     },

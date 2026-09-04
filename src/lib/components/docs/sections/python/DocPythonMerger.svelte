@@ -59,6 +59,28 @@ merged, conflicts = db1.merge_with(
     entry points can currently tell you — every other binding (C#, Go, Java,
     PHP, C/C++) returns real per-key conflict detail.
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Strategy string</th><th>Behavior</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: '"weighted_priority" (default)', d: 'Each source\'s weight decides the winner; ties favor the lower-indexed source.' },
+          { m: '"primary_wins"',   d: 'The lower-indexed source always wins, regardless of weight.' },
+          { m: '"secondary_wins"', d: 'The higher-indexed source always wins, regardless of weight.' },
+          { m: '"throw_on_conflict"', d: 'Any key defined by more than one source fails the whole merge.' },
+          { m: '"replace" (array_strategy)',      d: 'The winning source\'s array entirely replaces the losing array.' },
+          { m: '"concat" (array_strategy)',        d: 'Both arrays concatenated, winning source\'s items first.' },
+          { m: '"concat_dedup" (array_strategy, default)', d: 'Concatenated, exact-duplicate primitive values removed.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

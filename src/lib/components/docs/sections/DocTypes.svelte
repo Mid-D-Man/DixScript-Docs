@@ -6,7 +6,7 @@
     { type: 'long',       example: '9_000_000_000L, 0xDEAD_BEEFL',   desc: 'Signed 64-bit integer — L/l suffix, or auto-promoted when a plain integer overflows i32', ideal: 'Timestamps in ms, large IDs (Discord/Snowflake-style), file sizes, counters that can exceed 2^31' },
     { type: 'float',     example: '3.14f, -2.5f, 42f',             desc: 'Single-precision — f suffix required',      ideal: 'Game physics, weights, factors where f suffix makes intent clear' },
     { type: 'double',    example: '3.14159, 2.718e10',              desc: 'Double-precision float',                   ideal: 'Scientific values, monetary ratios, coordinates' },
-    { type: 'string',    example: '"hello", \'world\'',             desc: 'Double or single quoted',                  ideal: 'Names, URLs, messages, paths, labels' },
+    { type: 'string',    example: '"hi", \'hi\', `hi`',              desc: 'Double, single, or backtick quoted',        ideal: 'Names, URLs, messages, paths, labels' },
     { type: 'bool',      example: 'true, false',                    desc: 'Boolean',                                  ideal: 'Feature flags, enabled/disabled switches, SSL' },
     { type: 'hex',       example: '0xFF, 0xDEAD_BEEF',              desc: 'Hex integer literal (int, or long with L suffix / overflow)', ideal: 'Bitmasks, memory addresses, raw byte values' },
     { type: 'binary',    example: '0b1010_1100, 0b1111L',           desc: 'Binary integer literal — 0b/0B prefix (int, or long with L suffix / overflow)', ideal: 'Flag bytes, protocol bitfields, permission masks' },
@@ -93,6 +93,19 @@ pi      = 3.14159265358979   // Double (f64)`;
     return $"https://{host}:{port.toString()}/api"
   }
 )`;
+
+  const stringStylesExample = `@DATA(
+  // "..." and '...' — identical semantics, escape-processed the usual way
+  double_quoted = "She said \\"hi\\""
+  single_quoted = 'She said "hi"'
+
+  // \`...\` — raw / verbatim. No escape processing at all, so embedded " and '
+  // need no escaping, and the content may span literal newlines. Ideal for
+  // apostrophe-heavy or multilingual text, and any string with mixed quotes.
+  raw_quote     = \`She said "hi" — that's the whole sentence, unescaped\`
+  raw_multiline = \`line one
+line two\`
+)`;
 </script>
 
 <div class="doc-page">
@@ -135,6 +148,30 @@ pi      = 3.14159265358979   // Double (f64)`;
     magnitude and suffix, not a separate annotation.
   </p>
   <CodeBlock code={numericRulesExample} lang="dixscript" />
+
+  <h2>String Literal Styles</h2>
+  <p>
+    Strings support three interchangeable quote delimiters —
+    <code>"..."</code>, <code>'...'</code>, and <code>`...`</code> — all
+    producing the exact same string type underneath, so pick whichever
+    delimiter needs the least escaping for a given value.
+    <code>"</code> and <code>'</code> are escape-processed the normal way
+    (<code>\\"</code>, <code>\\'</code>, <code>\\n</code>, etc.).
+    <code>`</code> is raw/verbatim — no escape processing at all, so a
+    literal <code>"</code> or <code>'</code> inside it needs no escaping,
+    and the content may span real newlines directly. Especially useful for
+    apostrophe-heavy or multilingual text (contractions, quoted dialogue)
+    and any string mixing both quote characters.
+  </p>
+  <CodeBlock code={stringStylesExample} lang="dixscript" />
+  <p>
+    One trade-off: <code>$</code>-prefixed interpolated strings only work
+    with <code>"</code> or <code>'</code> — a backtick string cannot be
+    interpolated, since "no escape processing at all" extends to
+    <code>{'{expression}'}</code> too. A raw string containing a literal
+    backtick isn't possible either, for the same reason; use <code>"</code>
+    or <code>'</code> for that one case.
+  </p>
 
   <h2>Interpolated Strings</h2>
   <p>

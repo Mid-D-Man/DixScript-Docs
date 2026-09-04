@@ -45,6 +45,7 @@
   import DocRustMerging           from '$lib/components/docs/sections/rust/DocRustMerging.svelte';
   import DocRustSerde             from '$lib/components/docs/sections/rust/DocRustSerde.svelte';
   import DocRustHotReload         from '$lib/components/docs/sections/rust/DocRustHotReload.svelte';
+  import DocRustMethodReference   from '$lib/components/docs/sections/rust/DocRustMethodReference.svelte';
   import DocGoOverview          from '$lib/components/docs/sections/go/DocGoOverview.svelte';
   import DocGoInstall           from '$lib/components/docs/sections/go/DocGoInstall.svelte';
   import DocGoQuickStart        from '$lib/components/docs/sections/go/DocGoQuickStart.svelte';
@@ -102,6 +103,7 @@
   import DocPythonQuery     from '$lib/components/docs/sections/python/DocPythonQuery.svelte';
   import DocPythonHotReload from '$lib/components/docs/sections/python/DocPythonHotReload.svelte';
   import DocPythonMlExtras  from '$lib/components/docs/sections/python/DocPythonMlExtras.svelte';
+  import DocPythonMethodReference from '$lib/components/docs/sections/python/DocPythonMethodReference.svelte';
   import DocWasmOverview         from '$lib/components/docs/sections/wasm/DocWasmOverview.svelte';
   import DocWasmInstall          from '$lib/components/docs/sections/wasm/DocWasmInstall.svelte';
   import DocWasmQuickStart       from '$lib/components/docs/sections/wasm/DocWasmQuickStart.svelte';
@@ -115,6 +117,7 @@
   import DocWasmHotReload        from '$lib/components/docs/sections/wasm/DocWasmHotReload.svelte';
   import DocWasmDlm              from '$lib/components/docs/sections/wasm/DocWasmDlm.svelte';
   import DocWasmCloudImports     from '$lib/components/docs/sections/wasm/DocWasmCloudImports.svelte';
+  import DocWasmMethodReference  from '$lib/components/docs/sections/wasm/DocWasmMethodReference.svelte';
   import DocOdinOverview    from '$lib/components/docs/sections/odin/DocOdinOverview.svelte';
   import DocOdinBuildLink   from '$lib/components/docs/sections/odin/DocOdinBuildLink.svelte';
   import DocOdinQuickStart  from '$lib/components/docs/sections/odin/DocOdinQuickStart.svelte';
@@ -141,6 +144,7 @@
   import DocCMerging           from '$lib/components/docs/sections/c/DocCMerging.svelte';
   import DocCHotReload         from '$lib/components/docs/sections/c/DocCHotReload.svelte';
   import DocCFormatConversion  from '$lib/components/docs/sections/c/DocCFormatConversion.svelte';
+  import DocCMethodReference   from '$lib/components/docs/sections/c/DocCMethodReference.svelte';
   import DocBuiltinMath     from '$lib/components/docs/sections/DocBuiltinMath.svelte';
   import DocBuiltinArray    from '$lib/components/docs/sections/DocBuiltinArray.svelte';
   import DocBuiltinDateTime from '$lib/components/docs/sections/DocBuiltinDateTime.svelte';
@@ -277,6 +281,8 @@
     <DocRustSerde />
   {:else if activeSection === 'rust-api--hot-reload'}
     <DocRustHotReload />
+  {:else if activeSection === 'rust-api--method-reference'}
+    <DocRustMethodReference />
   {:else if activeSection === 'csharp-api'}
     <DocCSharpOverview />
   {:else if activeSection === 'csharp-api--install'}
@@ -423,6 +429,8 @@
     <DocPythonHotReload />
   {:else if activeSection === 'python-api--ml-extras'}
     <DocPythonMlExtras />
+  {:else if activeSection === 'python-api--method-reference'}
+    <DocPythonMethodReference />
   {:else if activeSection === 'wasm-api'}
     <DocWasmOverview />
   {:else if activeSection === 'wasm-api--install'}
@@ -449,6 +457,8 @@
     <DocWasmDlm />
   {:else if activeSection === 'wasm-api--cloud-imports'}
     <DocWasmCloudImports />
+  {:else if activeSection === 'wasm-api--method-reference'}
+    <DocWasmMethodReference />
   {:else if activeSection === 'odin-api'}
     <DocOdinOverview />
   {:else if activeSection === 'odin-api--build-link'}
@@ -501,5 +511,7 @@
     <DocCHotReload />
   {:else if activeSection === 'c-api--format-conversion'}
     <DocCFormatConversion />
+  {:else if activeSection === 'c-api--method-reference'}
+    <DocCMethodReference />
   {/if}
 </DocLayout>

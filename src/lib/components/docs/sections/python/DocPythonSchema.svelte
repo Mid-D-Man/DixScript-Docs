@@ -22,11 +22,29 @@ if not report.is_valid:
     print(report.errors_of_kind("type_mismatch"))
 
 print(bool(report))   # same as report.is_valid`;
+
+  const exampleMdix = `@ENUMS(
+  LogLevel { DEBUG, INFO, WARN, ERROR }
+)
+
+@DATA(
+  name = "MyApp"
+  port<int> = 8080
+  ssl<bool> = true
+  session_id<long> = 9007199254740993
+  log_level = LogLevel.INFO
+
+  enemies:: { name = "Goblin", hp = 50 }
+)`;
 </script>
 
 <div class="doc-page">
   <h1>MdixSchemaBuilder — Validation</h1>
   <p class="page-lead">Part of the <a href="#python-api">Python Runtime API</a>.</p>
+
+  <h2>Example .mdix file</h2>
+  <CodeBlock code={exampleMdix} lang="dixscript" />
+
   <CodeBlock code={schemaApi} lang="python" />
 
   <p>

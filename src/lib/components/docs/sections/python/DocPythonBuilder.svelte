@@ -67,5 +67,32 @@ b.reset()            # clears everything, including config and enums`;
     rather than constructing a fresh one each time.
   </p>
   <CodeBlock code={resetApi} lang="python" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixBuilder()',                     d: 'Create a new, empty builder.' },
+          { m: '.set_config(key, value)',            d: 'Add a @CONFIG entry. Not subject to the two-tier rule.' },
+          { m: '.add_enum(name, fields)',             d: 'Declare an @ENUMS block. Not subject to the two-tier rule.' },
+          { m: '.set_string/int/long/float/double/bool/date/timestamp/hex_color/blob/regex/enum(path, value)', d: 'Tier-1 flat property setters — must all come before any tier-2 call.' },
+          { m: '.set_array/tuple/object(path, value)', d: 'Also tier-1 — a literal array, tuple, or nested object at a flat path.' },
+          { m: '.with_table_properties(path, dict)',   d: 'Tier-2 — a table block.' },
+          { m: '.with_group_array(path, list)',        d: 'Tier-2 — a group array of objects.' },
+          { m: '.to_database()',                       d: 'Consume the builder, produce an MdixDatabase.' },
+          { m: '.try_to_database()',                   d: 'Railway twin — returns MdixResult instead of raising.' },
+          { m: '.serialize()',                         d: 'Produce the raw .mdix source string instead of a Database.' },
+          { m: '.reset_grouped()',                     d: 'Clear tier-2 (tables + group arrays) only — flat properties and config are kept.' },
+          { m: '.reset()',                             d: 'Clear everything — the builder returns to its initial empty state.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 

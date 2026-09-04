@@ -12,6 +12,7 @@
     { id: 'python-api--query',      label: 'Query',                desc: 'LINQ-style chaining, container protocols.' },
     { id: 'python-api--hot-reload', label: 'Hot Reload',           desc: 'Poll-based MdixWatcher.' },
     { id: 'python-api--ml-extras',  label: 'ML Extras',            desc: 'numpy / pandas / torch / tensorflow — Python-only.' },
+    { id: 'python-api--method-reference', label: 'Full Method Reference', desc: 'Every public class and function, grouped by category.' },
   ];
 </script>
 
