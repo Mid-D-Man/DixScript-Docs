@@ -24,7 +24,7 @@
           { c: 'Convert',     d: 'to_json, to_toml, to_mdix, format_source, minify_source, compact_source, strip_comments' },
           { c: 'Builder',     d: 'builder_new, builder_from_database, builder_destroy, builder_entry_count, builder_clear, builder_set_string, builder_set_int, builder_set_long, builder_set_float, builder_set_double, builder_set_bool, builder_remove, builder_has_key, builder_get_string, builder_get_int, builder_get_long, builder_get_float, builder_get_double, builder_get_bool, builder_to_string, builder_save, builder_to_database' },
           { c: 'Merge',       d: 'merge_sources, merge_sources_weighted' },
-          { c: 'Schema',      d: 'schema_new, schema_destroy, schema_field_count, schema_require, schema_optional, schema_require_string, schema_require_double, schema_require_object, schema_optional_string, schema_optional_double, schema_validate; validation_error_to_string, validation_report_is_valid, validation_report_destroy' },
+          { c: 'Schema',      d: 'schema_new, schema_destroy, schema_field_count, schema_require, schema_optional, schema_require_string/int/long/float/double/bool/array/object/enum, schema_optional_string/int/long/float/double/bool, schema_validate; validation_error_to_string, validation_report_is_valid, validation_report_destroy' },
           { c: 'Hot reload',  d: 'hot_reload_init, hot_reload_destroy, hot_reload_check' },
           { c: 'Value types', d: 'parse_hex_color, blob_bytes, regex_compile, parse_mdix_date, parse_mdix_timestamp' },
         ] as row}
@@ -38,14 +38,11 @@
   </div>
 
   <p>
-    <code>Schema</code>'s typed shortcuts are noticeably thinner than every
-    other binding's — only <code>schema_require_string</code>/<code>_double</code>/<code>_object</code>
-    and <code>schema_optional_string</code>/<code>_double</code> exist.
-    There's no <code>_int</code>, <code>_long</code>, <code>_float</code>,
-    <code>_bool</code>, <code>_array</code>, or <code>_enum</code> shortcut
-    on either side — checked directly against <code>schema.odin</code>, not
-    an omission on this page. Use <code>schema_require(s, path,
-    ffi.Mdix_Type.Int)</code> / <code>schema_optional(...)</code> directly
-    for any type without a shortcut.
+    <code>schema_optional_*</code> has no <code>_array</code>,
+    <code>_object</code>, or <code>_enum</code> shortcut — only
+    <code>schema_require_*</code> covers those three. Checked directly
+    against <code>schema.odin</code>. Use <code>schema_optional(s, path,
+    ffi.Mdix_Type.Array)</code> directly for an optional field of one of
+    those types.
   </p>
 </div>

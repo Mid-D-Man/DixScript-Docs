@@ -36,4 +36,29 @@ all_statuses, ok2 := mdix.query_many(string, db, "servers.*.status")`;
     into a slice, no <code>Query(T)</code> wrapper needed.
   </p>
   <CodeBlock code={queryApi} lang="odin" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Procedure</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'query_load(T, db, path) / query_new(slice)', d: 'Read an array at path into a typed Query(T), or wrap a slice you already have.' },
+          { m: 'query_delete(q)',                  d: 'Free the query.' },
+          { m: 'query_where(q, pred) / query_skip(q, n) / query_take(q, n)', d: 'Chainable filtering and slicing.' },
+          { m: 'query_order_by(q, key) / query_order_by_desc(q, key) / query_distinct(q)', d: 'Chainable sorting and deduplication.' },
+          { m: 'query_any(q, pred) / query_all(q, pred) / query_count(q) / query_is_empty(q)', d: 'Boolean and count checks.' },
+          { m: 'query_first(q) / query_first_or(q, default) / query_last(q) / query_nth(q, i)', d: 'Element access, each returning (value, ok).' },
+          { m: 'query_select(q, map) / query_group_by(q, key)', d: 'Project to a new type, or group into a map.' },
+          { m: 'query_sum_int(q, key) / query_sum_float(q, key) / query_avg_float(q, key)', d: 'Numeric aggregation over a key function.' },
+          { m: 'query_min_by_key(q, key) / query_max_by_key(q, key)', d: 'Element with the min/max key value.' },
+          { m: 'query_many(T, db, pattern)',        d: 'Whole-segment wildcard match, gathered directly into a slice.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

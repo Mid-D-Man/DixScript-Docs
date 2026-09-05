@@ -25,4 +25,22 @@ mdix_free_string(json);`;
     case, gathered via the core Runtime's
     <code>dixscript::Runtime::DixData::select_many</code>.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>C</th><th>C++</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { c: 'mdix_select_many_as_json(db, pattern)', cpp: 'db->query_many(pattern)', d: 'Whole-segment "*" wildcard across sibling paths, returned as a JSON array string.' },
+          { c: 'mdix_get_json(db, path)',                cpp: 'db->get_json(path)',      d: 'Single fixed path — use this instead when there is no wildcard.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.c}</code></td>
+            <td><code style="font-size:0.75rem">{row.cpp}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

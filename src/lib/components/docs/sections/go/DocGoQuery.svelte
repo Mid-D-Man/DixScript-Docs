@@ -39,4 +39,30 @@ json.Unmarshal([]byte(jsonStr), &raw)`;
     over a group array without hand-decoding JSON.
   </p>
   <CodeBlock code={queryApi} lang="go" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Function / method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'LoadQuery[T](db, path)',      d: 'Decode a group array at path directly into a Query[T].' },
+          { m: 'NewQuery(slice)',              d: 'Wrap a slice you already have as a Query[T].' },
+          { m: 'db.QueryManyJSON(pattern)',    d: 'Whole-segment wildcard match, returned as a raw JSON string.' },
+          { m: '.Where(pred) / .Skip(n) / .Take(n)', d: 'Chainable, lazy filtering and slicing.' },
+          { m: '.OrderBy(key) / .OrderByDesc(key) / .Distinct()', d: 'Chainable sorting and deduplication.' },
+          { m: '.Any(pred) / .All(pred) / .Count() / .IsEmpty()', d: 'Boolean and count checks over the sequence.' },
+          { m: '.First() / .FirstOr(default) / .Last() / .Nth(i)', d: 'Element access, each returning (value, ok).' },
+          { m: '.ToSlice()',                    d: 'Materialize the query back into a plain []T.' },
+          { m: 'Select(q, map) / GroupBy(q, key)', d: 'Free functions — project to a new type, or group into map[K][]T.' },
+          { m: 'SumInt/SumFloat(q, key) / AvgFloat(q, key)', d: 'Free functions — numeric aggregation over a key function.' },
+          { m: 'MinByKey(q, key) / MaxByKey(q, key)', d: 'Free functions — element with the min/max key value.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

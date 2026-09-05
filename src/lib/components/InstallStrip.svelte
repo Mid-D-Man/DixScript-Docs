@@ -15,8 +15,9 @@
     { label: 'LSP',          registry: 'crates.io', cmd: 'cargo install mdix-lsp',                        href: 'https://crates.io/crates/mdix-lsp',                  published: true },
     { label: 'Node / Browser', registry: 'npm',     cmd: 'npm install @midmanstudio/mdix',                href: 'https://www.npmjs.com/package/@midmanstudio/mdix',  published: true },
     { label: 'Python',       registry: 'PyPI',      cmd: 'pip install midmanstudio-mdix',                 href: 'https://pypi.org/project/midmanstudio-mdix/',        published: true },
-    { label: 'C# / Unity',   registry: 'NuGet',     cmd: 'dotnet add package MidManStudio.Mdix',          href: 'https://www.nuget.org/packages/MidManStudio.Mdix',  published: true },
-    { label: 'VS Code',      registry: 'Open VSX',  cmd: 'search "DixScript"',                            href: 'https://open-vsx.org/extension/midmanstudio/dixscript', published: true, note: 'Not yet on the VS Code Marketplace' },
+    { label: 'C#',           registry: 'NuGet',     cmd: 'dotnet add package MidManStudio.Mdix',          href: 'https://www.nuget.org/packages/MidManStudio.Mdix',  published: true },
+    { label: 'Unity',        registry: 'UPM (git URL)', cmd: 'com.midmanstudio.mdix',                     href: 'https://github.com/Mid-D-Man/DixScript-Rust',       published: true, note: 'Separate package from the plain C#/NuGet one — bundles native binaries' },
+    { label: 'VS Code',      registry: 'Marketplace', cmd: 'ext install midmanstudio.dixscript',           href: 'https://marketplace.visualstudio.com/items?itemName=midmanstudio.dixscript', published: true, note: 'Also on Open VSX' },
   ];
 </script>
 
@@ -43,9 +44,11 @@
     </div>
 
     <p class="install-footnote">
-      Go, Java/Kotlin, Lua, PHP, and Odin bindings are code-complete and bind to the
-      same Rust core — they just haven't had their publishing pass yet. Build them
-      from source in the meantime, or see
+      Go, Java/Kotlin, PHP, and Odin bindings are code-complete and bind to the
+      same Rust core — they just haven't had their publishing pass yet. Zig is
+      also code-complete but newer, not yet published. Lua is not production
+      ready (runtime incomplete). Build any of these from source in the
+      meantime, or see
       <a href="/docs#ffi">Language Bindings</a> for exact status per wrapper.
     </p>
   </div>

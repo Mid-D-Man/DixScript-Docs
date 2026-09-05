@@ -63,4 +63,29 @@ if (b2) {
     are already stripped; only aggregate/root values that map back to valid
     <code>.mdix</code> identifiers carry over.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>C</th><th>C++</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { c: 'mdix_builder_new / mdix_builder_from_handle(db)', cpp: 'Builder() / Builder::from_handle(db) — returns Result<Builder>', d: 'Create empty, or pre-populate from an already-loaded database.' },
+          { c: 'mdix_builder_free(b)',           cpp: '.reset() — also called automatically by the destructor', d: 'Free the native handle.' },
+          { c: 'mdix_builder_set_string/int/long/float/double/bool(b, path, v)', cpp: '.set_string/int/long/float/double/bool(path, v) — fluent, chainable', d: 'Set a flat property value.' },
+          { c: 'mdix_builder_has_key / mdix_builder_remove(b, path)', cpp: '.has_key / .remove(path)', d: 'Check for, or remove, a previously-set property.' },
+          { c: 'mdix_builder_get_string/int/long/float/double/bool(b, path)', cpp: '.get_string/int/long/float/double/bool(path) — returns std::optional<T>', d: 'Read back a value already staged on the builder.' },
+          { c: 'mdix_builder_entry_count / mdix_builder_clear(b)', cpp: '.entry_count() / .clear()', d: 'Number of set properties / reset the builder to empty.' },
+          { c: 'mdix_builder_save(b, path)',      cpp: '.save(path)',               d: 'Write the built source directly to a file.' },
+          { c: 'mdix_builder_to_string(b)',       cpp: '.to_string()',              d: 'Produce the raw .mdix source string.' },
+          { c: '(build the string, then mdix_load_str it)', cpp: '.to_database()',  d: 'Parse the built source into a Database — C++ only convenience.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.c}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.cpp}</td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

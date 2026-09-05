@@ -35,4 +35,23 @@ enum FormatMode: int {
     <code>toMdix()</code> / <code>formatSource()</code>.
   </p>
   <CodeBlock code={valueTypeApi} lang="php" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Enum</th><th>Cases / methods</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'ValueType',   d: 'Unknown, Null, Bool, Int, Float, Double, String, Date, Timestamp, HexColor, Blob, Regex, Array, Object, Tuple, Enum' },
+          { m: 'ValueType::label()',    d: 'Human-readable name, e.g. "int".' },
+          { m: 'ValueType::isScalar()', d: 'True for Bool/Int/Float/Double/String only.' },
+          { m: 'FormatMode',  d: 'Default (2-space), Pretty (4-space, sorted keys), Compact (trailing whitespace removed), Minified (all unnecessary whitespace stripped)' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

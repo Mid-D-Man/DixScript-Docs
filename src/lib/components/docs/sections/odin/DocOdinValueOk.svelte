@@ -30,4 +30,24 @@ mdix.clear_error()   // clear it explicitly`;
     <code>context.temp_allocator</code>.
   </p>
   <CodeBlock code={valueOkPattern} lang="odin" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Convention</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: '(value, ok) return',        d: 'Every fallible procedure returns this pair instead of throwing or using a sentinel.' },
+          { m: 'last_error()',               d: 'The most recent error message as a string, for when ok is false.' },
+          { m: 'clear_error()',              d: 'Clear the stored error explicitly, so a stale message is not read by mistake.' },
+          { m: 'allocator = context.allocator', d: 'Optional parameter on string-returning procedures — the returned string is caller-owned, delete() it.' },
+          { m: 'context.temp_allocator',      d: 'Used internally for values passed in — call free_all(context.temp_allocator) yourself in long-running loops with no surrounding temp scope.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

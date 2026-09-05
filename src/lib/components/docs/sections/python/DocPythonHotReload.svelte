@@ -46,4 +46,25 @@ watcher.path            # property — the watched file's path`;
     path internally. A core Runtime limitation shared by every binding,
     not something specific to Python.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Member</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixWatcher(path)',   d: 'Create a watcher for a single plaintext .mdix file.' },
+          { m: '.check()',            d: 'Returns (db, changed) — db is None when changed is False.' },
+          { m: '.has_changed()',      d: 'Check without reloading.' },
+          { m: '.force_reload()',     d: 'Reload unconditionally, regardless of whether the file changed.' },
+          { m: '.has_loaded',         d: 'Property — True once at least one reload has succeeded.' },
+          { m: '.path',               d: 'Property — the watched file\'s path.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

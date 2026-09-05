@@ -32,4 +32,29 @@ mdix.get_all_keys(db)             // []string — every leaf path`;
   <h1>Reading Values</h1>
   <p class="page-lead">Part of the <a href="#odin-api">Odin Runtime API</a>.</p>
   <CodeBlock code={readApi} lang="odin" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Procedure</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'entry_count/is_encrypted/is_compressed(db)', d: 'Metadata about the loaded database.' },
+          { m: 'loaded_version(db) / config_value(db, key)', d: 'Version recorded in the file itself / a @CONFIG field.' },
+          { m: 'exists(db, path)',                  d: 'True if a value exists at path.' },
+          { m: 'get_type(db, path)',                 d: 'The stored type as an ffi.Mdix_Type.' },
+          { m: 'array_length(db, path)',              d: 'Number of elements at an array path.' },
+          { m: 'get_string/int/long/float/double/bool(db, path)', d: 'Typed getters, each returning (value, ok).' },
+          { m: 'get_enum_name/get_enum_field(db, path)', d: 'Enum type name / field name.' },
+          { m: 'get_json(db, path)',                  d: 'Raw JSON string of a nested object/array at path.' },
+          { m: 'select_many_as_json(db, pattern)',    d: 'Whole-segment wildcard match, returned as a JSON string.' },
+          { m: 'get_keys(db, prefix) / get_all_keys(db)', d: 'Direct child keys under prefix, or every leaf path recursively.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

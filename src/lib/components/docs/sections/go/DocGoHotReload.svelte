@@ -24,4 +24,24 @@ db.IsHotReloadEnabled() // -> bool
   <h1>Hot Reload</h1>
   <p class="page-lead">Part of the <a href="#go-api">Go Runtime API</a>.</p>
   <CodeBlock code={watchApi} lang="go" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'EnableHotReload(interval)',   d: 'Start polling the source file at the given interval. Requires a Load()-ed database.' },
+          { m: 'DisableHotReload()',           d: 'Stop polling.' },
+          { m: 'IsHotReloadEnabled()',         d: 'True if currently polling.' },
+          { m: 'OnReloaded(func(*Database))',  d: 'Callback fired with the reloaded database on a successful reload.' },
+          { m: 'OnReloadFailed(func(error))',  d: 'Callback fired with the error on a failed reload attempt.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

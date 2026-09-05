@@ -34,4 +34,26 @@ Merge.Result fromDbs = Merge.databases(baseDb, overlayDb);`;
     (<code>Merge.databases</code>).
   </p>
   <CodeBlock code={mergeApi} lang="java" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method / value</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'Merge.sources(...) / Merge.sourcesWeighted(...)', d: 'Merge raw source strings, with implicit or explicit weights.' },
+          { m: 'Merge.databases(...) / Merge.databasesWeighted(...)', d: 'Merge already-loaded Database instances.' },
+          { m: 'Result.database / Result.conflicts / Result.hasConflicts()', d: 'The merged database, the per-key conflict list, and a quick boolean check.' },
+          { m: 'Strategy.WEIGHTED_PRIORITY',    d: 'Each source\u2019s weight decides the winner; ties favor the lower-indexed source.' },
+          { m: 'Strategy.PRIMARY_WINS / SECONDARY_WINS', d: 'The lower / higher indexed source always wins, regardless of weight.' },
+          { m: 'Strategy.THROW_ON_CONFLICT',    d: 'Any key defined by more than one source fails the whole merge.' },
+          { m: 'ArrayStrategy.REPLACE / CONCAT / CONCAT_DEDUP', d: 'How array-valued entries combine.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

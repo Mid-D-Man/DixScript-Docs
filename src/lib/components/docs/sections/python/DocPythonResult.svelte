@@ -40,4 +40,32 @@ else:
     instead of nested try/except.
   </p>
   <CodeBlock code={railway} lang="python" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixResult.ok(value) / err(message)', d: 'Construct a success or failure result directly.' },
+          { m: '.is_success / .is_failure',            d: 'Properties for checking which state a result is in.' },
+          { m: '.value / .error',                      d: 'Properties — raise AttributeError if accessed on the wrong state.' },
+          { m: '.unwrap()',                             d: 'Return the value, or raise if this is a failure.' },
+          { m: '.unwrap_or(default)',                   d: 'Return the value, or default if this is a failure.' },
+          { m: '.unwrap_or_else(fn)',                    d: 'Return the value, or compute a fallback from the error via fn.' },
+          { m: '.map(fn)',                               d: 'Transform the value if success, pass the failure through unchanged.' },
+          { m: '.and_then(fn)',                          d: 'Chain another Result-returning operation, short-circuiting on failure.' },
+          { m: '.ensure(pred, message)',                 d: 'Downgrade a success to a failure if pred(value) is False.' },
+          { m: '.or_(fallback_result)',                  d: 'Return this result if success, otherwise fallback_result.' },
+          { m: '.fold(on_success, on_failure)',           d: 'Collapse to a single value by calling whichever branch applies.' },
+          { m: '.tap(fn) / .tap_error(fn)',               d: 'Side-effect only, on success or failure respectively — returns self unchanged.' },
+          { m: '.or_raise()',                            d: 'Same as unwrap() — raise on failure, return the value on success.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

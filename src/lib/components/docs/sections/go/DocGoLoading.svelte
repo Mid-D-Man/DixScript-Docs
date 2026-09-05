@@ -14,4 +14,25 @@ defer db.Close()`;
   <h1>Loading</h1>
   <p class="page-lead">Part of the <a href="#go-api">Go Runtime API</a>.</p>
   <CodeBlock code={loadApi} lang="go" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Function</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'dixscript.Load(path)',                        d: 'Load from a file path.' },
+          { m: 'dixscript.LoadStr(source)',                    d: 'Load from an in-memory source string.' },
+          { m: 'dixscript.LoadEncrypted(encPath, keyPath)',    d: 'Load an encrypted file, key from a separate key file.' },
+          { m: 'dixscript.LoadEncryptedPassword(encPath, pw)', d: 'Load an encrypted file, key derived from a password.' },
+          { m: 'dixscript.LoadEncryptedBytes(data, keyContent, pw)', d: 'Load encrypted data already in memory.' },
+          { m: 'dixscript.LoadJSON(json) / LoadToml(toml)',    d: 'Load from a foreign format string.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

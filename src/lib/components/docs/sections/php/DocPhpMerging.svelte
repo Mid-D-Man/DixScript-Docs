@@ -49,4 +49,26 @@ $result3 = MdixMerge::databases($db1, $db2);`;
     <code>Concat</code>, or <code>Replace</code> — governs how array-valued
     entries from different sources combine.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method / value</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixMerge::sources(...) / sourcesWeighted(...)', d: 'Merge raw source strings, with implicit or explicit weights.' },
+          { m: 'MdixMerge::databases(...) / databasesWeighted(...)', d: 'Merge already-loaded MdixDatabase instances.' },
+          { m: 'MdixMergeResult::hasConflicts()',   d: 'Quick boolean check before iterating the conflict list.' },
+          { m: 'MergeStrategy::WeightedPriority',   d: 'Each source\u2019s weight decides the winner; ties favor the lower-indexed source.' },
+          { m: 'MergeStrategy::PrimaryWins / SecondaryWins', d: 'The lower / higher indexed source always wins, regardless of weight.' },
+          { m: 'MergeStrategy::ThrowOnConflict',    d: 'Any key defined by more than one source fails the whole merge.' },
+          { m: 'ArrayMergeStrategy::Replace/Concat/ConcatDedup', d: 'How array-valued entries combine.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

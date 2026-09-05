@@ -26,4 +26,23 @@ $builder->close();`;
     processes rather than waiting on PHP's garbage collector.
   </p>
   <CodeBlock code={lifecycleApi} lang="php" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'entryCount()',    d: 'Total entries in the flat store.' },
+          { m: 'isValid()',       d: 'False once close() has been called.' },
+          { m: 'close()',         d: 'Release the native handle explicitly — safe to call once.' },
+          { m: '__destruct()',    d: 'Calls close() automatically as a safety net — do not rely on its timing.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

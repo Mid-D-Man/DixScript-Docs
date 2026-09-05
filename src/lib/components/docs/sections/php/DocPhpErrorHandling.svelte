@@ -38,4 +38,27 @@ try {
     message.
   </p>
   <CodeBlock code={errorApi} lang="php" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>ErrorKind</th><th>Meaning</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'NotFound',       d: 'The requested path does not exist.' },
+          { m: 'TypeMismatch',   d: 'Wrong accessor called for the stored type.' },
+          { m: 'NullHandle',     d: 'The underlying native handle is null.' },
+          { m: 'Closed',         d: 'The database or builder has already been closed.' },
+          { m: 'InvalidPath',    d: 'A malformed dotted path string.' },
+          { m: 'Parse',          d: 'The source failed to compile.' },
+          { m: 'Io',             d: 'A file read/write failure.' },
+          { m: 'Native',         d: 'An error surfaced directly from the Rust core, uncategorized further.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

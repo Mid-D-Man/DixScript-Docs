@@ -83,6 +83,29 @@ cfg2 = MdixMLConfig.builder()  # -> MdixBuilder pre-shaped for ML config convent
 
   <h2>MdixMLConfig — experiment config convention layer</h2>
   <CodeBlock code={mlConfig} lang="python" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Class / method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixNumpy.store/load/try_load(db, path, arr)', d: 'Round-trip a numpy array through a string envelope.' },
+          { m: 'MdixNumpy.exists(db, path)',                    d: 'True if a real numpy envelope (not just any string) is stored at path.' },
+          { m: 'MdixNumpy.array_info(db, path)',                d: 'Shape/dtype metadata without loading the full array.' },
+          { m: 'MdixTensor.store / load_numpy / load_torch / load_tf', d: 'Same stored envelope, read back as a numpy array, a torch tensor, or a TF tensor.' },
+          { m: 'MdixDataFrame.store/load/try_load(db, path, df)', d: 'Round-trip a pandas DataFrame.' },
+          { m: 'MdixMLConfig.load/load_str/builder',            d: 'Entry points, mirroring MdixDatabase/MdixBuilder.' },
+          { m: '.hyperparameter/.architecture/.dataset_path/.training/.label_map', d: 'Convention-based accessors for common experiment-config sections.' },
+          { m: '.all_hyperparameters / .load_weights / .weights_info', d: 'Bulk hyperparameter dict; weight-array loading via MdixNumpy underneath.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

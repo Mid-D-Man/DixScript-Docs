@@ -78,6 +78,27 @@ void*  w   = mdix_watcher_new(path);         /* free with mdix_watcher_free(w)  
       <li>Passing <code>NULL</code>/an empty handle into most C functions is safe — it returns a sentinel and sets the last-error string rather than crashing. The C++ wrapper's own null checks (<code>h_ ? ... : ...</code>) are a second, redundant layer on top of that, not a workaround for unsafe C behavior.</li>
     </ul>
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Allocation</th><th>Free with</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'A single char* (mdix_get_string, mdix_get_json, export functions, ...)', d: 'mdix_free_string()' },
+          { m: 'char** array (mdix_get_keys, mdix_get_all_keys)',                          d: 'mdix_free_string_array(arr, count)' },
+          { m: 'A database handle (mdix_load*, mdix_from_json/toml, a merge result)',      d: 'mdix_free()' },
+          { m: 'A builder handle (mdix_builder_new/from_handle)',                          d: 'mdix_builder_free()' },
+          { m: 'A watcher handle (mdix_watcher_new)',                                      d: 'mdix_watcher_free()' },
+          { m: 'C++: any of the above',                                                    d: 'Nothing — RAII destructors handle it automatically.' },
+        ] as row}
+          <tr>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.m}</td>
+            <td><code style="font-size:0.75rem">{row.d}</code></td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

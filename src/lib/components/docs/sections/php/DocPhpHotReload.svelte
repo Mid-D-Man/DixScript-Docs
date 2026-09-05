@@ -39,4 +39,25 @@ $watcher->close();`;
     not supported — a core Runtime limitation, not something this binding
     could opt out of.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'new MdixHotReload(path)',   d: 'Create a watcher for a single plaintext .mdix file.' },
+          { m: 'checkAndReload()',           d: 'Returns ?MdixDatabase — null if unchanged (or on error).' },
+          { m: 'forceReload()',              d: 'Reload unconditionally, throws on failure.' },
+          { m: 'hasChanged()',               d: 'Check without reloading.' },
+          { m: 'hasLoaded()',                d: 'True once at least one reload has succeeded.' },
+          { m: 'close()',                    d: 'Release the native handle.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

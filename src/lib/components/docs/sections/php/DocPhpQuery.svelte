@@ -43,4 +43,28 @@ $firstOrDefault = $enemies->firstOr(['name' => 'none', 'hp' => 0]);`;
     <code>sumInt</code>/<code>sumFloat</code>/<code>avgFloat</code>/<code>minByKey</code>/<code>maxByKey</code>)
     end the chain and return a plain value.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixDatabase::query(path) / queryMany(pattern)', d: 'Single fixed path, or a whole-segment wildcard across sibling paths.' },
+          { m: 'where(pred) / whereFieldEquals(field, value)', d: 'Filter — a predicate closure, or a shortcut for a single-field equality check.' },
+          { m: 'skip(n) / take(n) / distinct()',    d: 'Slice and deduplicate the sequence.' },
+          { m: 'orderBy(key) / orderByDescending(key)', d: 'Sort by a key function.' },
+          { m: 'select(map) / selectField(field) / groupBy(key)', d: 'Project, pull one field out directly, or group into an array.' },
+          { m: 'any(pred) / all(pred) / count() / isEmpty()', d: 'Boolean and count checks over the sequence.' },
+          { m: 'first() / firstOr(default) / last() / nth(i)', d: 'Element access.' },
+          { m: 'sumInt() / sumFloat() / avgFloat() / minByKey() / maxByKey()', d: 'Numeric aggregation.' },
+          { m: 'toArray()',                          d: 'Materialize as a plain PHP array.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

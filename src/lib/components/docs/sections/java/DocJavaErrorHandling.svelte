@@ -22,4 +22,23 @@ try {
   <h1>Error Handling</h1>
   <p class="page-lead">Part of the <a href="#java-api">Java / Kotlin Runtime API</a>.</p>
   <CodeBlock code={exceptionApi} lang="java" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Pattern</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'db.getInt(path)',                d: 'Throws MdixException if path is missing or the wrong type.' },
+          { m: 'db.getInt(path, default)',        d: 'Returns default instead of throwing — every typed getter has this overload.' },
+          { m: 'e.getMessage()',                  d: 'The underlying error text — no separate ErrorKind enum to branch on here.' },
+          { m: 'db.exists(path) / db.valueTypeAt(path)', d: 'Defensive checks before a get*() call, as an alternative to try/catch.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

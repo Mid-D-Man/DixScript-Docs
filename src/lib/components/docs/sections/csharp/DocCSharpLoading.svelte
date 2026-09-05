@@ -42,6 +42,28 @@ Dix.LoadToml(tomlString);`;
       <li><strong>Use the sync overloads</strong> everywhere else — a console app, a server request handler already on a thread-pool thread, or Unity's main thread during a loading screen where you're going to block on something anyway.</li>
     </ul>
   </div>
+
+  <div class="table-scroll" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'Dix.Load(path) / LoadAsync(path, ct)',                 d: 'Load from a file path.' },
+          { m: 'Dix.LoadStr(source) / LoadStrAsync(source, ct)',        d: 'Load from an in-memory source string.' },
+          { m: 'Dix.LoadEncrypted(encPath, keyPath) / …Async(…)',       d: 'Load an encrypted file, key from a separate key file.' },
+          { m: 'Dix.LoadEncryptedPassword(encPath, password) / …Async(…)', d: 'Load an encrypted file, key derived from a password.' },
+          { m: 'Dix.LoadEncryptedBytes(bytes, keyContent, password) / …Async(…)', d: 'Load encrypted data already in memory.' },
+          { m: 'Dix.LoadEncryptedWith(encPath, MdixLoadOptions)',       d: 'Load with a fully custom options object.' },
+          { m: 'Dix.LoadJson(json) / Dix.LoadToml(toml)',               d: 'Load from a foreign format string.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

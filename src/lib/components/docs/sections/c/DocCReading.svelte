@@ -66,4 +66,26 @@ std::vector<std::string> allKeys = db->get_all_keys();`;
     array and freed — there's nothing to manually release, unlike the raw
     <code>char**</code> from <code>mdix_get_keys</code>/<code>mdix_get_all_keys</code>.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Concept</th><th>C</th><th>C++</th></tr></thead>
+      <tbody>
+        {#each [
+          { c: 'Metadata',    ch: 'mdix_entry_count, mdix_is_encrypted, mdix_is_compressed, mdix_get_loaded_version, mdix_get_config_value', cpp: 'entry_count, is_encrypted, is_compressed, get_loaded_version, get_config_value' },
+          { c: 'Existence / type', ch: 'mdix_exists, mdix_get_type, mdix_get_array_length', cpp: 'exists, get_type, get_array_length' },
+          { c: 'Typed getters', ch: 'mdix_get_string/int/long/float/double/bool — plain values, NULL/0/false on failure', cpp: 'get_string/int/long/float/double/bool — return Result<T>' },
+          { c: 'Enums',        ch: 'mdix_get_enum_name, mdix_get_enum_field',       cpp: 'get_enum_name, get_enum_field' },
+          { c: 'Nested JSON',  ch: 'mdix_get_json',                                 cpp: 'get_json' },
+          { c: 'Key enumeration', ch: 'mdix_get_keys, mdix_get_all_keys — caller must mdix_free_string_array()', cpp: 'get_keys, get_all_keys — returns owning std::vector<std::string>, no free needed' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.c}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.ch}</td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.cpp}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

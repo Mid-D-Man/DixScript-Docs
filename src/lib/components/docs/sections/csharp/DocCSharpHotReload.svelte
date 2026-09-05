@@ -53,6 +53,26 @@ db.DisableHotReload();`;
       <li><strong><code>db</code> is mutated in place</strong> on a successful reload — <code>OnReloaded</code>'s handler argument, <code>Reload()</code>'s <code>SuccessResult</code>, and the <code>db</code> reference you already hold are all the same object; you never swap which instance you're holding.</li>
     </ul>
   </div>
+
+  <div class="table-scroll" style="margin-top:1.5rem">
+    <table>
+      <thead><tr><th>Member</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'db.EnableHotReload()',   d: 'Starts watching the file db was Load()-ed from. Throws if db came from LoadStr().' },
+          { m: 'db.DisableHotReload()',  d: 'Stops watching.' },
+          { m: 'db.OnReloaded',          d: 'Event, fires with the reloaded MdixDatabase on a successful reload.' },
+          { m: 'db.OnReloadFailed',      d: 'Event, fires with the error on a failed reload attempt.' },
+          { m: 'db.Reload() / ReloadAsync()', d: 'Force a check right now instead of waiting for the FileSystemWatcher event.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

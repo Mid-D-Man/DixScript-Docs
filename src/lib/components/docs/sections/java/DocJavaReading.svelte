@@ -37,4 +37,26 @@ db.getJson("server");          // raw JSON string of a nested object/array`;
     and a form that takes a default value instead.
   </p>
   <CodeBlock code={readApi} lang="java" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'exists(path)',                    d: 'True if a value exists at path.' },
+          { m: 'valueTypeAt(path)',                d: 'The stored type as a ValueType enum.' },
+          { m: 'arrayLength(path)',                d: 'Number of elements at an array path.' },
+          { m: 'keys(prefix) / keys()',            d: 'Direct child keys under prefix, or top-level keys.' },
+          { m: 'getString/getInt/getLong/getFloat/getDouble/getBool(path[, default])', d: 'Typed getters, each with a throwing and a default-value overload.' },
+          { m: 'getEnumName/getEnumField/getEnumValue(path)', d: 'Enum type name / field name / resolved integer value.' },
+          { m: 'getJson(path)',                    d: 'Raw JSON string of a nested object/array at path.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

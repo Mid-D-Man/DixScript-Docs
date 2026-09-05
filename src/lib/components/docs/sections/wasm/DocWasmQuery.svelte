@@ -81,6 +81,30 @@ arr.reduce((m, x) => (m.set(keyFn(x), [...(m.get(keyFn(x)) ?? []), x]), m), new 
       <li><strong>An empty result is not an error</strong> — a typo'd path and a genuinely empty array look identical (<code>[]</code>). If that distinction matters, check <code>db.exists(path)</code> first.</li>
     </ul>
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Rust core concept</th><th>JS equivalent</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'query(db, path)',       d: 'A single array at a known path — returns a plain typed array.' },
+          { m: 'queryMany(db, pattern)', d: 'Whole-segment "*" glob across sibling paths, resolved natively.' },
+          { m: 'where_(pred) / select(map)', d: 'arr.filter(pred) / arr.map(map)' },
+          { m: 'order_by / order_by_desc',    d: 'arr.sort((a,b) => …)' },
+          { m: 'count() / any(pred) / all(pred)', d: 'arr.length / arr.some(pred) / arr.every(pred)' },
+          { m: 'first() / last() / nth(i)',   d: 'arr[0] / arr.at(-1) / arr[i]' },
+          { m: 'sum_int/sum_float(key) / avg_float(key)', d: 'arr.reduce((a,b) => a + b.field, 0), divided by arr.length for the average' },
+          { m: 'group_by(key)',               d: 'arr.reduce(...) into a Map' },
+          { m: 'distinct()',                  d: '[...new Set(arr)] for primitives, a Map keyed by id for objects' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

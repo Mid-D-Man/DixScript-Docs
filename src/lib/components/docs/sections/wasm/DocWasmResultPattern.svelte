@@ -57,6 +57,25 @@ const remote = await tryGetAsync(async () => {
       <li><strong><code>tryGetAsync</code> isn't wrapping an async mdix call</strong> — nothing in this package is actually async yet (it's WASM, everything resolves synchronously once loaded). It exists so your own async code — a <code>fetch()</code>, an IndexedDB read — that happens to call into mdix can use the same result shape as everything else here.</li>
     </ul>
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Function</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'tryGet(fn)',       d: 'Runs fn, returns { ok: true, value } or { ok: false, error }.' },
+          { m: 'tryGetAsync(fn)',  d: 'Same shape, for wrapping your own async code (nothing in this package is itself async).' },
+          { m: 'unwrap(result)',   d: 'Returns .value, or throws the original error if .ok is false.' },
+          { m: 'unwrapOr(result, fallback)', d: 'Returns .value, or fallback if .ok is false.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

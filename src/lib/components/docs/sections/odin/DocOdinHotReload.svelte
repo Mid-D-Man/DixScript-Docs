@@ -26,4 +26,22 @@ for /* your main loop */ {
   <h1>Hot Reload</h1>
   <p class="page-lead">Part of the <a href="#odin-api">Odin Runtime API</a>.</p>
   <CodeBlock code={watchApi} lang="odin" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Procedure</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'hot_reload_init(&hr, path)', d: 'Initialize a watcher for a single plaintext .mdix file.' },
+          { m: 'hot_reload_destroy(&hr)',     d: 'Free the watcher.' },
+          { m: 'hot_reload_check(&hr, &db)',  d: 'Re-stat the file; reloads db in place and returns true only if it changed.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -40,4 +40,23 @@ auto db5 = mdix::Database::load_encrypted_bytes(bytes, std::nullopt, "hunter2");
     always reload through the plaintext loader path, a core Runtime limitation
     rather than something this binding could opt out of.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>C</th><th>C++</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { c: 'mdix_load_encrypted(encPath, keyPath)', cpp: 'Database::load_encrypted(encPath, keyPath = nullopt)', d: 'Key from a separate key file, or auto-detected if omitted.' },
+          { c: 'mdix_load_encrypted_password(encPath, password)', cpp: 'Database::load_encrypted_password(encPath, password)', d: 'Key derived from a password.' },
+          { c: 'mdix_load_encrypted_bytes(bytes, count, keyContent, password)', cpp: 'Database::load_encrypted_bytes(bytes, keyContent = nullopt, password = nullopt)', d: 'Encrypted data already in memory — at least one of keyContent/password is required.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.c}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.cpp}</td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

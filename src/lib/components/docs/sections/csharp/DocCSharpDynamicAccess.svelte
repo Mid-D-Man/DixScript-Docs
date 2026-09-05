@@ -50,6 +50,25 @@ string typo = cfg.sever.host;  // "sever" — null, no exception, no warning`;
       <li><strong>Avoid</strong> passing an <code>MdixDynamic</code> across a method boundary as <code>dynamic</code> — cast it back to a concrete type (or read the values out) at the edge of whatever scratch code is using it, so the rest of the call graph stays statically typed.</li>
     </ul>
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Member</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'db.AsDynamic()',           d: 'Wrap a loaded MdixDatabase as an MdixDynamic.' },
+          { m: 'cfg.path.segment',         d: 'Dynamic member access — resolves against the underlying DixData at runtime.' },
+          { m: 'cfg.array[i]',             d: 'Dynamic index access into an array-valued path.' },
+          { m: '((MdixDynamic)cfg).ToJson()', d: 'Cast back to the concrete type to reach non-dynamic members like export.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

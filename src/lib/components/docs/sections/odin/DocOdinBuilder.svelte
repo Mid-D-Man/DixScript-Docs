@@ -35,4 +35,28 @@ b2 := mdix.builder_from_database(db)`;
   <h1>Building Programmatically</h1>
   <p class="page-lead">Part of the <a href="#odin-api">Odin Runtime API</a>.</p>
   <CodeBlock code={builderApi} lang="odin" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Procedure</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'builder_new() / builder_from_database(db)', d: 'Create empty, or pre-populate from an already-loaded database.' },
+          { m: 'builder_destroy(&b)',                d: 'Free the native handle.' },
+          { m: 'builder_set_string/int/long/float/double/bool(b, path, v)', d: 'Set a flat property value.' },
+          { m: 'builder_has_key(b, path) / builder_remove(b, path)', d: 'Check for, or remove, a previously-set property.' },
+          { m: 'builder_get_string/int/long/float/double/bool(b, path)', d: 'Read back a value already staged on the builder.' },
+          { m: 'builder_entry_count(b) / builder_clear(b)', d: 'Number of set properties / reset the builder to empty.' },
+          { m: 'builder_save(b, path)',               d: 'Write the built source directly to a file.' },
+          { m: 'builder_to_string(b)',                 d: 'Produce the raw .mdix source string.' },
+          { m: 'builder_to_database(b)',               d: 'Parse the built source into a database.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

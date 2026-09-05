@@ -41,6 +41,26 @@ const mdix = fromJson.toMdix();`;
       <li><strong>No source-text formatting helpers here</strong> — unlike the Rust core (<code>DixCompactor</code>) or other bindings, this build only converts already-loaded <code>MdixDatabase</code> instances between formats; there's no <code>formatSource</code>/<code>minifySource</code> that operates on raw text without loading it first.</li>
     </ul>
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixDatabase.fromJson(json)', d: 'Static — parse a JSON string into a new database.' },
+          { m: 'MdixDatabase.fromToml(toml)', d: 'Static — parse a TOML string into a new database.' },
+          { m: '.toJson(indented)',            d: 'Instance — export as a JSON string.' },
+          { m: '.toToml()',                    d: 'Instance — export as a TOML string.' },
+          { m: '.toMdix()',                    d: 'Instance — export as .mdix source text, default formatting style.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

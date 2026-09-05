@@ -27,4 +27,26 @@ watcher.close();      // implements Closeable — use try-with-resources`;
     background thread automatically.
   </p>
   <CodeBlock code={hotReloadApi} lang="java" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'new HotReload(path)',   d: 'Create a watcher for a single plaintext .mdix file.' },
+          { m: 'hasChanged()',           d: 'Check without reloading.' },
+          { m: 'checkAndReload()',       d: 'Returns Optional<Database> — empty if unchanged (or on error).' },
+          { m: 'forceReload()',          d: 'Reload unconditionally, regardless of whether the file changed.' },
+          { m: 'hasLoaded()',            d: 'True once at least one reload has succeeded.' },
+          { m: 'path()',                 d: 'The watched file\u2019s path.' },
+          { m: 'close()',                d: 'Free the native handle — HotReload implements Closeable.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>

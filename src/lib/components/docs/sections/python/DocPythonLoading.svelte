@@ -59,6 +59,28 @@ db2 = MdixDatabase.from_table({"app_name": "MyGame", "port": 8080})`;
     <code>database.rs</code>'s static methods; if you need to load
     encrypted bytes already in memory, write them to a temp file first.
   </p>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MdixDatabase.load(path) / try_load(path)',                   d: 'Load from a file path.' },
+          { m: 'MdixDatabase.load_str(source) / try_load_str(source)',        d: 'Load from an in-memory source string.' },
+          { m: 'MdixDatabase.from_json(json) / try_from_json(json)',          d: 'Load from a JSON string.' },
+          { m: 'MdixDatabase.from_toml(toml) / try_from_toml(toml)',          d: 'Load from a TOML string.' },
+          { m: 'MdixDatabase.load_encrypted(encPath, key_path=None)',         d: 'Load an encrypted file, key from a key file or auto-detected.' },
+          { m: 'MdixDatabase.load_encrypted_password(encPath, password)',     d: 'Load an encrypted file, key derived from a password.' },
+          { m: 'MdixDatabase.from_table(dict)',                               d: 'Build a database directly from a dict/list structure.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 

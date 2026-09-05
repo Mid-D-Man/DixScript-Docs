@@ -52,6 +52,29 @@ while (running) {
       <li><strong><code>force_reload()</code> reloads unconditionally</strong>, regardless of whether the file changed — useful for an explicit "reload now" action distinct from the poll loop.</li>
     </ul>
   </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>C</th><th>C++</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { c: 'mdix_watcher_new(path)',            cpp: 'Watcher(path) — throws on construction failure', d: 'Create a watcher for a single plaintext .mdix file.' },
+          { c: 'mdix_watcher_free(w)',               cpp: '.reset() / destructor', d: 'Free the watcher.' },
+          { c: 'mdix_watcher_path(w)',                cpp: '.path()',              d: 'The watched file\u2019s path.' },
+          { c: 'mdix_watcher_has_loaded(w)',          cpp: '.has_loaded()',        d: 'True once at least one reload has succeeded.' },
+          { c: 'mdix_watcher_has_changed(w)',         cpp: '.has_changed()',       d: 'Check without reloading.' },
+          { c: 'mdix_watcher_check_and_reload(w) — NULL handle', cpp: '.check_and_reload() — returns std::optional<Database>', d: 'Reload only if changed since the last successful reload.' },
+          { c: 'mdix_watcher_force_reload(w) — NULL handle', cpp: '.force_reload() — returns Result<Database>', d: 'Reload unconditionally, regardless of whether the file changed.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.c}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.cpp}</td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <style>

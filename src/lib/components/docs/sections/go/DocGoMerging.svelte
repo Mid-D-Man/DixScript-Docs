@@ -31,4 +31,25 @@ merged, conflicts, err := dixscript.MergeSourcesWeighted(
     are reported per key, never silently resolved without you knowing.
   </p>
   <CodeBlock code={mergeApi} lang="go" />
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Function / value</th><th>Description</th></tr></thead>
+      <tbody>
+        {#each [
+          { m: 'MergeSources(sources, strategy, arrayStrategy)',        d: 'Merge source strings with implicit descending weights.' },
+          { m: 'MergeSourcesWeighted(sources, weights, strategy, arrayStrategy)', d: 'Same, with explicit per-source weights.' },
+          { m: 'WeightedPriority',   d: 'Each source\u2019s weight decides the winner; ties favor the lower-indexed source.' },
+          { m: 'PrimaryWins / SecondaryWins', d: 'The lower / higher indexed source always wins, regardless of weight.' },
+          { m: 'ThrowOnConflict',    d: 'Any key defined by more than one source fails the whole merge.' },
+          { m: 'ArrayReplace / ArrayConcat / ArrayConcatDedup', d: 'How array-valued entries combine — replace, concatenate, or concatenate with duplicates removed.' },
+        ] as row}
+          <tr>
+            <td><code style="font-size:0.75rem">{row.m}</code></td>
+            <td style="color:var(--muted-foreground);font-size:0.8125rem">{row.d}</td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 </div>
